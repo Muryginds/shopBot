@@ -2,14 +2,18 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
+import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.keyboard.ListingFavoriteKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
+import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.service.KeyboardService;
 import org.telegram.galacticMiniatures.bot.service.ListingFavoriteService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -31,6 +35,7 @@ public class MainMenuCallbackHandler implements AbstractHandler {
     private final KeyboardService keyboardService;
     private final CacheService cacheService;
     private final ListingFavoriteService listingFavoriteService;
+    private final ListingFavoriteKeyboardMessage listingFavoriteKeyboardMessage;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -52,8 +57,19 @@ public class MainMenuCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CONTACTS_COMMAND:
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_FAVORITE_COMMAND:
-                List<ListingFavorite> list = listingFavoriteService.getListingsByChatId(chatId.toString());
-                answer.add(Utils.prepareSendMessage(chatId, list.toString()));
+                Pageable pageable = PageRequest.of(0, 1);
+                Pageable imagePageable = PageRequest.of(0, 1);
+                Page<ListingFavorite> listingPage =
+                        listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                if(listingPage.getTotalElements() > 0) {
+                    FavoriteInfo favoriteInfo = new FavoriteInfo(pageable, imagePageable);
+                    cacheService.add(chatId, favoriteInfo);
+                    answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                } else {
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            "No items in favorites", false, callbackQuery));
+                }
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CART_COMMAND:
                 boolean cartIsEmpty = true;

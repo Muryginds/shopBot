@@ -2,13 +2,14 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
+import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
 import org.telegram.galacticMiniatures.bot.model.Listing;
+import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
+import org.telegram.galacticMiniatures.bot.service.ListingFavoriteService;
 import org.telegram.galacticMiniatures.bot.service.ListingService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -17,22 +18,33 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class ListingKeyboardMessage implements AbstractKeyboardMessage {
+public class ListingFavoriteKeyboardMessage implements AbstractKeyboardMessage {
 
     private final ListingService listingService;
     private final CacheService cacheService;
+    private final ListingFavoriteService listingFavoriteService;
     private final ListingWithImageService listingWithImageService;
 
-    public SendPhoto prepareSendPhoto(Pageable pageable, SearchInfo searchInfo, Long chatId) {
+    //private Map<Listing, Integer> cart = new HashMap<>();
 
-        Page<Listing> listingPage =
-                listingService.getPageListingBySectionIdentifier(
-                        searchInfo.getSectionId(), pageable);
+    public SendPhoto prepareSendPhoto(Pageable pageable, FavoriteInfo favoriteInfo, Long chatId) {
+
+/*        Optional<ChatInfo> info = cacheService.get(chatId);
+        info.ifPresent(chatInfo -> cart = chatInfo.getCart());*/
+
+        Page<ListingFavorite> listingPage =
+                listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+
+        ListingFavorite listingFavorite = listingPage.getContent().get(0);
+        Pageable imagePageable = favoriteInfo.getPhotoPageable();
+        Page<ListingWithImage> imagePage =
+                listingWithImageService.getPageImagesByListingIdentifier(listingFavorite.getId().getListing(), imagePageable);
+        ListingWithImage listingWithImage = imagePage.getContent().get(0);
+        Listing listing = listingWithImage.getListing();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -40,65 +52,59 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage {
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
-        Listing listing = listingPage.getContent().get(0);
-        Pageable imagePageable = searchInfo.getPhotoPageable();
-        Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListingIdentifier(listing, imagePageable);
 
         if (imagePage.getTotalElements() > 1) {
             if (imagePage.getNumber() > 0) {
                 keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND));
+                        Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_PREVIOUS_NAME,
+                        Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_PREVIOUS_COMMAND));
             }
             keyboardButtonsRow0.add(createInlineKeyboardButton(
                     new StringBuilder().append("Photo ")
                             .append(imagePage.getNumber() + 1)
                             .append(" of ")
                             .append(imagePage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
+                    Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_MIDDLE_COMMAND));
             if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
                 keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND));
+                        Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_NAME,
+                        Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_COMMAND));
             }
             rowList.add(keyboardButtonsRow0);
         }
         if (listingPage.getNumber() > 0) {
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND));
+                    Constants.KEYBOARD_FAVORITE_BUTTON_PREVIOUS_NAME,
+                    Constants.KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND));
         }
         keyboardButtonsRow1.add(createInlineKeyboardButton(
                 new StringBuilder().append("Item ")
                         .append(listingPage.getNumber() + 1)
                         .append(" of ")
                         .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_LISTING_BUTTON_MIDDLE_COMMAND));
+                Constants.KEYBOARD_FAVORITE_BUTTON_MIDDLE_COMMAND));
         if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND));
+                    Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_NAME,
+                    Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND));
         }
         rowList.add(keyboardButtonsRow1);
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_NAME,
-                Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND));
+                Constants.KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_NAME,
+                Constants.KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_NAME,
-                Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_COMMAND));
+                Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_NAME,
+                Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_NAME,
-                Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND));
+                Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_NAME,
+                Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        searchInfo.setListingPageable(pageable);
-        searchInfo.setPhotoPageable(imagePageable);
-        cacheService.add(chatId, searchInfo);
-
-        ListingWithImage listingWithImage = imagePage.getContent().get(0);
+        favoriteInfo.setFavoritePageable(pageable);
+        favoriteInfo.setPhotoPageable(imagePageable);
+        cacheService.add(chatId, favoriteInfo);
 
         String caption = new StringBuilder().append(listing.getTitle())
                 .append(". \nPrice: ")

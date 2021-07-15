@@ -1,6 +1,8 @@
 package org.telegram.galacticMiniatures.bot.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithImageRepository;
@@ -48,5 +50,9 @@ public class ListingWithImageService {
     public List<String> getImagesByListingIdentifier(Integer listingId) {
         return getByListingIdentifier(listingId).stream()
                 .map(ListingWithImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    public Page<ListingWithImage> getPageImagesByListingIdentifier(Listing listing, Pageable pageable) {
+        return listingWithImageRepository.findByListing(listing, pageable);
     }
 }

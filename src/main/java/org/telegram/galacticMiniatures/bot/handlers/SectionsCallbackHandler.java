@@ -9,7 +9,9 @@ import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Listing;
+import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.KeyboardService;
@@ -47,6 +49,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingWithImageService listingWithImageService;
+    private final ListingKeyboardMessage listingKeyboardMessage;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -69,10 +72,12 @@ public class SectionsCallbackHandler implements AbstractHandler {
                 Integer sectionId = Integer.parseInt(
                         data.replace(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK, ""));
                 Pageable pageable = PageRequest.of(0, 1);
+                Pageable imagePageable = PageRequest.of(0, 1);
                 Page<Listing> listingPage = listingService.getPageListingBySectionIdentifier(sectionId, pageable);
                 if(listingPage.getTotalElements() > 0) {
-                    cacheService.add(chatId, new SearchInfo(sectionId, listingPage.getPageable()));
-                    answer.add(prepareSendPhoto(pageable, sectionId, chatId));
+                    SearchInfo searchInfo = new SearchInfo(sectionId, listingPage.getPageable(), imagePageable);
+                    cacheService.add(chatId, searchInfo);
+                    answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 } else {
                     answer.add(Utils.prepareAnswerCallbackQuery(
@@ -80,53 +85,6 @@ public class SectionsCallbackHandler implements AbstractHandler {
                 }
         }
         return answer;
-    }
-
-    private SendPhoto prepareSendPhoto(Pageable pageable, Integer sectionId, Long chatId) {
-
-        Page<Listing> listingPage =
-                listingService.getPageListingBySectionIdentifier(sectionId, pageable);
-        InlineKeyboardMarkup keyboardMarkup =
-                keyboardService.getInlineKeyboardMarkup(KeyboardType.LISTING);
-        keyboardMarkup.getKeyboard().get(0).get(1)
-                .setText(listingPage.getNumber() + 1 + " of " + listingPage.getTotalElements());
-        if (listingPage.getNumber() + 1 >= listingPage.getTotalPages()) {
-            keyboardMarkup.getKeyboard().get(0).remove(2);
-        }
-        if (listingPage.getNumber() == 0) {
-            keyboardMarkup.getKeyboard().get(0).remove(0);
-        }
-
-        Listing listing = listingPage.getContent().get(0);
-        List<String> pics = listingWithImageService.
-                getImagesByListingIdentifier(listing.getIdentifier());
-        StringBuilder sb = new StringBuilder();
-        if (pics.size() > 1) {
-            for (int i = 1; i < pics.size(); i++) {
-                sb.append("<a href=\"")
-                        .append(pics.get(i))
-                        .append("\">picture ")
-                        .append(i)
-                        .append("</a>")
-                        .append("\n");
-            }
-        }
-
-        String caption = sb.append(listing.getTitle())
-                .append("\nprice: ")
-                .append(listing.getPrice()).toString();
-
-        InputMediaPhoto photo = new InputMediaPhoto();
-        photo.setMedia(pics.get(0));
-        InputFile inputFile = new InputFile();
-        inputFile.setMedia(pics.get(0));
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(inputFile);
-        sendPhoto.setChatId(chatId.toString());
-        sendPhoto.setCaption(caption);
-        sendPhoto.setParseMode("html");
-        sendPhoto.setReplyMarkup(keyboardMarkup);
-        return sendPhoto;
     }
 
     @Override
