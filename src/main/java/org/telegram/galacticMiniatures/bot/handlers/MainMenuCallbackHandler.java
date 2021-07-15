@@ -5,28 +5,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
-import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
-import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
+import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
-import org.telegram.galacticMiniatures.bot.keyboard.ListingFavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.Listing;
+import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
-import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.service.KeyboardService;
-import org.telegram.galacticMiniatures.bot.service.ListingFavoriteService;
+import org.telegram.galacticMiniatures.bot.service.CartService;
+import org.telegram.galacticMiniatures.bot.service.FavoriteService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -34,8 +31,10 @@ public class MainMenuCallbackHandler implements AbstractHandler {
 
     private final KeyboardService keyboardService;
     private final CacheService cacheService;
-    private final ListingFavoriteService listingFavoriteService;
-    private final ListingFavoriteKeyboardMessage listingFavoriteKeyboardMessage;
+    private final FavoriteService favoriteService;
+    private final FavoriteKeyboardMessage favoriteKeyboardMessage;
+    private final CartKeyboardMessage cartKeyboardMessage;
+    private final CartService cartService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -47,12 +46,10 @@ public class MainMenuCallbackHandler implements AbstractHandler {
 
         switch (data) {
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CATALOGUE_COMMAND:
-                EditMessageText editMessageText = new EditMessageText();
-                editMessageText.setText(Constants.KEYBOARD_SECTIONS_HEADER);
-                editMessageText.setMessageId(callbackQuery.getMessage().getMessageId());
-                editMessageText.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION));
-                editMessageText.setChatId(callbackQuery.getMessage().getChatId().toString());
-                answer.add(editMessageText);
+                SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_SECTIONS_HEADER);
+                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION));
+                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                answer.add(sm);
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CONTACTS_COMMAND:
                 break;
@@ -60,11 +57,11 @@ public class MainMenuCallbackHandler implements AbstractHandler {
                 Pageable pageable = PageRequest.of(0, 1);
                 Pageable imagePageable = PageRequest.of(0, 1);
                 Page<ListingFavorite> listingPage =
-                        listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                        favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                 if(listingPage.getTotalElements() > 0) {
                     FavoriteInfo favoriteInfo = new FavoriteInfo(pageable, imagePageable);
                     cacheService.add(chatId, favoriteInfo);
-                    answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                    answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 } else {
                     answer.add(Utils.prepareAnswerCallbackQuery(
@@ -72,16 +69,16 @@ public class MainMenuCallbackHandler implements AbstractHandler {
                 }
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CART_COMMAND:
-                boolean cartIsEmpty = true;
-                Optional<ChatInfo> optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    Map<Listing, Integer> cart = optionalChatInfo.get().getCart();
-                    cartIsEmpty = cart.isEmpty();
-                    if (!cartIsEmpty) {
-                        answer.add(Utils.prepareSendMessage(chatId, cart.toString()));
-                    }
-                }
-                if (cartIsEmpty) {
+                Pageable cartPageable = PageRequest.of(0, 1);
+                Pageable imageCartPageable = PageRequest.of(0, 1);
+                Page<ListingCart> listingCartPage =
+                        cartService.getPageCartByChatId(chatId.toString(), cartPageable);
+                if(listingCartPage.getTotalElements() > 0) {
+                    CartInfo cartInfo = new CartInfo(cartPageable, imageCartPageable);
+                    cacheService.add(chatId, cartInfo);
+                    answer.add(cartKeyboardMessage.prepareSendPhoto(cartPageable, cartInfo, chatId));
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                } else {
                     answer.add(Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));
                 }
                 break;

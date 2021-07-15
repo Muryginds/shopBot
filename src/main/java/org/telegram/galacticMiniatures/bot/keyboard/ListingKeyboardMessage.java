@@ -2,7 +2,6 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
@@ -43,7 +42,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage {
         Listing listing = listingPage.getContent().get(0);
         Pageable imagePageable = searchInfo.getPhotoPageable();
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListingIdentifier(listing, imagePageable);
+                listingWithImageService.getPageImagesByListing(listing, imagePageable);
 
         if (imagePage.getTotalElements() > 1) {
             if (imagePage.getNumber() > 0) {

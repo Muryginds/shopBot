@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "listings_favorite")
@@ -18,11 +17,6 @@ public class ListingFavorite {
 
   @EmbeddedId
   Key id;
-
-  @Override
-  public String toString() {
-    return "Listing item {" + id.getListing().getIdentifier() + '}';
-  }
 
   @Embeddable
   @Getter

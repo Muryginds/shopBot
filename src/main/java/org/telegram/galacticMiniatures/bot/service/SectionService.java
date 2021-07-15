@@ -21,7 +21,11 @@ public class SectionService {
         List<Section> sections = new ArrayList<>();
         for (ParsedSection parsedSection : collection) {
             Optional<Section> section = getByIdentifier(parsedSection.getSectionId());
-            sections.add(section.orElse(new Section(parsedSection.getTitle(), parsedSection.getSectionId())));
+            Section modifiedSection = section.
+                    orElse(new Section());
+            modifiedSection.setName(parsedSection.getTitle());
+            modifiedSection.setIdentifier(parsedSection.getSectionId());
+            sections.add(modifiedSection);
         }
        return sectionRepository.saveAll(sections);
     }

@@ -2,7 +2,6 @@ package org.telegram.galacticMiniatures.bot.cache;
 
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
-import org.telegram.galacticMiniatures.bot.model.Listing;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,13 +38,13 @@ public class CacheService {
         }
     }
 
-    public void add(long chatId, Map<Listing, Integer> cart) {
+    public void add(long chatId, CartInfo cartInfo) {
         if(cache.containsKey(chatId)) {
             ChatInfo chatInfo = cache.get(chatId);
-            chatInfo.getCart().putAll(cart);
+            chatInfo.setCartInfo(cartInfo);
         } else {
             ChatInfo chatInfo = new ChatInfo();
-            chatInfo.getCart().putAll(cart);
+            chatInfo.setCartInfo(cartInfo);
             cache.put(chatId, chatInfo);
         }
     }

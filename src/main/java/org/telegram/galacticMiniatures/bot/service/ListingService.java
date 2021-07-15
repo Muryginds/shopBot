@@ -26,9 +26,12 @@ public class ListingService {
         for (Map.Entry<Section, List<ParsedListing>> entry : listingsMap.entrySet()) {
             for (ParsedListing parsedListing : entry.getValue()) {
                 Optional<Listing> listing = getByIdentifier(parsedListing.getId());
-                Listing modifiedListing = listing.orElse(new Listing(parsedListing.getTitle(), parsedListing.getId(),
-                        parsedListing.getDescription(), parsedListing.getPrice(),
-                        entry.getKey(), null));
+                Listing modifiedListing = listing.orElse(new Listing());
+                modifiedListing.setTitle(parsedListing.getTitle());
+                modifiedListing.setIdentifier(parsedListing.getId());
+                modifiedListing.setDescription(parsedListing.getDescription());
+                modifiedListing.setPrice((int)(parsedListing.getPrice() * 7) * 10);
+                modifiedListing.setSection(entry.getKey());
                 modifiedListing.setLastModified(LocalDateTime.now());
                 listings.add(modifiedListing);
             }

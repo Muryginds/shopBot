@@ -5,18 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
-import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
-import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
+import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
-import org.telegram.galacticMiniatures.bot.keyboard.ListingFavoriteKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Listing;
+import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
-import org.telegram.galacticMiniatures.bot.service.KeyboardService;
-import org.telegram.galacticMiniatures.bot.service.ListingFavoriteService;
-import org.telegram.galacticMiniatures.bot.service.ListingService;
-import org.telegram.galacticMiniatures.bot.service.UserService;
+import org.telegram.galacticMiniatures.bot.model.User;
+import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
@@ -27,7 +23,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -35,10 +30,10 @@ import java.util.Optional;
 public class FavoriteCallbackHandler implements AbstractHandler {
 
     private final KeyboardService keyboardService;
-    private final ListingService listingService;
     private final CacheService cacheService;
-    private final ListingFavoriteService listingFavoriteService;
-    private final ListingFavoriteKeyboardMessage listingFavoriteKeyboardMessage;
+    private final FavoriteService favoriteService;
+    private final FavoriteKeyboardMessage favoriteKeyboardMessage;
+    private final CartService cartService;
     private final UserService userService;
 
     @Override
@@ -67,7 +62,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                     if (favoriteInfo != null) {
                         Pageable pageable = favoriteInfo.getFavoritePageable().next();
                         favoriteInfo.setPhotoPageable(PageRequest.of(0, 1));
-                        answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                        answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                     }
                 }
@@ -81,7 +76,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                     if (favoriteInfo != null) {
                         Pageable pageable = favoriteInfo.getFavoritePageable().previousOrFirst();
                         favoriteInfo.setPhotoPageable(PageRequest.of(0, 1));
-                        answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                        answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                     }
                 }
@@ -96,7 +91,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                         Pageable pageable = favoriteInfo.getFavoritePageable();
                         Pageable pageablePhoto = favoriteInfo.getPhotoPageable().next();
                         favoriteInfo.setPhotoPageable(pageablePhoto);
-                        answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                        answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                     }
                 }
@@ -111,7 +106,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                         Pageable pageable = favoriteInfo.getFavoritePageable();
                         Pageable pageablePhoto = favoriteInfo.getPhotoPageable().previousOrFirst();
                         favoriteInfo.setPhotoPageable(pageablePhoto);
-                        answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+                        answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                     }
                 }
@@ -124,10 +119,9 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                     if (favoriteInfo != null) {
                         Pageable pageable = favoriteInfo.getFavoritePageable();
                         Page<ListingFavorite> pageFavorite =
-                                listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                                favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                         ListingFavorite listingFavorite = pageFavorite.getContent().get(0);
-                        listingFavoriteService.deleteByUserIdAndListingIdentifier(chatId.toString(),
-                                listingFavorite.getId().getListing().getIdentifier());
+                        favoriteService.delete(listingFavorite);
                         answer.add(
                                 Utils.prepareAnswerCallbackQuery(
                                         "Removed from favorites", true, callbackQuery));
@@ -135,9 +129,9 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                         favoriteInfo.setPhotoPageable(newPageable);
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                         Page<ListingFavorite> newPageFavorite =
-                                listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                                favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                         if (newPageFavorite.getTotalElements() > 0) {
-                            answer.add(listingFavoriteKeyboardMessage.prepareSendPhoto(
+                            answer.add(favoriteKeyboardMessage.prepareSendPhoto(
                                     newPageable, favoriteInfo, chatId));
                         } else {
                             answer.add(keyboardService.getSendMessage(
@@ -154,11 +148,15 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                     if (favoriteInfo != null) {
                         Pageable pageable = favoriteInfo.getFavoritePageable();
                         Page<ListingFavorite> pageFavorite =
-                                listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                                favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                         ListingFavorite listingFavorite = pageFavorite.getContent().get(0);
                         Listing listing = listingFavorite.getId().getListing();
-                        Optional<Integer> optionalAmount = Optional.ofNullable(optionalChatInfo.get().getCart().get(listing));
-                        cacheService.add(chatId, Map.of(listing,  optionalAmount.orElse(0) + 1));
+                        Optional<ListingCart> optionalListingCart =
+                                cartService.findById(new ListingCart.Key(listing, getUser(message)));
+                        ListingCart listingCart = optionalListingCart.
+                                orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
+                        listingCart.setQuantity(listingCart.getQuantity() + 1);
+                        cartService.save(listingCart);
                         answer.add(
                                 Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
                         }
@@ -168,6 +166,11 @@ public class FavoriteCallbackHandler implements AbstractHandler {
             default:
         }
         return answer;
+    }
+
+    private User getUser(Message message) {
+        return userService.getUser(message.getChatId())
+                .orElseGet(() -> userService.add(new User(message)));
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Listing extends AbstractEntity {
     String description;
 
     @Column(name = "price")
-    Double price;
+    Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Section section;

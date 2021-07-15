@@ -33,9 +33,6 @@ public class KeyboardService {
             case STARTER:
                 result = starterKeyboardMessage;
                 break;
-            case LISTING:
-                result = listingKeyboardMessage;
-                break;
             default:
                 result = defaultKeyboardMessage;
         }
