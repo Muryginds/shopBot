@@ -9,8 +9,7 @@ import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
-import org.telegram.galacticMiniatures.bot.service.ListingFavoriteService;
-import org.telegram.galacticMiniatures.bot.service.ListingService;
+import org.telegram.galacticMiniatures.bot.service.FavoriteService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -22,27 +21,22 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class ListingFavoriteKeyboardMessage implements AbstractKeyboardMessage {
+public class FavoriteKeyboardMessage implements AbstractKeyboardMessage {
 
-    private final ListingService listingService;
     private final CacheService cacheService;
-    private final ListingFavoriteService listingFavoriteService;
+    private final FavoriteService favoriteService;
     private final ListingWithImageService listingWithImageService;
-
-    //private Map<Listing, Integer> cart = new HashMap<>();
 
     public SendPhoto prepareSendPhoto(Pageable pageable, FavoriteInfo favoriteInfo, Long chatId) {
 
-/*        Optional<ChatInfo> info = cacheService.get(chatId);
-        info.ifPresent(chatInfo -> cart = chatInfo.getCart());*/
-
         Page<ListingFavorite> listingPage =
-                listingFavoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
+                favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
 
         ListingFavorite listingFavorite = listingPage.getContent().get(0);
         Pageable imagePageable = favoriteInfo.getPhotoPageable();
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListingIdentifier(listingFavorite.getId().getListing(), imagePageable);
+                listingWithImageService.getPageImagesByListing(listingFavorite.getId().getListing(),
+                        imagePageable);
         ListingWithImage listingWithImage = imagePage.getContent().get(0);
         Listing listing = listingWithImage.getListing();
 

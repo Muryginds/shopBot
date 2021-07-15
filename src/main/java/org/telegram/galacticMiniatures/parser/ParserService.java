@@ -93,7 +93,8 @@ public class ParserService {
                         .filter(p ->
                                     p.getDescription() != null &&
                                     p.getPrice() != null &&
-                                    p.getTitle() != null).collect(Collectors.toList());
+                                    p.getTitle() != null)
+                        .collect(Collectors.toList());
 
                 listings.put(section, resultList);
 /*                Set<String> tagNames = resultList.stream()

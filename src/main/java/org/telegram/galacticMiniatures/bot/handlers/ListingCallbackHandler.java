@@ -29,9 +29,10 @@ public class ListingCallbackHandler implements AbstractHandler {
     private final KeyboardService keyboardService;
     private final ListingService listingService;
     private final CacheService cacheService;
-    private final ListingFavoriteService listingFavoriteService;
+    private final FavoriteService favoriteService;
     private final ListingKeyboardMessage listingKeyboardMessage;
     private final UserService userService;
+    private final CartService cartService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -119,7 +120,7 @@ public class ListingCallbackHandler implements AbstractHandler {
                                 listingService.getPageListingBySectionIdentifier(
                                         searchInfo.getSectionId(), pageable);
                         Listing listing = listingPage.getContent().get(0);
-                        listingFavoriteService.save(
+                        favoriteService.save(
                                 new ListingFavorite(
                                         new ListingFavorite.Key(listing, getUser(message))));
                         answer.add(
@@ -138,7 +139,14 @@ public class ListingCallbackHandler implements AbstractHandler {
                                 listingService.getPageListingBySectionIdentifier(
                                         searchInfo.getSectionId(), pageable);
                         Listing listing = listingPage.getContent().get(0);
-                        cacheService.add(chatId, Map.of(listing,1));
+
+                        Optional<ListingCart> optionalListingCart =
+                                cartService.findById(new ListingCart.Key(listing, getUser(message)));
+                        ListingCart listingCart = optionalListingCart.
+                                orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
+                        listingCart.setQuantity(listingCart.getQuantity() + 1);
+                        cartService.save(listingCart);
+
                         answer.add(
                                 Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
                     }

@@ -52,7 +52,7 @@ public class ListingWithImageService {
                 .map(ListingWithImage::getImageUrl).collect(Collectors.toList());
     }
 
-    public Page<ListingWithImage> getPageImagesByListingIdentifier(Listing listing, Pageable pageable) {
+    public Page<ListingWithImage> getPageImagesByListing(Listing listing, Pageable pageable) {
         return listingWithImageRepository.findByListing(listing, pageable);
     }
 }
