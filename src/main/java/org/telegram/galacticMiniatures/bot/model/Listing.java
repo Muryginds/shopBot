@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Listing extends AbstractEntity {
 
@@ -33,19 +34,9 @@ public class Listing extends AbstractEntity {
     @Column(name = "last_modified")
     LocalDateTime lastModified;
 
-    @OneToMany(fetch = FetchType.LAZY)
+/*    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id")
-    List<ListingWithImage> listingsImages;
-
-    public Listing(String title, Integer identifier, String description,
-                   Double price, Section section, LocalDateTime lastModified) {
-        this.title = title;
-        this.identifier = identifier;
-        this.description = description;
-        this.price = price;
-        this.section = section;
-        this.lastModified = lastModified;
-    }
+    List<ListingWithImage> listingsImages;*/
 
     @Override
     public String toString() {

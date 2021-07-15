@@ -28,6 +28,17 @@ public class CacheService {
         }
     }
 
+    public void add(long chatId, FavoriteInfo favoriteInfo) {
+        if(cache.containsKey(chatId)) {
+            ChatInfo chatInfo = cache.get(chatId);
+            chatInfo.setFavoriteInfo(favoriteInfo);
+        } else {
+            ChatInfo chatInfo = new ChatInfo();
+            chatInfo.setFavoriteInfo(favoriteInfo);
+            cache.put(chatId, chatInfo);
+        }
+    }
+
     public void add(long chatId, Map<Listing, Integer> cart) {
         if(cache.containsKey(chatId)) {
             ChatInfo chatInfo = cache.get(chatId);

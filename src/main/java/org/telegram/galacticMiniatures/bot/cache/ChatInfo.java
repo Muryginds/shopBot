@@ -18,5 +18,6 @@ public class ChatInfo {
 
     BotState botState = BotState.WORKING;
     SearchInfo searchInfo;
+    FavoriteInfo favoriteInfo;
     Map<Listing, Integer> cart = new LinkedHashMap<>();
 }

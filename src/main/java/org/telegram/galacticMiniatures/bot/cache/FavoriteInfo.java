@@ -10,8 +10,7 @@ import org.springframework.data.domain.Pageable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchInfo {
-    Integer sectionId;
-    Pageable listingPageable;
+public class FavoriteInfo {
+    Pageable favoritePageable;
     Pageable photoPageable;
 }
