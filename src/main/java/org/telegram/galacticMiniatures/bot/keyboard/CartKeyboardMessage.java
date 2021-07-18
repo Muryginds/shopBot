@@ -104,7 +104,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage {
                 Constants.KEYBOARD_CART_BUTTON_ORDER_NAME,
                 Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND));
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                "Total cart price: " + cartService.getCartSummaryByChatId(chatId.toString()),
+                "Total cart price: " + cartService.getCartSummaryByChatId(chatId.toString()).orElse(0),
                 Constants.KEYBOARD_CART_BUTTON_ADD_TOTAL_COMMAND));
         rowList.add(keyboardButtonsRow4);
 

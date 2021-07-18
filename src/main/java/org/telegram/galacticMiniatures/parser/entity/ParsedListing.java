@@ -21,12 +21,12 @@ public class ParsedListing {
     @JsonProperty("title")
     String title;
 
-    @JsonProperty("description")
-    String description;
-
     @JsonProperty("price")
     Double price;
 
     @JsonProperty("tags")
     List<String> tags;
+
+    @JsonProperty("sku")
+    List<String> sku;
 }

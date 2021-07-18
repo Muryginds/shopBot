@@ -49,7 +49,7 @@ public class CartCallbackHandler implements AbstractHandler {
         switch (data) {
             case Constants.KEYBOARD_CART_BUTTON_GO_BACK_COMMAND:
                 SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU));
+                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 answer.add(sm);
                 break;
@@ -199,7 +199,7 @@ public class CartCallbackHandler implements AbstractHandler {
                             SendMessage mainMenuMessage = Utils.prepareSendMessage(
                                     chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
                             mainMenuMessage.setReplyMarkup(
-                                    keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU));
+                                    keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
                             answer.add(mainMenuMessage);
                             answer.add(
                                     Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));

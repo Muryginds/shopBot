@@ -12,6 +12,7 @@ import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 import org.telegram.galacticMiniatures.bot.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -24,5 +25,5 @@ public interface ListingCartRepository
             "INNER JOIN listings l on uc.listing_id = l.id " +
             "WHERE chat_id = :chatId",
             nativeQuery = true)
-    int countCartSummaryByChatId(@Param("chatId")String chatId);
+    Optional<Integer> countCartSummaryByChatId(@Param("chatId")String chatId);
 }

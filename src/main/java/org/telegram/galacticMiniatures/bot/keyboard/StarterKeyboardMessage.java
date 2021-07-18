@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class StarterKeyboardMessage implements AbstractKeyboardMessage {
 
   @Override
-  public ReplyKeyboard formKeyboard() {
+  public ReplyKeyboard formKeyboard(Long chatId) {
     ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
     keyboardMarkup.setSelective(true);
     keyboardMarkup.setResizeKeyboard(true);

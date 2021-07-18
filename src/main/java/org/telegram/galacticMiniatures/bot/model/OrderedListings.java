@@ -8,19 +8,19 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "listings_tags")
+@Table(name = "ordered_listings")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ListingWithTag {
+public class OrderedListings {
 
   @EmbeddedId
   Key id;
 
-  @Column(name = "updated")
-  LocalDateTime lastModified;
+  @Column(name = "quantity")
+  Integer quantity;
 
   @Embeddable
   @Getter
@@ -32,9 +32,9 @@ public class ListingWithTag {
   public static class Key implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL)
-    Listing listing;
+    Order order;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    Tag tag;
+    Listing listing;
   }
 }

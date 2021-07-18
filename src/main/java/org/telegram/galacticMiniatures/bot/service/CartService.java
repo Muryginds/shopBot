@@ -31,7 +31,7 @@ public class CartService {
         return listingCartRepository.findById_User_ChatId(chatId, pageable);
     }
 
-    public int getCartSummaryByChatId(String chatId) {
+    public Optional<Integer> getCartSummaryByChatId(String chatId) {
         return listingCartRepository.countCartSummaryByChatId(chatId);
     }
 }

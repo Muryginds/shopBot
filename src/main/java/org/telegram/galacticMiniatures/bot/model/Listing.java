@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "listings")
@@ -22,17 +21,17 @@ public class Listing extends AbstractEntity {
     @Column(name = "listing_identifier")
     Integer identifier;
 
-    @Column(name = "description")
-    String description;
-
     @Column(name = "price")
     Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Section section;
 
-    @Column(name = "last_modified")
-    LocalDateTime lastModified;
+    @Column(name = "updated")
+    LocalDateTime updated;
+
+    @Column(name = "sku_number")
+    String skuNumber;
 
 /*    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id")
@@ -42,6 +41,7 @@ public class Listing extends AbstractEntity {
     public String toString() {
         return "Listing{" +
                 "identifier=" + identifier +
+                "skuNumber=" + skuNumber +
                 ", price=" + price +
                 '}';
     }

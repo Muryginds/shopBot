@@ -91,7 +91,6 @@ public class ParserService {
                 results = mapper.readValue(url, ParsedListingsResult.class);
                 resultList = results.getResults().stream()
                         .filter(p ->
-                                    p.getDescription() != null &&
                                     p.getPrice() != null &&
                                     p.getTitle() != null)
                         .collect(Collectors.toList());

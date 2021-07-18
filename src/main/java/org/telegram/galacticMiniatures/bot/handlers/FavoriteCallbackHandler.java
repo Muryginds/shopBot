@@ -49,7 +49,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
         switch (data) {
             case Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_COMMAND:
                 SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU));
+                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 answer.add(sm);
                 break;
