@@ -26,12 +26,13 @@ public class ParserService {
     private final SectionService sectionService;
     private final ListingService listingService;
     private final ListingWithImageService listingWithImageService;
+    private final ListingWithOptionService listingWithOptionService;
     //private final TagService tagService;
     //private final ListingWithTagsService listingWithTagsService;
 
-    private List<Section> sectionList;
-    private List<Listing> listingList;
     //private Map<Integer, List<ParsedListing>> listings;
+    private List<Listing> listingList;
+    private List<Section> sectionList;
 
     @Value("${etsy.shopId}")
     private String shopId;
@@ -44,6 +45,7 @@ public class ParserService {
         parseListings();
        // parseListingsWithTags();
         parseListingImages();
+        parseListingOptions();
     }
 
     private void parseSections() {
@@ -116,6 +118,7 @@ public class ParserService {
         log.info("Scheduled task: LISTINGS parser finished");
     }
 
+
 //    private void parseListingsWithTags() {
 //        List<ParsedListing> parsedListings = listings.values().stream()
 //                .flatMap(Collection::stream)
@@ -124,7 +127,6 @@ public class ParserService {
 //        log.info("Scheduled task: LISTINGS WITH TAGS saved to DB");
 //        log.info("Scheduled task: LISTINGS WITH TAGS parser finished");
 //    }
-
     private void parseListingImages() {
         ObjectMapper mapper = new ObjectMapper();
         Map<Listing, List<ParsedImage>> images = new HashMap<>();
@@ -150,11 +152,47 @@ public class ParserService {
             log.error("Scheduled task: LISTING IMAGES failed: " + e.getMessage());
         }
 
-        if (listingList.size() > 0) {
+        if (images.size() > 0) {
             listingWithImageService.saveAllByParsedImageMap(images);
             log.info("Scheduled task: LISTING IMAGES saved to DB");
         }
 
         log.info("Scheduled task: LISTING IMAGES parser finished");
+    }
+
+    private void parseListingOptions() {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<Listing, List<ParsedOption>> options = new HashMap<>();
+        try {
+            StringBuilder sb;
+            URL url;
+            ParsedOptionsResult results;
+            List<ParsedOption> resultList;
+            for (Listing listing : listingList) {
+                sb = new StringBuilder(SITE_URL);
+                sb.append("listings/")
+                        .append(listing.getIdentifier())
+                        .append("/inventory?api_key=")
+                        .append(apiKey);
+                url = new URL(sb.toString());
+                results = mapper.readValue(url, ParsedOptionsResult.class);
+                resultList = results.getResults().values().stream()
+                        .flatMap(Collection::stream)
+                        .filter(l -> l.getParsedOptionValues().size() > 0)
+                        .collect(Collectors.toList());
+                if (resultList.size() > 0) {
+                    options.put(listing, resultList);
+                }
+            }
+        } catch (IOException e) {
+            log.error("Scheduled task: LISTING OPTIONS failed: " + e.getMessage());
+        }
+
+        if (options.size() > 0) {
+            listingWithOptionService.saveAllByParsedOptionMap(options);
+            log.info("Scheduled task: LISTING OPTIONS saved to DB");
+        }
+
+        log.info("Scheduled task: LISTING OPTIONS parser finished");
     }
 }
