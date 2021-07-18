@@ -64,7 +64,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
                 EditMessageText backToMainMenu = new EditMessageText();
                 backToMainMenu.setText(Constants.KEYBOARD_MAIN_MENU_HEADER);
                 backToMainMenu.setMessageId(messageId);
-                backToMainMenu.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU));
+                backToMainMenu.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
                 backToMainMenu.setChatId(chatId.toString());
                 answer.add(backToMainMenu);
                 break;

@@ -31,7 +31,7 @@ public class ListingWithImageService {
                 ListingWithImage modifiedListingWithImage =
                         listingWithImage.orElse(new ListingWithImage(entry.getKey(),
                                 parsedImage.getImageUrl(), null));
-                modifiedListingWithImage.setLastModified(LocalDateTime.now());
+                modifiedListingWithImage.setUpdated(LocalDateTime.now());
                 list.add(modifiedListingWithImage);
             }
         }

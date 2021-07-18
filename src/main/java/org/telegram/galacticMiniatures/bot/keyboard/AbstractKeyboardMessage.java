@@ -8,17 +8,17 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 public interface AbstractKeyboardMessage {
 
-  default SendMessage prepareKeyboardMessage(long chatId, String text) {
+  default SendMessage prepareKeyboardMessage(Long chatId, String text) {
     SendMessage message = Utils.prepareSendMessage(chatId, text);
-    message.setReplyMarkup(formKeyboard());
+    message.setReplyMarkup(formKeyboard(chatId));
     return message;
   }
 
-  default ReplyKeyboard formKeyboard() {
-    return getInlineKeyboardMarkup();
+  default ReplyKeyboard formKeyboard(Long chatId) {
+    return getInlineKeyboardMarkup(chatId);
   }
 
-  default InlineKeyboardMarkup getInlineKeyboardMarkup() {
+  default InlineKeyboardMarkup getInlineKeyboardMarkup(Long chatId) {
     return new InlineKeyboardMarkup();
   }
 

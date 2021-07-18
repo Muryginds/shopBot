@@ -47,7 +47,7 @@ public class MainMenuCallbackHandler implements AbstractHandler {
         switch (data) {
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CATALOGUE_COMMAND:
                 SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_SECTIONS_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION));
+                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION, chatId));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 answer.add(sm);
                 break;

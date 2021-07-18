@@ -18,7 +18,7 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
     private final SectionService sectionService;
 
     @Override
-    public InlineKeyboardMarkup getInlineKeyboardMarkup() {
+    public InlineKeyboardMarkup getInlineKeyboardMarkup(Long chatId) {
         StringBuilder sb = new StringBuilder();
         int count = 0;
         List<Section> sections = sectionService.getSections();

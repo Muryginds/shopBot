@@ -14,7 +14,6 @@ public class KeyboardService {
     private final MainMenuKeyboardMessage mainMenuKeyboardMessage;
     private final SectionsKeyboardMessage sectionsKeyboardMessage;
     private final StarterKeyboardMessage starterKeyboardMessage;
-    private final ListingKeyboardMessage listingKeyboardMessage;
     private final DefaultKeyboardMessage defaultKeyboardMessage;
 
     public SendMessage getSendMessage(KeyboardType keyboardType, long chatId, String text) {
@@ -39,7 +38,7 @@ public class KeyboardService {
         return result;
     }
 
-    public InlineKeyboardMarkup getInlineKeyboardMarkup(KeyboardType keyboardType) {
-        return getKeyboardMessage(keyboardType).getInlineKeyboardMarkup();
+    public InlineKeyboardMarkup getInlineKeyboardMarkup(KeyboardType keyboardType, long chatId) {
+        return getKeyboardMessage(keyboardType).getInlineKeyboardMarkup(chatId);
     }
 }

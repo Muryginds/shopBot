@@ -29,10 +29,11 @@ public class ListingService {
                 Listing modifiedListing = listing.orElse(new Listing());
                 modifiedListing.setTitle(parsedListing.getTitle());
                 modifiedListing.setIdentifier(parsedListing.getId());
-                modifiedListing.setDescription(parsedListing.getDescription());
                 modifiedListing.setPrice((int)(parsedListing.getPrice() * 7) * 10);
                 modifiedListing.setSection(entry.getKey());
-                modifiedListing.setLastModified(LocalDateTime.now());
+                modifiedListing.setUpdated(LocalDateTime.now());
+                modifiedListing.setSkuNumber(
+                        parsedListing.getSku().stream().reduce((s, s2) -> s + " " + s2).orElse(""));
                 listings.add(modifiedListing);
             }
         }

@@ -21,6 +21,6 @@ public class ListingWithImage extends AbstractEntity {
   @Column(name = "image_url")
   String imageUrl;
 
-  @Column(name = "last_modified")
-  LocalDateTime lastModified;
+  @Column(name = "updated")
+  LocalDateTime updated;
 }

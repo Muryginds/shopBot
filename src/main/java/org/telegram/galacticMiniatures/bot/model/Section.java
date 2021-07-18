@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sections")
@@ -21,4 +22,7 @@ public class Section extends AbstractEntity {
 
     @Column(name = "section_identifier")
     Integer identifier;
+
+    @Column(name = "updated")
+    LocalDateTime updated;
 }

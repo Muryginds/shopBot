@@ -7,6 +7,7 @@ import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.SectionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedSection;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class SectionService {
                     orElse(new Section());
             modifiedSection.setName(parsedSection.getTitle());
             modifiedSection.setIdentifier(parsedSection.getSectionId());
+            modifiedSection.setUpdated(LocalDateTime.now());
             sections.add(modifiedSection);
         }
        return sectionRepository.saveAll(sections);

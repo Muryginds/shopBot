@@ -84,8 +84,7 @@ final public class Constants {
     public static final String KEYBOARD_SECTIONS_OPERATED_CALLBACK = "SectionsCallback";
     public static final String KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND = "SectionsCallbackGoBack";
     public static final String KEYBOARD_SECTIONS_BUTTON_GO_BACK_NAME = "\u2B05  back to Menu";
-
-
+    
     public static final String BOT_HELP = "This bot represents GalacticMiniatures store. " +
             "Press menu button and choose category";
     public static final String BOT_START = "This bot represents GalacticMiniatures store!"

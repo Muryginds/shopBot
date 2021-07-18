@@ -47,7 +47,7 @@ public class ListingCallbackHandler implements AbstractHandler {
         switch (data) {
             case Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND:
                 SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_SECTIONS_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION));
+                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION, chatId));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 answer.add(sm);
                 break;
