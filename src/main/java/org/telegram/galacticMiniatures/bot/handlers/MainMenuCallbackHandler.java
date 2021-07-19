@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 import org.telegram.galacticMiniatures.bot.service.KeyboardService;
 import org.telegram.galacticMiniatures.bot.service.CartService;
@@ -19,11 +20,12 @@ import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -55,12 +57,10 @@ public class MainMenuCallbackHandler implements AbstractHandler {
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_FAVORITE_COMMAND:
                 Pageable pageable = PageRequest.of(0, 1);
-                Pageable imagePageable = PageRequest.of(0, 1);
                 Page<ListingFavorite> listingPage =
                         favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                 if(listingPage.getTotalElements() > 0) {
-                    FavoriteInfo favoriteInfo = new FavoriteInfo(pageable, imagePageable);
-                    cacheService.add(chatId, favoriteInfo);
+                    FavoriteInfo favoriteInfo = new FavoriteInfo();
                     answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 } else {
@@ -69,15 +69,13 @@ public class MainMenuCallbackHandler implements AbstractHandler {
                 }
                 break;
             case Constants.KEYBOARD_MAIN_MENU_BUTTON_CART_COMMAND:
-                Pageable cartPageable = PageRequest.of(0, 1);
-                Pageable imageCartPageable = PageRequest.of(0, 1);
-                Page<ListingCart> listingCartPage =
-                        cartService.getPageCartByChatId(chatId.toString(), cartPageable);
-                if(listingCartPage.getTotalElements() > 0) {
-                    CartInfo cartInfo = new CartInfo(cartPageable, imageCartPageable);
-                    cacheService.add(chatId, cartInfo);
-                    answer.add(cartKeyboardMessage.prepareSendPhoto(cartPageable, cartInfo, chatId));
-                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                if (cartService.countSizeCartByChatId(chatId) > 0) {
+                    Optional<SendPhoto> sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                            chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                    sendPhoto.ifPresent(s -> {
+                        answer.add(s);
+                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                    });
                 } else {
                     answer.add(Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));
                 }

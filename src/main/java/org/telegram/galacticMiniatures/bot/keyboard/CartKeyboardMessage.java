@@ -2,13 +2,15 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.CartInfo;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
-import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.service.CartService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -21,24 +23,22 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class CartKeyboardMessage implements AbstractKeyboardMessage {
+public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final CacheService cacheService;
     private final CartService cartService;
     private final ListingWithImageService listingWithImageService;
 
-    public SendPhoto prepareSendPhoto(Pageable pageable, CartInfo cartInfo, Long chatId) {
+    @Override
+    public Optional<SendPhoto> prepareSendPhoto(Long chatId, ScrollerType scrollerType, ScrollerObjectType scrollerObjectType) {
 
-        Page<ListingCart> listingPage =
-                cartService.getPageCartByChatId(chatId.toString(), pageable);
-
+        CartInfo cartInfo = cacheService.get(chatId).getCartInfo();
+        Pageable listingPageable = getPageableByScrollerType(cartInfo.getListingPageable(), scrollerType);
+        Page<ListingCart> listingPage = cartService.getPageCartByChatId(chatId, listingPageable);
         ListingCart listingCart = listingPage.getContent().get(0);
-        Pageable imagePageable = cartInfo.getPhotoPageable();
-        Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListing(listingCart.getId().getListing(),
-                        imagePageable);
-        ListingWithImage listingWithImage = imagePage.getContent().get(0);
-        Listing listing = listingWithImage.getListing();
+        Listing listing = listingCart.getId().getListing();
+
+        String imageUrl = listingWithImageService.getImageByListingIdentifier(listing.getIdentifier()).orElse("");
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -48,26 +48,6 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage {
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
-
-/*        if (imagePage.getTotalElements() > 1) {
-            if (imagePage.getNumber() > 0) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_CART_BUTTON_PHOTO_PREVIOUS_NAME,
-                        Constants.KEYBOARD_CART_BUTTON_PHOTO_PREVIOUS_COMMAND));
-            }
-            keyboardButtonsRow0.add(createInlineKeyboardButton(
-                    new StringBuilder().append("Photo ")
-                            .append(imagePage.getNumber() + 1)
-                            .append(" of ")
-                            .append(imagePage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_CART_BUTTON_PHOTO_MIDDLE_COMMAND));
-            if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_CART_BUTTON_PHOTO_NEXT_NAME,
-                        Constants.KEYBOARD_CART_BUTTON_PHOTO_NEXT_COMMAND));
-            }
-            rowList.add(keyboardButtonsRow0);
-        }*/
         if (listingPage.getNumber() > 0) {
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_CART_BUTTON_PREVIOUS_NAME,
@@ -120,8 +100,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage {
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        cartInfo.setCartPageable(pageable);
-        cartInfo.setPhotoPageable(imagePageable);
+        cartInfo.setListingPageable(listingPageable);
         cacheService.add(chatId, cartInfo);
 
         String caption = new StringBuilder().append(listing.getTitle())
@@ -129,13 +108,13 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage {
                 .append(listing.getPrice()).toString();
 
         InputFile inputFile = new InputFile();
-        inputFile.setMedia(listingWithImage.getImageUrl());
+        inputFile.setMedia(imageUrl);
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(inputFile);
         sendPhoto.setChatId(chatId.toString());
         sendPhoto.setCaption(caption);
         sendPhoto.setParseMode("html");
         sendPhoto.setReplyMarkup(keyboardMarkup);
-        return sendPhoto;
+        return Optional.of(sendPhoto);
     }
 }

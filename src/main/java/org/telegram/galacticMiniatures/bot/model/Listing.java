@@ -33,10 +33,6 @@ public class Listing extends AbstractEntity {
     @Column(name = "sku_number")
     String skuNumber;
 
-/*    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "listing_id")
-    List<ListingWithImage> listingsImages;*/
-
     @Override
     public String toString() {
         return "Listing{" +

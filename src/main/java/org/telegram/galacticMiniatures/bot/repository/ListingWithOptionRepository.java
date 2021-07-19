@@ -7,16 +7,18 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
-import org.telegram.galacticMiniatures.bot.model.ListingWithTag;
+import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Transactional
-public interface ListingWithImageRepository
-    extends JpaRepository<ListingWithImage, Integer> {
-    List<ListingWithImage> findAllByListing_Identifier(Integer listingId);
-    Optional<ListingWithImage> findByListingAndImageUrl(Listing listing, String url);
-    Page<ListingWithImage> findByListing(Listing listing, Pageable pageable);
+public interface ListingWithOptionRepository
+    extends JpaRepository<ListingWithOption, Integer> {
+    Page<ListingWithOption> findByListing(Listing listing, Pageable pageable);
+    Optional<ListingWithOption>
+    findByListingAndFirstOptionNameAndFirstOptionValueAndSecondOptionNameAndSecondOptionValue(
+            Listing listing, String firstOptionName, String firstOptionValue,
+            String secondOptionName, String secondOptionValue);
 }

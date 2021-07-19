@@ -26,4 +26,6 @@ public interface ListingCartRepository
             "WHERE chat_id = :chatId",
             nativeQuery = true)
     Optional<Integer> countCartSummaryByChatId(@Param("chatId")String chatId);
+
+    int countListingCartById_User_ChatId(String chatId);
 }

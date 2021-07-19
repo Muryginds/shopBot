@@ -2,14 +2,20 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
+import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.service.ListingService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
+import org.telegram.galacticMiniatures.bot.service.ListingWithOptionService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -18,31 +24,103 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ListingKeyboardMessage implements AbstractKeyboardMessage {
+public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingWithImageService listingWithImageService;
+    private final ListingWithOptionService listingWithOptionService;
 
-    public SendPhoto prepareSendPhoto(Pageable pageable, SearchInfo searchInfo, Long chatId) {
+    @Override
+    public Optional<SendPhoto> prepareSendPhoto(Long chatId,
+                                                ScrollerType scrollerType,
+                                                ScrollerObjectType scrollerObjectType) {
 
-        Page<Listing> listingPage =
-                listingService.getPageListingBySectionIdentifier(
-                        searchInfo.getSectionId(), pageable);
+        SearchInfo searchInfo = cacheService.get(chatId).getSearchInfo();
+        Pageable listingPageable = searchInfo.getListingPageable();
+        Pageable imagePageable = searchInfo.getImagePageable();
+        Pageable optionPageable = searchInfo.getOptionPageable();
+
+        switch (scrollerObjectType) {
+            case LISTING:
+                listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
+                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
+                break;
+            case IMAGE:
+                imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
+                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
+                break;
+            case OPTION:
+                optionPageable = getPageableByScrollerType(optionPageable, scrollerType);
+        }
+
+        Page<Listing> listingPage = listingService.getPageListingBySectionIdentifier(
+                        searchInfo.getSectionId(), listingPageable);
+        Listing listing;
+        try {
+            listing = listingPage.getContent().get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            return Optional.empty();
+        }
+        Page<ListingWithImage> imagePage =
+                listingWithImageService.getPageImagesByListing(listing, imagePageable);
+        Page<ListingWithOption> listingWithOptionPage =
+                listingWithOptionService.getPageOptionByListing(listing, optionPageable);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow0 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
 
-        Listing listing = listingPage.getContent().get(0);
-        Pageable imagePageable = searchInfo.getPhotoPageable();
-        Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListing(listing, imagePageable);
+        Optional<Integer> optionPrice = Optional.empty();
+        StringBuilder optionsText = new StringBuilder();
+        if (listingWithOptionPage.getTotalElements() > 1) {
+            ListingWithOption listingWithOption = listingWithOptionPage.getContent().get(0);
+            optionPrice = Optional.of(listingWithOption.getPrice());
+            if (listingWithOptionPage.getNumber() > 0) {
+                keyboardButtonsRow3.add(createInlineKeyboardButton(
+                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME,
+                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND));
+            }
+            optionsText
+                .append("<b>")
+                .append("\n\nOptions: ")
+                .append("[")
+                .append(listingWithOption.getFirstOptionName())
+                .append(": ")
+                .append(listingWithOption.getFirstOptionValue())
+                .append("]");
+
+            if (!"".equals(listingWithOption.getSecondOptionName())) {
+                optionsText.append(", ")
+                    .append("[")
+                    .append(listingWithOption.getSecondOptionName())
+                    .append(": ")
+                    .append(listingWithOption.getSecondOptionValue())
+                    .append("]");
+            }
+            optionsText.append("</b>");
+
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    new StringBuilder().append("Option ")
+                            .append(listingWithOptionPage.getNumber() + 1)
+                            .append(" of ")
+                            .append(listingWithOptionPage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_MIDDLE_COMMAND));
+            if (listingWithOptionPage.getNumber() + 1 < listingWithOptionPage.getTotalPages()) {
+                keyboardButtonsRow3.add(createInlineKeyboardButton(
+                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME,
+                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND));
+            }
+            rowList.add(keyboardButtonsRow3);
+        }
 
         if (imagePage.getTotalElements() > 1) {
             if (imagePage.getNumber() > 0) {
@@ -93,24 +171,27 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage {
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        searchInfo.setListingPageable(pageable);
-        searchInfo.setPhotoPageable(imagePageable);
+        searchInfo.setListingPageable(listingPageable);
+        searchInfo.setImagePageable(imagePageable);
+        searchInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, searchInfo);
 
         ListingWithImage listingWithImage = imagePage.getContent().get(0);
 
-        String caption = new StringBuilder().append(listing.getTitle())
-                .append(". \nPrice: ")
-                .append(listing.getPrice()).toString();
+        StringBuilder caption = new StringBuilder().append(listing.getTitle())
+                .append(optionsText)
+                .append("\n\n<b>Price: ")
+                .append(optionPrice.orElse(listing.getPrice()))
+                .append("</b>");
 
         InputFile inputFile = new InputFile();
         inputFile.setMedia(listingWithImage.getImageUrl());
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(inputFile);
         sendPhoto.setChatId(chatId.toString());
-        sendPhoto.setCaption(caption);
+        sendPhoto.setCaption(caption.toString());
         sendPhoto.setParseMode("html");
         sendPhoto.setReplyMarkup(keyboardMarkup);
-        return sendPhoto;
+        return Optional.of(sendPhoto);
     }
 }
