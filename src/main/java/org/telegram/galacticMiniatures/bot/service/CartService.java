@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.repository.ListingCartRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,8 +28,12 @@ public class CartService {
         return listingCartRepository.findById(key);
     }
 
-    public Page<ListingCart> getPageCartByChatId(String chatId, Pageable pageable) {
-        return listingCartRepository.findById_User_ChatId(chatId, pageable);
+    public Page<ListingCart> getPageCartByChatId(Long chatId, Pageable pageable) {
+        return listingCartRepository.findById_User_ChatId(chatId.toString(), pageable);
+    }
+
+    public int countSizeCartByChatId(Long chatId) {
+        return listingCartRepository.countListingCartById_User_ChatId(chatId.toString());
     }
 
     public Optional<Integer> getCartSummaryByChatId(String chatId) {

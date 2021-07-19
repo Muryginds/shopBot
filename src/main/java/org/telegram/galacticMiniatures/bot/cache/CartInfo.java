@@ -2,6 +2,7 @@ package org.telegram.galacticMiniatures.bot.cache;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @Setter
@@ -10,6 +11,6 @@ import org.springframework.data.domain.Pageable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartInfo {
-    Pageable cartPageable;
-    Pageable photoPageable;
+    Pageable listingPageable = PageRequest.of(0,1);
+    Pageable imagePageable = PageRequest.of(0,1);
 }

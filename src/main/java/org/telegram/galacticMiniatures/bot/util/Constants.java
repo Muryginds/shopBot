@@ -4,6 +4,9 @@ final public class Constants {
 
     private Constants() {}
 
+
+    public static final String ERROR_RESTART_MENU = "Unexpected error, please restart menu";
+
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME = "\u276E";
@@ -21,6 +24,11 @@ final public class Constants {
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME = "\u140A";
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND = "ListingCallbackNextPhoto";
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME = "\u1405";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND = "ListingCallbackPreviousOption";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME = "\u140A";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_MIDDLE_COMMAND = "ListingCallback";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND = "ListingCallbackNextOption";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME = "\u1405";
 
     public static final String KEYBOARD_FAVORITE_OPERATED_CALLBACK = "FavoriteCallback";
     public static final String KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND = "FavoriteCallbackPrevious";

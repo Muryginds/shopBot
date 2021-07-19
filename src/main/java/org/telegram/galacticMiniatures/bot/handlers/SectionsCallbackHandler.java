@@ -9,6 +9,8 @@ import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
@@ -48,7 +50,6 @@ public class SectionsCallbackHandler implements AbstractHandler {
     private final KeyboardService keyboardService;
     private final ListingService listingService;
     private final CacheService cacheService;
-    private final ListingWithImageService listingWithImageService;
     private final ListingKeyboardMessage listingKeyboardMessage;
 
     @Override
@@ -59,30 +60,24 @@ public class SectionsCallbackHandler implements AbstractHandler {
         Long chatId = callbackQuery.getMessage().getChatId();
         Integer messageId = callbackQuery.getMessage().getMessageId();
 
-        switch (data) {
-            case Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND:
-                EditMessageText backToMainMenu = new EditMessageText();
-                backToMainMenu.setText(Constants.KEYBOARD_MAIN_MENU_HEADER);
-                backToMainMenu.setMessageId(messageId);
-                backToMainMenu.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
-                backToMainMenu.setChatId(chatId.toString());
-                answer.add(backToMainMenu);
-                break;
-            default:
-                Integer sectionId = Integer.parseInt(
-                        data.replace(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK, ""));
-                Pageable pageable = PageRequest.of(0, 1);
-                Pageable imagePageable = PageRequest.of(0, 1);
-                Page<Listing> listingPage = listingService.getPageListingBySectionIdentifier(sectionId, pageable);
-                if(listingPage.getTotalElements() > 0) {
-                    SearchInfo searchInfo = new SearchInfo(sectionId, listingPage.getPageable(), imagePageable);
-                    cacheService.add(chatId, searchInfo);
-                    answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
-                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                } else {
-                    answer.add(Utils.prepareAnswerCallbackQuery(
-                            "No items in chosen category", false, callbackQuery));
-                }
+        if (Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND.equals(data)) {
+            SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
+            sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
+            answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+            answer.add(sm);
+        } else {
+            Integer sectionId = Integer.parseInt(
+                    data.replace(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK, ""));
+            if (listingService.countSizeBySectionIdentifier(sectionId) > 0) {
+                SearchInfo searchInfo = new SearchInfo(sectionId);
+                cacheService.add(chatId, searchInfo);
+                Optional<SendPhoto> sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+            } else {
+                answer.add(Utils.prepareAnswerCallbackQuery(
+                        "No items in chosen category", false, callbackQuery));
+            }
         }
         return answer;
     }

@@ -44,6 +44,10 @@ public class ListingService {
         return listingRepository.getByIdentifier(identifier);
     }
 
+    public Integer countSizeBySectionIdentifier(Integer sectionId) {
+        return listingRepository.countBySectionIdentifier(sectionId);
+    }
+
     public List<Listing> getListingsBySectionIdentifier(Integer identifier) {
         return listingRepository.findAllBySection_Identifier(identifier);
     }

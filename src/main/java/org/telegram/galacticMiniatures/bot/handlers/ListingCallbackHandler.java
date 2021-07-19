@@ -6,9 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -17,6 +18,7 @@ import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -42,7 +44,11 @@ public class ListingCallbackHandler implements AbstractHandler {
         Message message = callbackQuery.getMessage();
         Long chatId = message.getChatId();
         Integer messageId = message.getMessageId();
-        Optional<ChatInfo> optionalChatInfo;
+        SearchInfo searchInfo;
+        Pageable pageable;
+        Page<Listing> listingPage;
+        Listing listing;
+        Optional<SendPhoto> sendPhoto;
 
         switch (data) {
             case Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND:
@@ -53,103 +59,76 @@ public class ListingCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND:
-
-               optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable().next();
-                        searchInfo.setPhotoPageable(PageRequest.of(0, 1));
-                        answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
-                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                    }
-                }
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND:
-
-                optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable().previousOrFirst();
-                        searchInfo.setPhotoPageable(PageRequest.of(0, 1));
-                        answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
-                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                    }
-                }
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND:
-
-                optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable();
-                        Pageable pageablePhoto = searchInfo.getPhotoPageable().next();
-                        searchInfo.setPhotoPageable(pageablePhoto);
-                        answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
-                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                    }
-                }
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND:
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                break;
 
-                optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable();
-                        Pageable pageablePhoto = searchInfo.getPhotoPageable().previousOrFirst();
-                        searchInfo.setPhotoPageable(pageablePhoto);
-                        answer.add(listingKeyboardMessage.prepareSendPhoto(pageable, searchInfo, chatId));
-                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                    }
-                }
+            case Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND:
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                break;
+
+            case Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND:
+                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND:
-                optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable();
-                        Page<Listing> listingPage =
-                                listingService.getPageListingBySectionIdentifier(
-                                        searchInfo.getSectionId(), pageable);
-                        Listing listing = listingPage.getContent().get(0);
-                        favoriteService.save(
-                                new ListingFavorite(
-                                        new ListingFavorite.Key(listing, getUser(message))));
-                        answer.add(
-                                Utils.prepareAnswerCallbackQuery("Added to favorite", true, callbackQuery));
-                    }
+                searchInfo = cacheService.get(chatId).getSearchInfo();
+                pageable = searchInfo.getListingPageable();
+                listingPage = listingService.getPageListingBySectionIdentifier(searchInfo.getSectionId(), pageable);
+                try {
+                    listing = listingPage.getContent().get(0);
+                    favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing, getUser(message))));
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            "Added to favorite", true, callbackQuery));
+                } catch (IndexOutOfBoundsException ex) {
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            Constants.ERROR_RESTART_MENU, true, callbackQuery));
                 }
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_COMMAND:
-                optionalChatInfo = cacheService.get(chatId);
-                if (optionalChatInfo.isPresent()) {
-                    SearchInfo searchInfo = optionalChatInfo.get().getSearchInfo();
-                    if (searchInfo != null) {
-                        Pageable pageable = searchInfo.getListingPageable();
-                        Page<Listing> listingPage =
-                                listingService.getPageListingBySectionIdentifier(
-                                        searchInfo.getSectionId(), pageable);
-                        Listing listing = listingPage.getContent().get(0);
+                searchInfo = cacheService.get(chatId).getSearchInfo();
+                pageable = searchInfo.getListingPageable();
+                listingPage = listingService.getPageListingBySectionIdentifier(
+                                searchInfo.getSectionId(), pageable);
+                try {
+                    listing = listingPage.getContent().get(0);
 
-                        Optional<ListingCart> optionalListingCart =
-                                cartService.findById(new ListingCart.Key(listing, getUser(message)));
-                        ListingCart listingCart = optionalListingCart.
-                                orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
-                        listingCart.setQuantity(listingCart.getQuantity() + 1);
-                        cartService.save(listingCart);
+                    Optional<ListingCart> optionalListingCart =
+                            cartService.findById(new ListingCart.Key(listing, getUser(message)));
+                    ListingCart listingCart = optionalListingCart.
+                            orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
+                    listingCart.setQuantity(listingCart.getQuantity() + 1);
+                    cartService.save(listingCart);
 
-                        answer.add(
-                                Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
-                    }
+                    answer.add(
+                            Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
+                } catch (IndexOutOfBoundsException ex) {
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            Constants.ERROR_RESTART_MENU, true, callbackQuery));
                 }
                 break;
 
@@ -157,6 +136,8 @@ public class ListingCallbackHandler implements AbstractHandler {
         }
         return answer;
     }
+
+
 
     private User getUser(Message message) {
         return userService.getUser(message.getChatId())

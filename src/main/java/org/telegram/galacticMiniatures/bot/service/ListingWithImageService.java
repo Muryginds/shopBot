@@ -43,13 +43,17 @@ public class ListingWithImageService {
     }
 
     public List<ListingWithImage> getByListingIdentifier(Integer listingId) {
-        Optional<Listing> result = listingService.getByIdentifier(listingId);
-        return listingWithImageRepository.findAllByListing(result.orElse(new Listing()));
+        return listingWithImageRepository.findAllByListing_Identifier(listingId);
     }
 
     public List<String> getImagesByListingIdentifier(Integer listingId) {
         return getByListingIdentifier(listingId).stream()
                 .map(ListingWithImage::getImageUrl).collect(Collectors.toList());
+    }
+
+    public Optional<String> getImageByListingIdentifier(Integer listingId) {
+        return getByListingIdentifier(listingId).stream()
+                .map(ListingWithImage::getImageUrl).findAny();
     }
 
     public Page<ListingWithImage> getPageImagesByListing(Listing listing, Pageable pageable) {

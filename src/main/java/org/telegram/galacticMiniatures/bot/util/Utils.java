@@ -1,10 +1,17 @@
 package org.telegram.galacticMiniatures.bot.util;
 
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public final class Utils {
 
@@ -43,5 +50,20 @@ public final class Utils {
     answerCallbackQuery.setText(text);
 
     return answerCallbackQuery;
+  }
+
+  public static List<PartialBotApiMethod<?>> handleOptionalSendPhoto(Optional<SendPhoto> sendPhoto,
+                                                                     CallbackQuery callbackQuery) {
+    List<PartialBotApiMethod<?>> answer = new ArrayList<>();
+    Message message = callbackQuery.getMessage();
+    Long chatId = message.getChatId();
+    Integer messageId = message.getMessageId();
+    if (sendPhoto.isPresent()) {
+      answer.add(sendPhoto.get());
+      answer.add(prepareDeleteMessage(chatId, messageId));
+    } else {
+      answer.add(prepareAnswerCallbackQuery(Constants.ERROR_RESTART_MENU, true, callbackQuery));
+    }
+    return answer;
   }
 }

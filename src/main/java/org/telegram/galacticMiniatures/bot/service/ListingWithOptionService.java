@@ -74,7 +74,7 @@ public class ListingWithOptionService {
                         listing, firstOptionName, firstOptionValue, secondOptionName, secondOptionValue);
     }
 
-    public Page<ListingWithOption> getPageImagesByListing(Listing listing, Pageable pageable) {
+    public Page<ListingWithOption> getPageOptionByListing(Listing listing, Pageable pageable) {
         return listingWithOptionRepository.findByListing(listing, pageable);
     }
 }

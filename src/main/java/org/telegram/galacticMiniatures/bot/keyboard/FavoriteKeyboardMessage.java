@@ -33,7 +33,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage {
                 favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
 
         ListingFavorite listingFavorite = listingPage.getContent().get(0);
-        Pageable imagePageable = favoriteInfo.getPhotoPageable();
+        Pageable imagePageable = favoriteInfo.getImagePageable();
         Page<ListingWithImage> imagePage =
                 listingWithImageService.getPageImagesByListing(listingFavorite.getId().getListing(),
                         imagePageable);
@@ -96,8 +96,8 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage {
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        favoriteInfo.setFavoritePageable(pageable);
-        favoriteInfo.setPhotoPageable(imagePageable);
+        favoriteInfo.setListingPageable(pageable);
+        favoriteInfo.setImagePageable(imagePageable);
         cacheService.add(chatId, favoriteInfo);
 
         String caption = new StringBuilder().append(listing.getTitle())

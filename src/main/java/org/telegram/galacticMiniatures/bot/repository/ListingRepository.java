@@ -17,4 +17,5 @@ public interface ListingRepository extends JpaRepository<Listing, Integer> {
     Optional<Listing> getByIdentifier(Integer id);
     List<Listing> findAllBySection_Identifier(Integer id);
     Page<Listing> findBySection_Identifier(Integer id, Pageable pageable);
+    Integer countBySectionIdentifier(Integer sectionId);
 }

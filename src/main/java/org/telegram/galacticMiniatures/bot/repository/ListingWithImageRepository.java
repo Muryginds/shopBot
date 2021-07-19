@@ -16,7 +16,7 @@ import java.util.Optional;
 @Transactional
 public interface ListingWithImageRepository
     extends JpaRepository<ListingWithImage, Integer> {
-    List<ListingWithImage> findAllByListing(Listing listing);
+    List<ListingWithImage> findAllByListing_Identifier(Integer listingId);
     Optional<ListingWithImage> findByListingAndImageUrl(Listing listing, String url);
     Page<ListingWithImage> findByListing(Listing listing, Pageable pageable);
 }

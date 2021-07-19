@@ -10,9 +10,8 @@ import org.telegram.galacticMiniatures.bot.enums.BotState;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatInfo {
-
     BotState botState = BotState.WORKING;
-    SearchInfo searchInfo;
-    FavoriteInfo favoriteInfo;
-    CartInfo cartInfo;
+    SearchInfo searchInfo = new SearchInfo();
+    FavoriteInfo favoriteInfo = new FavoriteInfo();
+    CartInfo cartInfo = new CartInfo();
 }
