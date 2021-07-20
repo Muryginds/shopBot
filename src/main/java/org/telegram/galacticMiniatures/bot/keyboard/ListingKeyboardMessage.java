@@ -79,16 +79,65 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
 
-        Optional<Integer> optionPrice = Optional.empty();
+        String listingPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+        if (listingPage.getNumber() > 0) {
+            listingPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND;
+        }
+        keyboardButtonsRow1.add(createInlineKeyboardButton(
+                Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+
+        keyboardButtonsRow1.add(createInlineKeyboardButton(
+                "Item",
+                Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+        keyboardButtonsRow1.add(createInlineKeyboardButton(
+                new StringBuilder()
+                        .append(listingPage.getNumber() + 1)
+                        .append(" / ")
+                        .append(listingPage.getTotalElements()).toString(),
+                Constants.KEYBOARD_LISTING_BUTTON_MIDDLE_COMMAND));
+
+        String listingNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+        if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
+            listingNextCommand = Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND;
+        }
+        keyboardButtonsRow1.add(createInlineKeyboardButton(
+                Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME, listingNextCommand));
+        rowList.add(keyboardButtonsRow1);
+
+        if (imagePage.getTotalElements() > 1) {
+            String photoPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (imagePage.getNumber() > 0) {
+                photoPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND;
+            }
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME, photoPreviousCommand));
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    "Photo",
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    new StringBuilder()
+                            .append(imagePage.getNumber() + 1)
+                            .append(" / ")
+                            .append(imagePage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
+            String photoNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
+                photoNextCommand = Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND;
+            }
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME, photoNextCommand));
+            rowList.add(keyboardButtonsRow0);
+        }
+
+        ListingWithOption listingWithOption = listingWithOptionPage.getContent().get(0);
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
-            ListingWithOption listingWithOption = listingWithOptionPage.getContent().get(0);
-            optionPrice = Optional.of(listingWithOption.getPrice());
+            String optionPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (listingWithOptionPage.getNumber() > 0) {
-                keyboardButtonsRow3.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND));
+                optionPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND;
             }
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME, optionPreviousCommand));
             optionsText
                 .append("<b>")
                 .append("\n\nOptions: ")
@@ -109,55 +158,22 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
             optionsText.append("</b>");
 
             keyboardButtonsRow3.add(createInlineKeyboardButton(
-                    new StringBuilder().append("Option ")
+                    "Option",
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    new StringBuilder()
                             .append(listingWithOptionPage.getNumber() + 1)
-                            .append(" of ")
+                            .append(" / ")
                             .append(listingWithOptionPage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_MIDDLE_COMMAND));
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+            String optionNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (listingWithOptionPage.getNumber() + 1 < listingWithOptionPage.getTotalPages()) {
-                keyboardButtonsRow3.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND));
+                optionNextCommand = Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND;
             }
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME, optionNextCommand));
             rowList.add(keyboardButtonsRow3);
         }
-
-        if (imagePage.getTotalElements() > 1) {
-            if (imagePage.getNumber() > 0) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND));
-            }
-            keyboardButtonsRow0.add(createInlineKeyboardButton(
-                    new StringBuilder().append("Photo ")
-                            .append(imagePage.getNumber() + 1)
-                            .append(" of ")
-                            .append(imagePage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
-            if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND));
-            }
-            rowList.add(keyboardButtonsRow0);
-        }
-        if (listingPage.getNumber() > 0) {
-            keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND));
-        }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                new StringBuilder().append("Item ")
-                        .append(listingPage.getNumber() + 1)
-                        .append(" of ")
-                        .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_LISTING_BUTTON_MIDDLE_COMMAND));
-        if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
-            keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND));
-        }
-        rowList.add(keyboardButtonsRow1);
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_NAME,
@@ -181,7 +197,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         StringBuilder caption = new StringBuilder().append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")
-                .append(optionPrice.orElse(listing.getPrice()))
+                .append(listingWithOption.getPrice())
                 .append("</b>");
 
         InputFile inputFile = new InputFile();

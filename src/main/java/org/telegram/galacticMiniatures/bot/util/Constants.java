@@ -20,14 +20,14 @@ final public class Constants {
     public static final String KEYBOARD_LISTING_BUTTON_ADD_TO_CART_NAME = "🛒  Add";
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND = "ListingCallbackPreviousPhoto";
-    public static final String KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME = "\u140A";
+    public static final String KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME = "\u276E";
     public static final String KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND = "ListingCallbackNextPhoto";
-    public static final String KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME = "\u1405";
+    public static final String KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME = "\u276F";
     public static final String KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND = "ListingCallbackPreviousOption";
-    public static final String KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME = "\u140A";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME = "\u276E";
     public static final String KEYBOARD_LISTING_BUTTON_OPTION_MIDDLE_COMMAND = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND = "ListingCallbackNextOption";
-    public static final String KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME = "\u1405";
+    public static final String KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME = "\u276F";
 
     public static final String KEYBOARD_FAVORITE_OPERATED_CALLBACK = "FavoriteCallback";
     public static final String KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND = "FavoriteCallbackPrevious";

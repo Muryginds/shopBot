@@ -22,10 +22,10 @@ public interface Scrollable {
             case NEXT:
                 newPageable = pageable.next();
                 break;
-            case CURRENT:
-                newPageable = pageable;
-            default:
+            case NEW:
                 newPageable = PageRequest.of(0,1);
+            default:
+                newPageable = pageable;
         }
         return newPageable;
     }
