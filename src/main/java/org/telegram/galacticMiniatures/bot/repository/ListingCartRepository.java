@@ -8,10 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
-import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
-import org.telegram.galacticMiniatures.bot.model.User;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

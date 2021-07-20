@@ -3,6 +3,7 @@ package org.telegram.galacticMiniatures.bot.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -35,5 +36,8 @@ public class ListingCart {
 
         @ManyToOne(cascade = CascadeType.ALL)
         User user;
+
+        @ManyToOne(cascade = CascadeType.ALL)
+        ListingWithOption option;
     }
 }

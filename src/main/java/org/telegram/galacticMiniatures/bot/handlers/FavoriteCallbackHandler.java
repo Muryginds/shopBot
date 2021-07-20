@@ -8,10 +8,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.Listing;
-import org.telegram.galacticMiniatures.bot.model.ListingCart;
-import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
-import org.telegram.galacticMiniatures.bot.model.User;
+import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
@@ -33,6 +30,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final FavoriteKeyboardMessage favoriteKeyboardMessage;
+    private final ListingWithOptionService listingWithOptionService;
     private final CartService cartService;
     private final UserService userService;
 
@@ -126,10 +124,16 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                 pageFavorite = favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
                 listingFavorite = pageFavorite.getContent().get(0);
                 Listing listing = listingFavorite.getId().getListing();
+                Pageable optionPageable = favoriteInfo.getOptionPageable();
+                Page<ListingWithOption> optionPage =
+                        listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                ListingWithOption listingWithOption = optionPage.getContent().get(0);
                 Optional<ListingCart> optionalListingCart =
-                        cartService.findById(new ListingCart.Key(listing, getUser(message)));
+                        cartService.findById(
+                                new ListingCart.Key(listing, getUser(message), listingWithOption));
                 ListingCart listingCart = optionalListingCart.
-                        orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
+                        orElse(new ListingCart(new ListingCart.Key(listing, getUser(message), listingWithOption),
+                                0));
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
                 cartService.save(listingCart);
                 answer.add(

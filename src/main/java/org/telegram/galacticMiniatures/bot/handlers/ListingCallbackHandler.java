@@ -33,6 +33,7 @@ public class ListingCallbackHandler implements AbstractHandler {
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final ListingKeyboardMessage listingKeyboardMessage;
+    private final ListingWithOptionService listingWithOptionService;
     private final UserService userService;
     private final CartService cartService;
 
@@ -116,11 +117,17 @@ public class ListingCallbackHandler implements AbstractHandler {
                                 searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
+                    Pageable optionPageable = searchInfo.getOptionPageable();
+                    Page<ListingWithOption> optionPage =
+                            listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                    ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
                     Optional<ListingCart> optionalListingCart =
-                            cartService.findById(new ListingCart.Key(listing, getUser(message)));
+                            cartService.findById(
+                                    new ListingCart.Key(listing, getUser(message), listingWithOption));
                     ListingCart listingCart = optionalListingCart.
-                            orElse(new ListingCart(new ListingCart.Key(listing, getUser(message)), 0));
+                            orElse(new ListingCart(new ListingCart.Key(listing, getUser(message), listingWithOption),
+                                    0));
                     listingCart.setQuantity(listingCart.getQuantity() + 1);
                     cartService.save(listingCart);
 

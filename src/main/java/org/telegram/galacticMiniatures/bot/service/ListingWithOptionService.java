@@ -36,15 +36,20 @@ public class ListingWithOptionService {
                                 .get("currency_formatted_raw")))
                         .findFirst().orElse(0D);
 
-                Integer price = (int) (rawPrice * 7) * 10;
+                int price = (int) Math.round(rawPrice * 7) * 10;
 
                 Iterator<Map.Entry<String, String>> iterator = options.entrySet().iterator();
-                var first = iterator.next();
 
-                String firstOptionName = first.getKey();
-                String firstOptionValue = first.getValue();
+                String firstOptionName = "";
+                String firstOptionValue = "";
                 String secondOptionName = "" ;
                 String secondOptionValue = "";
+
+                if (iterator.hasNext()) {
+                    var first = iterator.next();
+                    firstOptionName = first.getKey();
+                    firstOptionValue = first.getValue();
+                }
 
                 if (iterator.hasNext()) {
                     var second = iterator.next();

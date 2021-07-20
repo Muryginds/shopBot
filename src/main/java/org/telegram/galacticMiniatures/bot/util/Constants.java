@@ -4,7 +4,6 @@ final public class Constants {
 
     private Constants() {}
 
-
     public static final String ERROR_RESTART_MENU = "Unexpected error, please restart menu";
 
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";

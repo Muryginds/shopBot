@@ -178,7 +178,7 @@ public class ParserService {
                 results = mapper.readValue(url, ParsedOptionsResult.class);
                 resultList = results.getResults().values().stream()
                         .flatMap(Collection::stream)
-                        .filter(l -> l.getParsedOptionValues().size() > 0)
+                        //.filter(l -> l.getParsedOptionValues().size() > 0)
                         .collect(Collectors.toList());
                 if (resultList.size() > 0) {
                     options.put(listing, resultList);
