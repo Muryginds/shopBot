@@ -22,6 +22,9 @@ public class ListingWithTag {
   @Column(name = "updated")
   LocalDateTime lastModified;
 
+  @Column(name = "active")
+  Boolean active;
+
   @Embeddable
   @Getter
   @Setter

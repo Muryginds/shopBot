@@ -3,7 +3,6 @@ package org.telegram.galacticMiniatures.bot.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 

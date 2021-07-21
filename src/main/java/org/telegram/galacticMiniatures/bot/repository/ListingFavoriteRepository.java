@@ -15,5 +15,6 @@ public interface ListingFavoriteRepository
     extends JpaRepository<ListingFavorite, ListingFavorite.Key> {
 
     List<ListingFavorite> findAllById_User_ChatId(String chatId);
+
     Page<ListingFavorite> getById_User_ChatId(String chatId, Pageable pageable);
 }

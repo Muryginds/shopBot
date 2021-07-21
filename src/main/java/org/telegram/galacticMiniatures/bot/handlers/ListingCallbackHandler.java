@@ -2,7 +2,6 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
@@ -98,7 +97,7 @@ public class ListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND:
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
-                listingPage = listingService.getPageListingBySectionIdentifier(searchInfo.getSectionId(), pageable);
+                listingPage = listingService.getPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
                     favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing, getUser(message))));
@@ -113,7 +112,7 @@ public class ListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_COMMAND:
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
-                listingPage = listingService.getPageListingBySectionIdentifier(
+                listingPage = listingService.getPageListingActiveBySectionIdentifier(
                                 searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);

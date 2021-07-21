@@ -8,20 +8,20 @@ import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithImageRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedImage;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ListingWithImageService {
 
     private final ListingWithImageRepository listingWithImageRepository;
-    private final ListingService listingService;
 
+    @Transactional
     public void saveAllByParsedImageMap(Map<Listing, List<ParsedImage>> listingsMap) {
         List<ListingWithImage> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedImage>> entry : listingsMap.entrySet()) {
@@ -30,8 +30,9 @@ public class ListingWithImageService {
                         getByListingAndImageUrl(entry.getKey(), parsedImage.getImageUrl());
                 ListingWithImage modifiedListingWithImage =
                         listingWithImage.orElse(new ListingWithImage(entry.getKey(),
-                                parsedImage.getImageUrl(), null));
+                                parsedImage.getImageUrl(), null, null));
                 modifiedListingWithImage.setUpdated(LocalDateTime.now());
+                modifiedListingWithImage.setActive(true);
                 list.add(modifiedListingWithImage);
             }
         }
@@ -42,21 +43,20 @@ public class ListingWithImageService {
         return listingWithImageRepository.findByListingAndImageUrl(listing, url);
     }
 
-    public List<ListingWithImage> getByListingIdentifier(Integer listingId) {
-        return listingWithImageRepository.findAllByListing_Identifier(listingId);
-    }
-
-    public List<String> getImagesByListingIdentifier(Integer listingId) {
-        return getByListingIdentifier(listingId).stream()
-                .map(ListingWithImage::getImageUrl).collect(Collectors.toList());
+    public List<ListingWithImage> getActiveByListingIdentifier(Integer listingId) {
+        return listingWithImageRepository.findAllByListing_IdentifierAndActiveTrue(listingId);
     }
 
     public Optional<String> getImageByListingIdentifier(Integer listingId) {
-        return getByListingIdentifier(listingId).stream()
+        return getActiveByListingIdentifier(listingId).stream()
                 .map(ListingWithImage::getImageUrl).findAny();
     }
 
-    public Page<ListingWithImage> getPageImagesByListing(Listing listing, Pageable pageable) {
-        return listingWithImageRepository.findByListing(listing, pageable);
+    public Page<ListingWithImage> getPageImagesActiveByListing(Listing listing, Pageable pageable) {
+        return listingWithImageRepository.findByListingAndActiveTrue(listing, pageable);
+    }
+
+    public void modifyExpiredEntities(Integer expirationTime) {
+        listingWithImageRepository.modifyExpiredEntities(expirationTime);
     }
 }

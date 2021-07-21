@@ -10,6 +10,7 @@ import org.telegram.galacticMiniatures.bot.repository.ListingWithOptionRepositor
 import org.telegram.galacticMiniatures.parser.entity.ParsedOption;
 import org.telegram.galacticMiniatures.parser.entity.ParsedOptionValues;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ListingWithOptionService {
 
     private final ListingWithOptionRepository listingWithOptionRepository;
 
+    @Transactional
     public void saveAllByParsedOptionMap(Map<Listing, List<ParsedOption>> listingsMap) {
         List<ListingWithOption> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedOption>> entry : listingsMap.entrySet()) {
@@ -33,7 +35,7 @@ public class ListingWithOptionService {
 
                 double rawPrice = parsedOption.getParsedOptionOfferings().stream()
                         .map(p -> Double.parseDouble(p.getPrice()
-                                .get("currency_formatted_raw")))
+                                .get("currency_formatted_raw").replace(",", "")))
                         .findFirst().orElse(0D);
 
                 int price = (int) Math.round(rawPrice * 7) * 10;
@@ -63,8 +65,9 @@ public class ListingWithOptionService {
                 ListingWithOption modifiedListingWithOption =
                         listingWithOption.orElse(new ListingWithOption(entry.getKey(),
                                 firstOptionName, firstOptionValue, secondOptionName, secondOptionValue,
-                                price, null));
+                                price, null, null));
                 modifiedListingWithOption.setUpdated(LocalDateTime.now());
+                modifiedListingWithOption.setActive(true);
                 list.add(modifiedListingWithOption);
             }
         }
@@ -80,6 +83,11 @@ public class ListingWithOptionService {
     }
 
     public Page<ListingWithOption> getPageOptionByListing(Listing listing, Pageable pageable) {
-        return listingWithOptionRepository.findByListing(listing, pageable);
+        return listingWithOptionRepository.findByListingAndActiveTrue(listing, pageable);
+    }
+
+    public void modifyExpiredEntities(Integer expirationTime) {
+        listingWithOptionRepository.modifyExpiredEntities(expirationTime);
+
     }
 }

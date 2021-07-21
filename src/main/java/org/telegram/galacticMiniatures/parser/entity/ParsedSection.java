@@ -18,4 +18,7 @@ public class ParsedSection {
 
     @JsonProperty("title")
     String title;
+
+    @JsonProperty("active_listing_count")
+    Integer count;
 }

@@ -15,11 +15,12 @@ import java.util.Optional;
 @Transactional
 public interface ListingCartRepository
     extends JpaRepository<ListingCart, ListingCart.Key> {
+
     Page<ListingCart> findById_User_ChatId(String chatId, Pageable pageable);
 
-    @Query(value = "SELECT SUM(l.price * uc.quantity) FROM user_cart uc " +
-            "INNER JOIN users u on uc.user_id = u.id " +
-            "INNER JOIN listings l on uc.listing_id = l.id " +
+    @Query(value = "SELECT SUM(cart.quantity * lo.price) FROM user_cart cart " +
+            "INNER JOIN users u on cart.user_id = u.id " +
+            "INNER JOIN listings_options lo on cart.option_id = lo.id " +
             "WHERE chat_id = :chatId",
             nativeQuery = true)
     Optional<Integer> countCartSummaryByChatId(@Param("chatId")String chatId);

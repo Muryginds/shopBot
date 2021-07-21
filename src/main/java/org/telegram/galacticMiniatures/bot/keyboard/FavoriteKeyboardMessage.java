@@ -35,7 +35,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage {
         ListingFavorite listingFavorite = listingPage.getContent().get(0);
         Pageable imagePageable = favoriteInfo.getImagePageable();
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListing(listingFavorite.getId().getListing(),
+                listingWithImageService.getPageImagesActiveByListing(listingFavorite.getId().getListing(),
                         imagePageable);
         ListingWithImage listingWithImage = imagePage.getContent().get(0);
         Listing listing = listingWithImage.getListing();

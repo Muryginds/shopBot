@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,4 +16,7 @@ public class ParsedListingsResult {
 
     @JsonProperty("results")
     List<ParsedListing> results;
+
+    @JsonProperty("pagination")
+    Map<String, Integer> pagination;
 }

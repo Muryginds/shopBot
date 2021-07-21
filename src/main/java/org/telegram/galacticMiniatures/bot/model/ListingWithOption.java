@@ -35,4 +35,7 @@ public class ListingWithOption extends AbstractEntity {
 
   @Column(name = "updated")
   LocalDateTime updated;
+
+  @Column(name = "active")
+  Boolean active;
 }

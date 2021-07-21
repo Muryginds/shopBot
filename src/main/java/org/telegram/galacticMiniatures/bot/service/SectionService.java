@@ -1,12 +1,12 @@
 package org.telegram.galacticMiniatures.bot.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.SectionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedSection;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ public class SectionService {
 
     private final SectionRepository sectionRepository;
 
+    @Transactional
     public List<Section> saveAllByParsedSectionCollection(Iterable<ParsedSection> collection) {
         List<Section> sections = new ArrayList<>();
         for (ParsedSection parsedSection : collection) {
@@ -27,6 +28,7 @@ public class SectionService {
             modifiedSection.setName(parsedSection.getTitle());
             modifiedSection.setIdentifier(parsedSection.getSectionId());
             modifiedSection.setUpdated(LocalDateTime.now());
+            modifiedSection.setActive(true);
             sections.add(modifiedSection);
         }
        return sectionRepository.saveAll(sections);
@@ -36,7 +38,11 @@ public class SectionService {
         return sectionRepository.getByIdentifier(id);
     }
 
-    public List<Section> getSections() {
-        return sectionRepository.findAll();
+    public List<Section> getActiveSections() {
+        return sectionRepository.findAllByActiveTrue();
+    }
+
+    public void modifyExpiredEntities(Integer expirationTime) {
+        sectionRepository.modifyExpiredEntities(expirationTime);
     }
 }

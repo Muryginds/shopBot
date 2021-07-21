@@ -25,4 +25,7 @@ public class Section extends AbstractEntity {
 
     @Column(name = "updated")
     LocalDateTime updated;
+
+    @Column(name = "active")
+    Boolean active;
 }

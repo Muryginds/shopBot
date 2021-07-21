@@ -1,8 +1,8 @@
 package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -28,6 +28,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final ListingService listingService;
@@ -45,30 +46,33 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         Pageable imagePageable = searchInfo.getImagePageable();
         Pageable optionPageable = searchInfo.getOptionPageable();
 
+        Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
             case LISTING:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
                 imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
-                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
-                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
                 break;
             case OPTION:
                 optionPageable = getPageableByScrollerType(optionPageable, scrollerType);
         }
 
-        Page<Listing> listingPage = listingService.getPageListingBySectionIdentifier(
+        Page<Listing> listingPage = listingService.getPageListingActiveBySectionIdentifier(
                         searchInfo.getSectionId(), listingPageable);
         Listing listing;
         try {
             listing = listingPage.getContent().get(0);
         } catch (IndexOutOfBoundsException ex) {
+            log.error("Listing for ChatId: " + chatId + " not found. " + ex.getMessage());
             return Optional.empty();
         }
+
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListing(listing, imagePageable);
+                listingWithImageService.getPageImagesActiveByListing(listing, imagePageable);
         Page<ListingWithOption> listingWithOptionPage =
                 listingWithOptionService.getPageOptionByListing(listing, optionPageable);
 
@@ -94,7 +98,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                         .append(listingPage.getNumber() + 1)
                         .append(" / ")
                         .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_LISTING_BUTTON_MIDDLE_COMMAND));
+                Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
 
         String listingNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
         if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
@@ -129,7 +133,15 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
             rowList.add(keyboardButtonsRow0);
         }
 
-        ListingWithOption listingWithOption = listingWithOptionPage.getContent().get(0);
+        ListingWithOption listingWithOption;
+        try {
+            listingWithOption = listingWithOptionPage.getContent().get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            log.error("Listing with option for ChatId: " + chatId + " not found. " + ex.getMessage());
+            return Optional.empty();
+        }
+
+
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
             String optionPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
@@ -202,12 +214,6 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
 
         InputFile inputFile = new InputFile();
         inputFile.setMedia(listingWithImage.getImageUrl());
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(inputFile);
-        sendPhoto.setChatId(chatId.toString());
-        sendPhoto.setCaption(caption.toString());
-        sendPhoto.setParseMode("html");
-        sendPhoto.setReplyMarkup(keyboardMarkup);
-        return Optional.of(sendPhoto);
+        return getSendPhoto(chatId, keyboardMarkup, caption, inputFile);
     }
 }

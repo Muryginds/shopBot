@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface TagRepository extends JpaRepository<Tag, Integer> {
+
     Optional<Tag> getTagByName(String name);
+
     List<Tag> getTagsByNameIn(Iterable<String> tagNames);
 }

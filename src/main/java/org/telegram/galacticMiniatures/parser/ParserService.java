@@ -38,14 +38,27 @@ public class ParserService {
     private String shopId;
     @Value("${etsy.apiKey}")
     private String apiKey;
+    @Value("${schedule.entityExpirationTime}")
+    private Integer expirationTime;
 
     @Scheduled(fixedRateString = "${schedule.sectionParsePeriod}")
     private void parseInfo() {
-        parseSections();
-        parseListings();
-       // parseListingsWithTags();
-        parseListingImages();
-        parseListingOptions();
+//        parseSections();
+//        parseListings();
+//        parseListingImages();
+//        parseListingOptions();
+
+        // parseListingsWithTags();
+        makeExpiredEntitiesNotActive();
+
+    }
+
+    private void makeExpiredEntitiesNotActive() {
+        listingWithOptionService.modifyExpiredEntities(expirationTime);
+        listingWithImageService.modifyExpiredEntities(expirationTime);
+        listingService.modifyExpiredEntities(expirationTime);
+        sectionService.modifyExpiredEntities(expirationTime);
+
     }
 
     private void parseSections() {
@@ -59,7 +72,7 @@ public class ParserService {
         try {
             URL url = new URL(sb.toString());
             ParsedSectionsResult results = mapper.readValue(url, ParsedSectionsResult.class);
-            resultList = results.getResults();
+            resultList = results.getResults().stream().filter(p -> p.getCount() > 0).collect(Collectors.toList());
         } catch (IOException e) {
             log.error("Scheduled task: SECTIONS failed: " + e.getMessage());
         }
@@ -80,24 +93,27 @@ public class ParserService {
             StringBuilder sb;
             URL url;
             ParsedListingsResult results;
-            List<ParsedListing> resultList;
             for (Section section : sectionList) {
-                sb = new StringBuilder(SITE_URL);
-                sb.append("shops/")
-                    .append(shopId)
-                    .append("/sections/")
-                    .append(section.getIdentifier())
-                    .append("/listings?api_key=")
-                    .append(apiKey);
-                url = new URL(sb.toString());
-                results = mapper.readValue(url, ParsedListingsResult.class);
-                resultList = results.getResults().stream()
-                        .filter(p ->
-                                    p.getPrice() != null &&
-                                    p.getTitle() != null)
-                        .collect(Collectors.toList());
-
+                List<ParsedListing> resultList = new ArrayList<>();
+                Integer nextPage = 1;
+                while (nextPage != null) {
+                    sb = new StringBuilder(SITE_URL);
+                    sb.append("shops/")
+                            .append(shopId)
+                            .append("/sections/")
+                            .append(section.getIdentifier())
+                            .append("/listings/active?api_key=")
+                            .append(apiKey)
+                            .append("&limit=100")
+                            .append("&page=")
+                            .append(nextPage);
+                    url = new URL(sb.toString());
+                    results = mapper.readValue(url, ParsedListingsResult.class);
+                    resultList.addAll(results.getResults());
+                    nextPage = results.getPagination().get("next_page");
+                }
                 listings.put(section, resultList);
+
 /*                Set<String> tagNames = resultList.stream()
                         .filter(p -> p.getTags() != null)
                         .flatMap(p -> p.getTags().stream())
