@@ -4,7 +4,15 @@ final public class Constants {
 
     private Constants() {}
 
-    public static final String ERROR_RESTART_MENU = "Unexpected error, please restart menu";
+    public static final String BOT_START_COMMAND = "/start";
+    public static final String KEYBOARD_STARTER_SHOP_COMMAND = "Магазин";
+    public static final String KEYBOARD_STARTER_ABOUT_COMMAND = "О нас";
+    public static final String KEYBOARD_STARTER_ADDRESS_COMMAND = "Адрес";
+    public static final String KEYBOARD_STARTER_CART_COMMAND = "🛒  Корзина";
+    public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
+    public static final String KEYBOARD_STARTER_SHIPPING_COMMAND = "Доставка";
+    public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
+    public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
 
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";
@@ -31,8 +39,8 @@ final public class Constants {
     public static final String KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND = "FavoriteCallbackPrevious";
     public static final String KEYBOARD_FAVORITE_BUTTON_PREVIOUS_NAME = "\u276E";
     public static final String KEYBOARD_FAVORITE_BUTTON_MIDDLE_COMMAND = "FavoriteCallback";
-    public static final String KEYBOARD_FAVORITE_BUTTON_GO_BACK_COMMAND = "FavoriteCallbackGoBack";
-    public static final String KEYBOARD_FAVORITE_BUTTON_GO_BACK_NAME = "\u2B05  Back";
+    public static final String KEYBOARD_FAVORITE_BUTTON_EXIT_COMMAND = "FavoriteCallbackGoBack";
+    public static final String KEYBOARD_FAVORITE_BUTTON_EXIT_NAME = "\u2716  Close";
     public static final String KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND = "FavoriteCallbackNext";
     public static final String KEYBOARD_FAVORITE_BUTTON_NEXT_NAME = "\u276F";
     public static final String KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_COMMAND =
@@ -49,8 +57,8 @@ final public class Constants {
     public static final String KEYBOARD_CART_OPERATED_CALLBACK = "CartCallback";
     public static final String KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND = "CartCallbackPrevious";
     public static final String KEYBOARD_CART_BUTTON_PREVIOUS_NAME = "\u276E";
-    public static final String KEYBOARD_CART_BUTTON_GO_BACK_COMMAND = "CartCallbackGoBack";
-    public static final String KEYBOARD_CART_BUTTON_GO_BACK_NAME = "\u2B05  Back";
+    public static final String KEYBOARD_CART_BUTTON_EXIT_COMMAND = "CartCallbackExit";
+    public static final String KEYBOARD_CART_BUTTON_EXIT_NAME = "\u2716  Close";
     public static final String KEYBOARD_CART_BUTTON_NEXT_COMMAND = "CartCallbackNext";
     public static final String KEYBOARD_CART_BUTTON_NEXT_NAME = "\u276F";
     public static final String KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND = "CartCallbackDeleteFromCart";
@@ -61,29 +69,17 @@ final public class Constants {
     public static final String KEYBOARD_CART_BUTTON_ADD_PLUS_COMMAND = "CartCallbackPlus";
     public static final String KEYBOARD_CART_BUTTON_ADD_MINUS_NAME = "\u2796";
     public static final String KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND = "CartCallbackMinus";
-    public static final String KEYBOARD_CART_BUTTON_ORDER_NAME = "Make order";
     public static final String KEYBOARD_CART_BUTTON_ORDER_COMMAND = "CartCallbackOrder";
+    public static final String KEYBOARD_CART_BUTTON_ORDER_NAME = "Сделать заказ";
 
-    public static final String KEYBOARD_MAIN_MENU_HEADER = "Our 3D miniatures store. Please check catalogue";
-    public static final String KEYBOARD_MAIN_MENU_OPERATED_CALLBACK = "MainMenuCallback";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CATALOGUE_COMMAND = "MainMenuCallbackCatalogue";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CATALOGUE_NAME = "Catalogue";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CONTACTS_COMMAND = "MainMenuCallbackContacts";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CONTACTS_NAME = "Contacts";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_FAVORITE_COMMAND = "MainMenuCallbackFavorite";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_FAVORITE_NAME = "\u2B50  Favorite";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CART_COMMAND = "MainMenuCallbackCart";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CART_NAME = "🛒  Cart";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CLOSE_COMMAND = "MainMenuCallbackClose";
-    public static final String KEYBOARD_MAIN_MENU_BUTTON_CLOSE_NAME = "\u2716  Close";
-
-    public static final String KEYBOARD_SECTIONS_HEADER = "Sections";
+    public static final String KEYBOARD_SECTIONS_HEADER = "Магазин";
     public static final String KEYBOARD_SECTIONS_OPERATED_CALLBACK = "SectionsCallback";
     public static final String KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND = "SectionsCallbackGoBack";
-    public static final String KEYBOARD_SECTIONS_BUTTON_GO_BACK_NAME = "\u2B05  back to Menu";
-    
-    public static final String BOT_HELP = "This bot represents GalacticMiniatures store. " +
-            "Press menu button and choose category";
-    public static final String BOT_START = "This bot represents GalacticMiniatures store!"
-            + " If you want to know more, send /help";
+    public static final String KEYBOARD_SECTIONS_BUTTON_GO_BACK_NAME = "\u2716  Close";
+
+    public static final String BOT_START = "Добро пожаловать! Этот бот магазина 3Д моделек";
+    public static final String BOT_ABOUT = "This bot represents GalacticMiniatures store";
+    public static final String BOT_SHIPPING = "Information about shipping";
+
+    public static final String ERROR_RESTART_MENU = "Unexpected error, please restart menu";
 }

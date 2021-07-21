@@ -40,10 +40,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
         Integer messageId = callbackQuery.getMessage().getMessageId();
 
         if (Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND.equals(data)) {
-            SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-            sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
             answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-            answer.add(sm);
         } else {
             Integer sectionId = Integer.parseInt(
                     data.replace(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK, ""));

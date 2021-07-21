@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 @RequiredArgsConstructor
 public class KeyboardService {
 
-    private final MainMenuKeyboardMessage mainMenuKeyboardMessage;
     private final SectionsKeyboardMessage sectionsKeyboardMessage;
     private final StarterKeyboardMessage starterKeyboardMessage;
     private final DefaultKeyboardMessage defaultKeyboardMessage;
@@ -23,9 +22,6 @@ public class KeyboardService {
     public AbstractKeyboardMessage getKeyboardMessage(KeyboardType keyboardType) {
         AbstractKeyboardMessage result;
         switch (keyboardType) {
-            case MAIN_MENU:
-                result = mainMenuKeyboardMessage;
-                break;
             case SECTION:
                 result = sectionsKeyboardMessage;
                 break;

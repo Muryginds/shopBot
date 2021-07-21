@@ -83,6 +83,9 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
 
+        keyboardButtonsRow1.add(createInlineKeyboardButton(
+                "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
         String listingPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
         if (listingPage.getNumber() > 0) {
             listingPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND;
@@ -90,9 +93,6 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         keyboardButtonsRow1.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                "Item",
-                Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
         keyboardButtonsRow1.add(createInlineKeyboardButton(
                 new StringBuilder()
                         .append(listingPage.getNumber() + 1)
@@ -109,15 +109,15 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         rowList.add(keyboardButtonsRow1);
 
         if (imagePage.getTotalElements() > 1) {
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    "Photo", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
             String photoPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (imagePage.getNumber() > 0) {
                 photoPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow0.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME, photoPreviousCommand));
-            keyboardButtonsRow0.add(createInlineKeyboardButton(
-                    "Photo",
-                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
             keyboardButtonsRow0.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(imagePage.getNumber() + 1)
@@ -144,6 +144,9 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
 
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    "Option", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
             String optionPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (listingWithOptionPage.getNumber() > 0) {
                 optionPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND;
@@ -169,9 +172,6 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
             }
             optionsText.append("</b>");
 
-            keyboardButtonsRow3.add(createInlineKeyboardButton(
-                    "Option",
-                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
             keyboardButtonsRow3.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(listingWithOptionPage.getNumber() + 1)

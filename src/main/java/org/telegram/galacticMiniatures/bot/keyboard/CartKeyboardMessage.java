@@ -3,7 +3,6 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.service.CartService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
-import org.telegram.galacticMiniatures.bot.service.ListingWithOptionService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -70,30 +68,32 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
-        String listingPreviousCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
-        if (listingPage.getNumber() > 0) {
-            listingPreviousCommand = Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND;
-        }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+        if(listingPage.getTotalPages() > 1) {
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
 
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                "Item",
-                Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                new StringBuilder()
-                        .append(listingPage.getNumber() + 1)
-                        .append(" / ")
-                        .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+            String listingPreviousCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
+            if (listingPage.getNumber() > 0) {
+                listingPreviousCommand = Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_CART_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-        String listingNextCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
-        if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
-            listingNextCommand = Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND;
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    new StringBuilder()
+                            .append(listingPage.getNumber() + 1)
+                            .append(" / ")
+                            .append(listingPage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+
+            String listingNextCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
+            if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
+                listingNextCommand = Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_CART_BUTTON_NEXT_NAME, listingNextCommand));
+            rowList.add(keyboardButtonsRow1);
         }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_NEXT_NAME, listingNextCommand));
-        rowList.add(keyboardButtonsRow1);
 
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_NAME,
@@ -127,8 +127,8 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                 Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_NAME,
                 Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_GO_BACK_NAME,
-                Constants.KEYBOARD_CART_BUTTON_GO_BACK_COMMAND));
+                Constants.KEYBOARD_CART_BUTTON_EXIT_NAME,
+                Constants.KEYBOARD_CART_BUTTON_EXIT_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 

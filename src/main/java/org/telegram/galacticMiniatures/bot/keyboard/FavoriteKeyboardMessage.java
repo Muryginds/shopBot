@@ -91,8 +91,8 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage {
                 Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_NAME,
                 Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_NAME,
-                Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_COMMAND));
+                Constants.KEYBOARD_FAVORITE_BUTTON_EXIT_NAME,
+                Constants.KEYBOARD_FAVORITE_BUTTON_EXIT_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 

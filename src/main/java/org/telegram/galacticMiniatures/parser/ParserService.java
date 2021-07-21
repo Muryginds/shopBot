@@ -43,10 +43,10 @@ public class ParserService {
 
     @Scheduled(fixedRateString = "${schedule.sectionParsePeriod}")
     private void parseInfo() {
-//        parseSections();
-//        parseListings();
-//        parseListingImages();
-//        parseListingOptions();
+        parseSections();
+        parseListings();
+        parseListingImages();
+        parseListingOptions();
 
         // parseListingsWithTags();
         makeExpiredEntitiesNotActive();

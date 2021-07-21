@@ -14,7 +14,6 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -49,11 +48,9 @@ public class FavoriteCallbackHandler implements AbstractHandler {
         ListingFavorite listingFavorite;
 
         switch (data) {
-            case Constants.KEYBOARD_FAVORITE_BUTTON_GO_BACK_COMMAND:
-                SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
+            case Constants.KEYBOARD_FAVORITE_BUTTON_EXIT_COMMAND:
+
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                answer.add(sm);
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND:
@@ -113,8 +110,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                     answer.add(favoriteKeyboardMessage.prepareSendPhoto(
                             newPageable, favoriteInfo, chatId));
                 } else {
-                    answer.add(keyboardService.getSendMessage(
-                            KeyboardType.MAIN_MENU, chatId, Constants.KEYBOARD_MAIN_MENU_HEADER));
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 }
                 break;
 
