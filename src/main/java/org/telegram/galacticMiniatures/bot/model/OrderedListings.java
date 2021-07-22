@@ -5,7 +5,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ordered_listings")
@@ -36,5 +35,8 @@ public class OrderedListings {
 
     @ManyToOne(cascade = CascadeType.ALL)
     Listing listing;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    ListingWithOption option;
   }
 }

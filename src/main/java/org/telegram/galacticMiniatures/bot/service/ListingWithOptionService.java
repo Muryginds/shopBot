@@ -10,7 +10,6 @@ import org.telegram.galacticMiniatures.bot.repository.ListingWithOptionRepositor
 import org.telegram.galacticMiniatures.parser.entity.ParsedOption;
 import org.telegram.galacticMiniatures.parser.entity.ParsedOptionValues;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,7 +20,6 @@ public class ListingWithOptionService {
 
     private final ListingWithOptionRepository listingWithOptionRepository;
 
-    @Transactional
     public void saveAllByParsedOptionMap(Map<Listing, List<ParsedOption>> listingsMap) {
         List<ListingWithOption> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedOption>> entry : listingsMap.entrySet()) {

@@ -6,7 +6,6 @@ import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.SectionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedSection;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ public class SectionService {
 
     private final SectionRepository sectionRepository;
 
-    @Transactional
     public List<Section> saveAllByParsedSectionCollection(Iterable<ParsedSection> collection) {
         List<Section> sections = new ArrayList<>();
         for (ParsedSection parsedSection : collection) {

@@ -28,6 +28,8 @@ import java.util.*;
 @Slf4j
 public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
+    private static final String HEADER = "CART:";
+
     private final CacheService cacheService;
     private final CartService cartService;
     private final ListingWithImageService listingWithImageService;
@@ -69,8 +71,8 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
         List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
         if(listingPage.getTotalPages() > 1) {
-            keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+//            keyboardButtonsRow1.add(createInlineKeyboardButton(
+//                    "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
 
             String listingPreviousCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
             if (listingPage.getNumber() > 0) {
@@ -157,8 +159,18 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
             optionsText.append("</b>");
         }
 
+        StringBuilder caption = new StringBuilder()
+                .append("<b>")
+                .append(HEADER)
+                .append("</b>\n\n")
+                .append(listing.getTitle())
+                .append(optionsText)
+                .append("\n\n<b>Price: ")
+                .append(listingWithOption.getPrice())
+                .append("</b>");
+
         InputFile inputFile = new InputFile();
         inputFile.setMedia(imageUrl);
-        return getSendPhoto(chatId, keyboardMarkup, optionsText, inputFile);
+        return getSendPhoto(chatId, keyboardMarkup, caption, inputFile);
     }
 }

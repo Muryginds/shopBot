@@ -37,8 +37,8 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
             count++;
         }
         InlineKeyboardButton goBackButton = new InlineKeyboardButton();
-        goBackButton.setText(Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_NAME);
-        goBackButton.setCallbackData(Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND);
+        goBackButton.setText(Constants.KEYBOARD_SECTIONS_BUTTON_CLOSE_NAME);
+        goBackButton.setCallbackData(Constants.KEYBOARD_SECTIONS_BUTTON_CLOSE_COMMAND);
         rowList.add(new ArrayList<>(List.of(goBackButton)));
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;

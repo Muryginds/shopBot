@@ -31,6 +31,8 @@ import java.util.Optional;
 @Slf4j
 public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
+    private static final String HEADER = "MODELS:";
+
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingWithImageService listingWithImageService;
@@ -55,10 +57,10 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
                 break;
             case OPTION:
                 optionPageable = getPageableByScrollerType(optionPageable, scrollerType);
+                break;
         }
 
         Page<Listing> listingPage = listingService.getPageListingActiveBySectionIdentifier(
@@ -83,30 +85,32 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
 
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+        if (listingPage.getTotalElements() > 1) {
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
 
-        String listingPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
-        if (listingPage.getNumber() > 0) {
-            listingPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND;
+            String listingPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (listingPage.getNumber() > 0) {
+                listingPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    new StringBuilder()
+                            .append(listingPage.getNumber() + 1)
+                            .append(" / ")
+                            .append(listingPage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
+            String listingNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
+                listingNextCommand = Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME, listingNextCommand));
+            rowList.add(keyboardButtonsRow1);
         }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
-
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                new StringBuilder()
-                        .append(listingPage.getNumber() + 1)
-                        .append(" / ")
-                        .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
-
-        String listingNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
-        if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
-            listingNextCommand = Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND;
-        }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME, listingNextCommand));
-        rowList.add(keyboardButtonsRow1);
 
         if (imagePage.getTotalElements() > 1) {
             keyboardButtonsRow0.add(createInlineKeyboardButton(
@@ -137,7 +141,8 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         try {
             listingWithOption = listingWithOptionPage.getContent().get(0);
         } catch (IndexOutOfBoundsException ex) {
-            log.error("Listing with option for ChatId: " + chatId + " not found. " + ex.getMessage());
+            log.error("Option for ChatId: " + chatId + " for listingId:" + listing.getIdentifier() +
+                    " not found. " + ex.getMessage());
             return Optional.empty();
         }
 
@@ -204,9 +209,20 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         searchInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, searchInfo);
 
-        ListingWithImage listingWithImage = imagePage.getContent().get(0);
+        ListingWithImage listingWithImage;
+        try {
+            listingWithImage = imagePage.getContent().get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            log.error("Image for ChatId: " + chatId + " for listingId:" + listing.getIdentifier() +
+                    " not found. " + ex.getMessage());
+            return Optional.empty();
+        }
 
-        StringBuilder caption = new StringBuilder().append(listing.getTitle())
+        StringBuilder caption = new StringBuilder()
+                .append("<b>")
+                .append(HEADER)
+                .append("</b>\n\n")
+                .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")
                 .append(listingWithOption.getPrice())

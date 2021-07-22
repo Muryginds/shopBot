@@ -17,4 +17,6 @@ public interface ListingFavoriteRepository
     List<ListingFavorite> findAllById_User_ChatId(String chatId);
 
     Page<ListingFavorite> getById_User_ChatId(String chatId, Pageable pageable);
+
+    int countListingFavoriteById_User_ChatId(String chatId);
 }

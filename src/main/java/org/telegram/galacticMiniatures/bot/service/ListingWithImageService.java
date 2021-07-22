@@ -8,7 +8,6 @@ import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithImageRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedImage;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ public class ListingWithImageService {
 
     private final ListingWithImageRepository listingWithImageRepository;
 
-    @Transactional
     public void saveAllByParsedImageMap(Map<Listing, List<ParsedImage>> listingsMap) {
         List<ListingWithImage> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedImage>> entry : listingsMap.entrySet()) {

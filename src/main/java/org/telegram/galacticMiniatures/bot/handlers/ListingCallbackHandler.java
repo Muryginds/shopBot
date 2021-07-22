@@ -52,6 +52,7 @@ public class ListingCallbackHandler implements AbstractHandler {
 
         switch (data) {
             case Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND:
+
                 SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_SECTIONS_HEADER);
                 sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.SECTION, chatId));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
@@ -59,45 +60,53 @@ public class ListingCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND:
+
                 sendPhoto = listingKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND:
+
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
-                listingPage = listingService.getPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
+                listingPage =
+                        listingService.getPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
                     favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing, getUser(message))));
@@ -110,6 +119,7 @@ public class ListingCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_COMMAND:
+
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
                 listingPage = listingService.getPageListingActiveBySectionIdentifier(
@@ -121,12 +131,9 @@ public class ListingCallbackHandler implements AbstractHandler {
                             listingWithOptionService.getPageOptionByListing(listing, optionPageable);
                     ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
-                    Optional<ListingCart> optionalListingCart =
-                            cartService.findById(
-                                    new ListingCart.Key(listing, getUser(message), listingWithOption));
-                    ListingCart listingCart = optionalListingCart.
-                            orElse(new ListingCart(new ListingCart.Key(listing, getUser(message), listingWithOption),
-                                    0));
+                    var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
+                    Optional<ListingCart> optionalListingCart = cartService.findById(key);
+                    ListingCart listingCart = optionalListingCart.orElse(new ListingCart(key,0));
                     listingCart.setQuantity(listingCart.getQuantity() + 1);
                     cartService.save(listingCart);
 

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -14,6 +16,7 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -25,7 +28,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FavoriteCallbackHandler implements AbstractHandler {
 
-    private final KeyboardService keyboardService;
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final FavoriteKeyboardMessage favoriteKeyboardMessage;
@@ -43,9 +45,9 @@ public class FavoriteCallbackHandler implements AbstractHandler {
         Integer messageId = message.getMessageId();
         FavoriteInfo favoriteInfo;
         Pageable pageable;
-        Pageable pageablePhoto;
         Page<ListingFavorite> pageFavorite;
         ListingFavorite listingFavorite;
+        Optional<SendPhoto> sendPhoto;
 
         switch (data) {
             case Constants.KEYBOARD_FAVORITE_BUTTON_EXIT_COMMAND:
@@ -55,85 +57,99 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND:
 
-                favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable().next();
-                favoriteInfo.setImagePageable(PageRequest.of(0, 1));
-                answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND:
 
-                favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable().previousOrFirst();
-                favoriteInfo.setImagePageable(PageRequest.of(0, 1));
-                answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_COMMAND:
 
-                favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable();
-                pageablePhoto = favoriteInfo.getImagePageable().next();
-                favoriteInfo.setImagePageable(pageablePhoto);
-                answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_PREVIOUS_COMMAND:
 
-                favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable();
-                pageablePhoto = favoriteInfo.getImagePageable().previousOrFirst();
-                favoriteInfo.setImagePageable(pageablePhoto);
-                answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                break;
+
+            case Constants.KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_COMMAND:
+
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                break;
+
+            case Constants.KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_COMMAND:
+
+                sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
+                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_COMMAND:
 
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
                 pageable = favoriteInfo.getListingPageable();
-                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
-                listingFavorite = pageFavorite.getContent().get(0);
-                favoriteService.delete(listingFavorite);
-                answer.add(
-                        Utils.prepareAnswerCallbackQuery(
-                                "Removed from favorites", true, callbackQuery));
-                Pageable newPageable = PageRequest.of(0,1);
-                favoriteInfo.setImagePageable(newPageable);
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                Page<ListingFavorite> newPageFavorite =
-                        favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
-                if (newPageFavorite.getTotalElements() > 0) {
-                    answer.add(favoriteKeyboardMessage.prepareSendPhoto(
-                            newPageable, favoriteInfo, chatId));
-                } else {
-                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId, pageable);
+
+                try {
+                    listingFavorite = pageFavorite.getContent().get(0);
+                    favoriteService.delete(listingFavorite);
+                    answer.add(
+                            Utils.prepareAnswerCallbackQuery(
+                                    "Removed from favorites", true, callbackQuery));
+
+                    if (favoriteService.countSizeFavoriteByChatId(chatId) > 0) {
+                        sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                                chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                        answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                    } else {
+                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                        answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
+                    }
+                } catch (IndexOutOfBoundsException ex) {
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            Constants.ERROR_RESTART_MENU, true, callbackQuery));
                 }
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_COMMAND:
+
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
                 pageable = favoriteInfo.getListingPageable();
-                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
-                listingFavorite = pageFavorite.getContent().get(0);
-                Listing listing = listingFavorite.getId().getListing();
-                Pageable optionPageable = favoriteInfo.getOptionPageable();
-                Page<ListingWithOption> optionPage =
-                        listingWithOptionService.getPageOptionByListing(listing, optionPageable);
-                ListingWithOption listingWithOption = optionPage.getContent().get(0);
-                Optional<ListingCart> optionalListingCart =
-                        cartService.findById(
-                                new ListingCart.Key(listing, getUser(message), listingWithOption));
-                ListingCart listingCart = optionalListingCart.
-                        orElse(new ListingCart(new ListingCart.Key(listing, getUser(message), listingWithOption),
-                                0));
-                listingCart.setQuantity(listingCart.getQuantity() + 1);
-                cartService.save(listingCart);
-                answer.add(
-                        Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
+                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId, pageable);
+                try {
+                    listingFavorite = pageFavorite.getContent().get(0);
+                    Listing listing = listingFavorite.getId().getListing();
+                    Pageable optionPageable = favoriteInfo.getOptionPageable();
+                    Page<ListingWithOption> optionPage = listingWithOptionService.
+                            getPageOptionByListing(listing, optionPageable);
+                    ListingWithOption listingWithOption = optionPage.getContent().get(0);
+
+                    var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
+                    Optional<ListingCart> optionalListingCart = cartService.findById(key);
+                    ListingCart listingCart = optionalListingCart.orElse(new ListingCart(key,0));
+                    listingCart.setQuantity(listingCart.getQuantity() + 1);
+                    cartService.save(listingCart);
+
+                    answer.add(
+                            Utils.prepareAnswerCallbackQuery("Added to cart", true, callbackQuery));
+                } catch (IndexOutOfBoundsException ex) {
+                    answer.add(Utils.prepareAnswerCallbackQuery(
+                            Constants.ERROR_RESTART_MENU, true, callbackQuery));
+                }
+
                 break;
 
             default:

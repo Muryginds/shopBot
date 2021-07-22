@@ -9,7 +9,6 @@ import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.ListingRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedListing;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
 
-    @Transactional
     public List<Listing> saveAllByParsedListingMap(Map<Section, List<ParsedListing>> listingsMap) {
         List<Listing> listings = new ArrayList<>();
         for (Map.Entry<Section, List<ParsedListing>> entry : listingsMap.entrySet()) {

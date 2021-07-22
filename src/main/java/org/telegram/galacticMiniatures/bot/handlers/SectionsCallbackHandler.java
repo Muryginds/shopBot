@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
@@ -14,7 +13,6 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
@@ -39,7 +37,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
         Long chatId = callbackQuery.getMessage().getChatId();
         Integer messageId = callbackQuery.getMessage().getMessageId();
 
-        if (Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND.equals(data)) {
+        if (Constants.KEYBOARD_SECTIONS_BUTTON_CLOSE_COMMAND.equals(data)) {
             answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         } else {
             Integer sectionId = Integer.parseInt(

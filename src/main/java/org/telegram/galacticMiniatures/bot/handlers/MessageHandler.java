@@ -83,14 +83,12 @@ public class MessageHandler implements AbstractHandler {
         break;
       case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-        Pageable pageable = PageRequest.of(0, 1);
-        Page<ListingFavorite> listingPage =
-                favoriteService.getPageFavoriteByChatId(chatId.toString(), pageable);
-        if(listingPage.getTotalElements() > 0) {
-          FavoriteInfo favoriteInfo = new FavoriteInfo();
-          answer.add(favoriteKeyboardMessage.prepareSendPhoto(pageable, favoriteInfo, chatId));
+        if (favoriteService.countSizeFavoriteByChatId(chatId) > 0) {
+          Optional<SendPhoto> sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                  chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+          sendPhoto.ifPresent(answer::add);
         } else {
-          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
+          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
         }
         break;
       case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
