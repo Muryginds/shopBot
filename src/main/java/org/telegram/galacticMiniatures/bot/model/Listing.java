@@ -33,6 +33,9 @@ public class Listing extends AbstractEntity {
     @Column(name = "sku_number")
     String skuNumber;
 
+    @Column(name = "active")
+    Boolean active;
+
     @Override
     public String toString() {
         return "Listing{" +

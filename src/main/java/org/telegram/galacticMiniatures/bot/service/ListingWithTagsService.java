@@ -31,7 +31,7 @@ public class ListingWithTagsService {
                     ListingWithTag.Key key = new ListingWithTag.Key(listing.get(), tag);
                     Optional<ListingWithTag> listingWithTags = getByKey(key);
                     listingsWithTags.add(
-                            listingWithTags.orElse(new ListingWithTag(key, LocalDateTime.now())));
+                            listingWithTags.orElse(new ListingWithTag(key, LocalDateTime.now(), true)));
                 }
             }
         }

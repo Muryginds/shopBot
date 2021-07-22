@@ -1,7 +1,6 @@
 package org.telegram.galacticMiniatures.bot.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.SectionRepository;
@@ -27,6 +26,7 @@ public class SectionService {
             modifiedSection.setName(parsedSection.getTitle());
             modifiedSection.setIdentifier(parsedSection.getSectionId());
             modifiedSection.setUpdated(LocalDateTime.now());
+            modifiedSection.setActive(true);
             sections.add(modifiedSection);
         }
        return sectionRepository.saveAll(sections);
@@ -36,7 +36,11 @@ public class SectionService {
         return sectionRepository.getByIdentifier(id);
     }
 
-    public List<Section> getSections() {
-        return sectionRepository.findAll();
+    public List<Section> getActiveSections() {
+        return sectionRepository.findAllByActiveTrue();
+    }
+
+    public void modifyExpiredEntities(Integer expirationTime) {
+        sectionRepository.modifyExpiredEntities(expirationTime);
     }
 }

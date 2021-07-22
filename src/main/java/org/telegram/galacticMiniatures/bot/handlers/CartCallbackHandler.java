@@ -53,11 +53,9 @@ public class CartCallbackHandler implements AbstractHandler {
         Optional<SendPhoto> sendPhoto;
 
         switch (data) {
-            case Constants.KEYBOARD_CART_BUTTON_GO_BACK_COMMAND:
-                SendMessage sm = Utils.prepareSendMessage(chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-                sm.setReplyMarkup(keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
+            case Constants.KEYBOARD_CART_BUTTON_EXIT_COMMAND:
+
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                answer.add(sm);
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND:
@@ -89,8 +87,7 @@ public class CartCallbackHandler implements AbstractHandler {
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
                     sendPhoto.ifPresent(answer::add);
                 } else {
-                    answer.add(keyboardService.getSendMessage(
-                            KeyboardType.MAIN_MENU, chatId, Constants.KEYBOARD_MAIN_MENU_HEADER));
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 }
                 break;
 
@@ -134,11 +131,6 @@ public class CartCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
 
                 if (pageCart.getTotalPages() - 1 == 0 && newQuantity == 0) {
-                    SendMessage mainMenuMessage = Utils.prepareSendMessage(
-                            chatId, Constants.KEYBOARD_MAIN_MENU_HEADER);
-                    mainMenuMessage.setReplyMarkup(
-                            keyboardService.getInlineKeyboardMarkup(KeyboardType.MAIN_MENU, chatId));
-                    answer.add(mainMenuMessage);
                     answer.add(
                             Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));
                 } else {

@@ -1,16 +1,28 @@
 package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
-import org.telegram.galacticMiniatures.bot.enums.StarterKeyboard;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
+import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
+import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
+import org.telegram.galacticMiniatures.bot.model.User;
+import org.telegram.galacticMiniatures.bot.service.CartService;
+import org.telegram.galacticMiniatures.bot.service.FavoriteService;
 import org.telegram.galacticMiniatures.bot.service.KeyboardService;
+import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.*;
@@ -20,6 +32,11 @@ import java.util.*;
 public class MessageHandler implements AbstractHandler {
 
   private final KeyboardService keyboardService;
+  private final CartKeyboardMessage cartKeyboardMessage;
+  private final CartService cartService;
+  private final FavoriteService favoriteService;
+  private final FavoriteKeyboardMessage favoriteKeyboardMessage;
+  private final UserService userService;
 
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -27,34 +44,59 @@ public class MessageHandler implements AbstractHandler {
     Message message = ((Message) botApiObject);
     long chatId = message.getChatId();
 
-    String messageText = message.getText().toLowerCase(Locale.ROOT);
-    boolean isStarterMenuReply = Arrays.stream(StarterKeyboard.values())
-            .anyMatch(s -> s.name().toLowerCase(Locale.ROOT).equals(messageText));
-
-    if (isStarterMenuReply) {
-      answer.addAll(handleStarterMenuReply(messageText, message));
+    if (Constants.BOT_START_COMMAND.equals(message.getText())) {
+      answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+      answer.add(keyboardService.getSendMessage(
+              KeyboardType.STARTER, chatId, Constants.BOT_START));
+      User user = userService.getUser(chatId).orElse(new User(message));
+      userService.add(user);
     } else {
-      answer.add(Utils.prepareSendMessage(chatId, message.getText()));
+      answer.addAll(handleStarterMenuReply(message));
     }
 
     return answer;
   }
 
-  private List<BotApiMethod<?>> handleStarterMenuReply(String text, Message message) {
-    StarterKeyboard reply = StarterKeyboard.valueOf(text.toUpperCase());
-    List<BotApiMethod<?>> answer = new ArrayList<>();
-    long chatId = message.getChatId();
-    switch (reply) {
-      case MENU:
-        answer.add(keyboardService.getSendMessage(KeyboardType.MAIN_MENU, chatId, Constants.KEYBOARD_MAIN_MENU_HEADER));
+  private List<PartialBotApiMethod<?>> handleStarterMenuReply(Message message) {
+    String text = message.getText();
+    List<PartialBotApiMethod<?>> answer = new ArrayList<>();
+    Long chatId = message.getChatId();
+    int messageId = message.getMessageId();
+    switch (text) {
+      case Constants.KEYBOARD_STARTER_SHOP_COMMAND:
+        answer.add(keyboardService.getSendMessage(KeyboardType.SECTION, chatId, Constants.KEYBOARD_SECTIONS_HEADER));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
-      case HELP:
-        answer.add(Utils.prepareSendMessage(message.getChatId(), Constants.BOT_HELP));
+      case Constants.KEYBOARD_STARTER_CART_COMMAND:
+        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+        if (cartService.countSizeCartByChatId(chatId) > 0) {
+          Optional<SendPhoto> sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                  chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+          sendPhoto.ifPresent(answer::add);
+        } else {
+          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
+        }
+        break;
+      case Constants.KEYBOARD_STARTER_ABOUT_COMMAND:
+        answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_ABOUT));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
-      case USER:
-        answer.add(Utils.prepareSendMessage(message.getChatId(), "User info here"));
+      case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
+        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+        if (favoriteService.countSizeFavoriteByChatId(chatId) > 0) {
+          Optional<SendPhoto> sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
+                  chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+          sendPhoto.ifPresent(answer::add);
+        } else {
+          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
+        }
+        break;
+      case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
+        answer.add(Utils.prepareSendMessage(chatId, "User address here"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+      case Constants.KEYBOARD_STARTER_SHIPPING_COMMAND:
+        answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_SHIPPING));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
     }

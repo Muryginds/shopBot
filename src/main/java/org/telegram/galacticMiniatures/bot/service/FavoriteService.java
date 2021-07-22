@@ -21,7 +21,11 @@ public class FavoriteService {
         listingFavoriteRepository.delete(listingFavorite);
     }
 
-    public Page<ListingFavorite> getPageFavoriteByChatId(String chatId, Pageable pageable) {
-        return listingFavoriteRepository.getById_User_ChatId(chatId, pageable);
+    public Page<ListingFavorite> getPageFavoriteByChatId(Long chatId, Pageable pageable) {
+        return listingFavoriteRepository.getById_User_ChatId(chatId.toString(), pageable);
+    }
+
+    public int countSizeFavoriteByChatId(Long chatId) {
+        return listingFavoriteRepository.countListingFavoriteById_User_ChatId(chatId.toString());
     }
 }

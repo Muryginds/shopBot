@@ -31,9 +31,10 @@ public class ListingService {
                 modifiedListing.setIdentifier(parsedListing.getId());
                 modifiedListing.setPrice((int)(parsedListing.getPrice() * 7) * 10);
                 modifiedListing.setSection(entry.getKey());
-                modifiedListing.setUpdated(LocalDateTime.now());
                 modifiedListing.setSkuNumber(
                         parsedListing.getSku().stream().reduce((s, s2) -> s + " " + s2).orElse(""));
+                modifiedListing.setUpdated(LocalDateTime.now());
+                modifiedListing.setActive(true);
                 listings.add(modifiedListing);
             }
         }
@@ -44,15 +45,15 @@ public class ListingService {
         return listingRepository.getByIdentifier(identifier);
     }
 
-    public Integer countSizeBySectionIdentifier(Integer sectionId) {
-        return listingRepository.countBySectionIdentifier(sectionId);
+    public Integer countSizeActiveBySectionIdentifier(Integer sectionId) {
+        return listingRepository.countBySectionIdentifierAndActiveTrue(sectionId);
     }
 
-    public List<Listing> getListingsBySectionIdentifier(Integer identifier) {
-        return listingRepository.findAllBySection_Identifier(identifier);
+    public Page<Listing> getPageListingActiveBySectionIdentifier(Integer identifier, Pageable pageable) {
+        return listingRepository.findBySection_IdentifierAndActiveTrue(identifier, pageable);
     }
 
-    public Page<Listing> getPageListingBySectionIdentifier(Integer identifier, Pageable pageable) {
-        return listingRepository.findBySection_Identifier(identifier, pageable);
+    public void modifyExpiredEntities(Integer expirationTime) {
+        listingRepository.modifyExpiredEntities(expirationTime);
     }
 }

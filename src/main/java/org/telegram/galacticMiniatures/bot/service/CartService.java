@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
 import org.telegram.galacticMiniatures.bot.repository.ListingCartRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +20,7 @@ public class CartService {
     }
 
     public void delete(ListingCart listingCart) {
-        listingCartRepository.delete(listingCart);
+        listingCartRepository.deleteById(listingCart.getId());
     }
 
     public Optional<ListingCart> findById(ListingCart.Key key) {

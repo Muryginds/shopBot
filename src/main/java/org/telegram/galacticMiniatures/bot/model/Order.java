@@ -25,4 +25,7 @@ public class Order extends AbstractEntity {
 
     @Column(name = "created")
     LocalDateTime created;
+
+    @Column(name = "summary")
+    Integer summary;
 }

@@ -35,5 +35,8 @@ public class ListingCart {
 
         @ManyToOne(cascade = CascadeType.ALL)
         User user;
+
+        @ManyToOne(cascade = CascadeType.ALL)
+        ListingWithOption option;
     }
 }

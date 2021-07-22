@@ -1,8 +1,8 @@
 package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,10 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
+
+    private static final String HEADER = "MODELS:";
 
     private final ListingService listingService;
     private final CacheService cacheService;
@@ -45,30 +48,33 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         Pageable imagePageable = searchInfo.getImagePageable();
         Pageable optionPageable = searchInfo.getOptionPageable();
 
+        Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
             case LISTING:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
                 imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
-                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
-                optionPageable = PageRequest.of(0,1, Sort.by("price").and(Sort.by("firstOptionValue")));
                 break;
             case OPTION:
                 optionPageable = getPageableByScrollerType(optionPageable, scrollerType);
+                break;
         }
 
-        Page<Listing> listingPage = listingService.getPageListingBySectionIdentifier(
+        Page<Listing> listingPage = listingService.getPageListingActiveBySectionIdentifier(
                         searchInfo.getSectionId(), listingPageable);
         Listing listing;
         try {
             listing = listingPage.getContent().get(0);
         } catch (IndexOutOfBoundsException ex) {
+            log.error("Listing for ChatId: " + chatId + " not found. " + ex.getMessage());
             return Optional.empty();
         }
+
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesByListing(listing, imagePageable);
+                listingWithImageService.getPageImagesActiveByListing(listing, imagePageable);
         Page<ListingWithOption> listingWithOptionPage =
                 listingWithOptionService.getPageOptionByListing(listing, optionPageable);
 
@@ -79,16 +85,79 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
 
-        Optional<Integer> optionPrice = Optional.empty();
+        if (listingPage.getTotalElements() > 1) {
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    "Item", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
+            String listingPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (listingPage.getNumber() > 0) {
+                listingPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    new StringBuilder()
+                            .append(listingPage.getNumber() + 1)
+                            .append(" / ")
+                            .append(listingPage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
+            String listingNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
+                listingNextCommand = Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND;
+            }
+            keyboardButtonsRow1.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME, listingNextCommand));
+            rowList.add(keyboardButtonsRow1);
+        }
+
+        if (imagePage.getTotalElements() > 1) {
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    "Photo", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
+            String photoPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (imagePage.getNumber() > 0) {
+                photoPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND;
+            }
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME, photoPreviousCommand));
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    new StringBuilder()
+                            .append(imagePage.getNumber() + 1)
+                            .append(" / ")
+                            .append(imagePage.getTotalElements()).toString(),
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
+            String photoNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
+            if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
+                photoNextCommand = Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND;
+            }
+            keyboardButtonsRow0.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME, photoNextCommand));
+            rowList.add(keyboardButtonsRow0);
+        }
+
+        ListingWithOption listingWithOption;
+        try {
+            listingWithOption = listingWithOptionPage.getContent().get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            log.error("Option for ChatId: " + chatId + " for listingId:" + listing.getIdentifier() +
+                    " not found. " + ex.getMessage());
+            return Optional.empty();
+        }
+
+
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
-            ListingWithOption listingWithOption = listingWithOptionPage.getContent().get(0);
-            optionPrice = Optional.of(listingWithOption.getPrice());
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    "Option", Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+
+            String optionPreviousCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (listingWithOptionPage.getNumber() > 0) {
-                keyboardButtonsRow3.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND));
+                optionPreviousCommand = Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND;
             }
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_NAME, optionPreviousCommand));
             optionsText
                 .append("<b>")
                 .append("\n\nOptions: ")
@@ -109,55 +178,19 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
             optionsText.append("</b>");
 
             keyboardButtonsRow3.add(createInlineKeyboardButton(
-                    new StringBuilder().append("Option ")
+                    new StringBuilder()
                             .append(listingWithOptionPage.getNumber() + 1)
-                            .append(" of ")
+                            .append(" / ")
                             .append(listingWithOptionPage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_MIDDLE_COMMAND));
+                    Constants.KEYBOARD_LISTING_OPERATED_CALLBACK));
+            String optionNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (listingWithOptionPage.getNumber() + 1 < listingWithOptionPage.getTotalPages()) {
-                keyboardButtonsRow3.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND));
+                optionNextCommand = Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND;
             }
+            keyboardButtonsRow3.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_NAME, optionNextCommand));
             rowList.add(keyboardButtonsRow3);
         }
-
-        if (imagePage.getTotalElements() > 1) {
-            if (imagePage.getNumber() > 0) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND));
-            }
-            keyboardButtonsRow0.add(createInlineKeyboardButton(
-                    new StringBuilder().append("Photo ")
-                            .append(imagePage.getNumber() + 1)
-                            .append(" of ")
-                            .append(imagePage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
-            if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
-                keyboardButtonsRow0.add(createInlineKeyboardButton(
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_NAME,
-                        Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND));
-            }
-            rowList.add(keyboardButtonsRow0);
-        }
-        if (listingPage.getNumber() > 0) {
-            keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND));
-        }
-        keyboardButtonsRow1.add(createInlineKeyboardButton(
-                new StringBuilder().append("Item ")
-                        .append(listingPage.getNumber() + 1)
-                        .append(" of ")
-                        .append(listingPage.getTotalElements()).toString(),
-                Constants.KEYBOARD_LISTING_BUTTON_MIDDLE_COMMAND));
-        if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
-            keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_NAME,
-                    Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND));
-        }
-        rowList.add(keyboardButtonsRow1);
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_NAME,
@@ -176,22 +209,27 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         searchInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, searchInfo);
 
-        ListingWithImage listingWithImage = imagePage.getContent().get(0);
+        ListingWithImage listingWithImage;
+        try {
+            listingWithImage = imagePage.getContent().get(0);
+        } catch (IndexOutOfBoundsException ex) {
+            log.error("Image for ChatId: " + chatId + " for listingId:" + listing.getIdentifier() +
+                    " not found. " + ex.getMessage());
+            return Optional.empty();
+        }
 
-        StringBuilder caption = new StringBuilder().append(listing.getTitle())
+        StringBuilder caption = new StringBuilder()
+                .append("<b>")
+                .append(HEADER)
+                .append("</b>\n\n")
+                .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")
-                .append(optionPrice.orElse(listing.getPrice()))
+                .append(listingWithOption.getPrice())
                 .append("</b>");
 
         InputFile inputFile = new InputFile();
         inputFile.setMedia(listingWithImage.getImageUrl());
-        SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(inputFile);
-        sendPhoto.setChatId(chatId.toString());
-        sendPhoto.setCaption(caption.toString());
-        sendPhoto.setParseMode("html");
-        sendPhoto.setReplyMarkup(keyboardMarkup);
-        return Optional.of(sendPhoto);
+        return getSendPhoto(chatId, keyboardMarkup, caption, inputFile);
     }
 }

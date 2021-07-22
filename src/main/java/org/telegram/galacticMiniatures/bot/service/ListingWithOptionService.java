@@ -33,18 +33,23 @@ public class ListingWithOptionService {
 
                 double rawPrice = parsedOption.getParsedOptionOfferings().stream()
                         .map(p -> Double.parseDouble(p.getPrice()
-                                .get("currency_formatted_raw")))
+                                .get("currency_formatted_raw").replace(",", "")))
                         .findFirst().orElse(0D);
 
-                Integer price = (int) (rawPrice * 7) * 10;
+                int price = (int) Math.round(rawPrice * 7) * 10;
 
                 Iterator<Map.Entry<String, String>> iterator = options.entrySet().iterator();
-                var first = iterator.next();
 
-                String firstOptionName = first.getKey();
-                String firstOptionValue = first.getValue();
+                String firstOptionName = "";
+                String firstOptionValue = "";
                 String secondOptionName = "" ;
                 String secondOptionValue = "";
+
+                if (iterator.hasNext()) {
+                    var first = iterator.next();
+                    firstOptionName = first.getKey();
+                    firstOptionValue = first.getValue();
+                }
 
                 if (iterator.hasNext()) {
                     var second = iterator.next();
@@ -58,8 +63,9 @@ public class ListingWithOptionService {
                 ListingWithOption modifiedListingWithOption =
                         listingWithOption.orElse(new ListingWithOption(entry.getKey(),
                                 firstOptionName, firstOptionValue, secondOptionName, secondOptionValue,
-                                price, null));
+                                price, null, null));
                 modifiedListingWithOption.setUpdated(LocalDateTime.now());
+                modifiedListingWithOption.setActive(true);
                 list.add(modifiedListingWithOption);
             }
         }
@@ -75,6 +81,11 @@ public class ListingWithOptionService {
     }
 
     public Page<ListingWithOption> getPageOptionByListing(Listing listing, Pageable pageable) {
-        return listingWithOptionRepository.findByListing(listing, pageable);
+        return listingWithOptionRepository.findByListingAndActiveTrue(listing, pageable);
+    }
+
+    public void modifyExpiredEntities(Integer expirationTime) {
+        listingWithOptionRepository.modifyExpiredEntities(expirationTime);
+
     }
 }

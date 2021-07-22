@@ -21,7 +21,7 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
     public InlineKeyboardMarkup getInlineKeyboardMarkup(Long chatId) {
         StringBuilder sb = new StringBuilder();
         int count = 0;
-        List<Section> sections = sectionService.getSections();
+        List<Section> sections = sectionService.getActiveSections();
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
@@ -37,8 +37,8 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
             count++;
         }
         InlineKeyboardButton goBackButton = new InlineKeyboardButton();
-        goBackButton.setText(Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_NAME);
-        goBackButton.setCallbackData(Constants.KEYBOARD_SECTIONS_BUTTON_GO_BACK_COMMAND);
+        goBackButton.setText(Constants.KEYBOARD_SECTIONS_BUTTON_CLOSE_NAME);
+        goBackButton.setCallbackData(Constants.KEYBOARD_SECTIONS_BUTTON_CLOSE_COMMAND);
         rowList.add(new ArrayList<>(List.of(goBackButton)));
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
