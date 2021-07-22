@@ -146,8 +146,15 @@ public class CartCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND:
 
-                orderService.createNewOrderWithListings(chatId);
-                answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
+                if (cartService.countSizeCartByChatId(chatId) > 0) {
+                    orderService.createNewOrderWithListings(chatId);
+                    answer.add(Utils.prepareSendMessage(chatId, "Gratz! Order created. " +
+                            "Please fill you address and read information" +
+                            " about shipping cost carefully"));
+                    answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
+                } else {
+                    answer.add(Utils.prepareSendMessage(chatId, "Cart is empty, nothing to order"));
+                }
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
 
             default:

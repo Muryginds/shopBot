@@ -30,8 +30,6 @@ import java.util.*;
 @Slf4j
 public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "FAVORITES:";
-
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final ListingWithImageService listingWithImageService;
@@ -221,9 +219,6 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

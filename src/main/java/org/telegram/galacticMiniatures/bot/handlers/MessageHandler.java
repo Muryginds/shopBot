@@ -8,11 +8,11 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
+import org.telegram.galacticMiniatures.bot.model.Order;
+import org.telegram.galacticMiniatures.bot.model.OrderedListing;
 import org.telegram.galacticMiniatures.bot.model.User;
-import org.telegram.galacticMiniatures.bot.service.CartService;
-import org.telegram.galacticMiniatures.bot.service.FavoriteService;
-import org.telegram.galacticMiniatures.bot.service.KeyboardService;
-import org.telegram.galacticMiniatures.bot.service.UserService;
+import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
@@ -21,6 +21,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteService favoriteService;
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
+  private final OrderService orderService;
 
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -59,10 +61,13 @@ public class MessageHandler implements AbstractHandler {
     int messageId = message.getMessageId();
     switch (text) {
       case Constants.KEYBOARD_STARTER_SHOP_COMMAND:
+
         answer.add(keyboardService.getSendMessage(KeyboardType.SECTION, chatId, Constants.KEYBOARD_SECTIONS_HEADER));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
+
       case Constants.KEYBOARD_STARTER_CART_COMMAND:
+
         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         if (cartService.countSizeCartByChatId(chatId) > 0) {
           Optional<SendPhoto> sendPhoto = cartKeyboardMessage.prepareSendPhoto(
@@ -72,11 +77,15 @@ public class MessageHandler implements AbstractHandler {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
         }
         break;
-      case Constants.KEYBOARD_STARTER_ABOUT_COMMAND:
+
+        case Constants.KEYBOARD_STARTER_INFORMATION_COMMAND:
+
         answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_ABOUT));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
-      case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
+
+        case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
+
         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         if (favoriteService.countSizeFavoriteByChatId(chatId) > 0) {
           Optional<SendPhoto> sendPhoto = favoriteKeyboardMessage.prepareSendPhoto(
@@ -86,14 +95,32 @@ public class MessageHandler implements AbstractHandler {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
         }
         break;
-      case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
+
+        case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
+
         answer.add(Utils.prepareSendMessage(chatId, "User address here"));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
-      case Constants.KEYBOARD_STARTER_SHIPPING_COMMAND:
-        answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_SHIPPING));
-        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
-        break;
+
+      case Constants.KEYBOARD_STARTER_ORDER_COMMAND:
+
+        List<Order> orderList = orderService.findAllByChatId(chatId.toString());
+        if (orderList.size() > 0) {
+          String result = orderList.stream().map(o -> {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Order №: ")
+                    .append(o.getId())
+                    .append(", Summary: ")
+                    .append(o.getSummary())
+                    .append(", Status: ")
+                    .append(o.getStatus());
+            return builder;
+          }).collect(Collectors.joining("\n"));
+          answer.add(Utils.prepareSendMessage(chatId, result));
+        } else {
+          answer.add(Utils.prepareSendMessage(chatId,"No orders found"));
+        }
+        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
     }
     return answer;
   }

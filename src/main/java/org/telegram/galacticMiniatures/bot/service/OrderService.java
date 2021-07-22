@@ -26,7 +26,7 @@ public class OrderService {
     private final CartService cartService;
     private final UserService userService;
 
-    public Page<Order> findActiveSections(String chatId, Pageable pageable) {
+    public Page<Order> findPageOrderByCharId(String chatId, Pageable pageable) {
         return orderRepository.findByUser_ChatId(chatId, pageable);
     }
 

@@ -28,8 +28,6 @@ import java.util.*;
 @Slf4j
 public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "CART:";
-
     private final CacheService cacheService;
     private final CartService cartService;
     private final ListingWithImageService listingWithImageService;
@@ -160,9 +158,6 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

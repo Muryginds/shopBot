@@ -31,8 +31,6 @@ import java.util.Optional;
 @Slf4j
 public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "MODELS:";
-
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingWithImageService listingWithImageService;
@@ -219,9 +217,6 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")
