@@ -1,18 +1,13 @@
 package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.CartService;
 import org.telegram.galacticMiniatures.bot.service.FavoriteService;
@@ -48,7 +43,7 @@ public class MessageHandler implements AbstractHandler {
       answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
       answer.add(keyboardService.getSendMessage(
               KeyboardType.STARTER, chatId, Constants.BOT_START));
-      User user = userService.getUser(chatId).orElse(new User(message));
+      User user = userService.findUser(chatId).orElse(new User(message));
       userService.add(user);
     } else {
       answer.addAll(handleStarterMenuReply(message));

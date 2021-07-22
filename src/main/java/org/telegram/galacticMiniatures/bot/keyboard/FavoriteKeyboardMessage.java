@@ -63,7 +63,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         }
 
         Page<ListingFavorite> listingPage =
-                favoriteService.getPageFavoriteByChatId(chatId, listingPageable);
+                favoriteService.findPageFavoriteByChatId(chatId, listingPageable);
         ListingFavorite listingFavorite;
         try {
             listingFavorite = listingPage.getContent().get(0);
@@ -74,11 +74,11 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
 
         Listing listing = listingFavorite.getId().getListing();
 
-        Page<ListingWithImage> imagePage = listingWithImageService.getPageImagesActiveByListing(
+        Page<ListingWithImage> imagePage = listingWithImageService.findPageImagesActiveByListing(
                 listing, imagePageable);
 
         Page<ListingWithOption> listingWithOptionPage =
-                listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                listingWithOptionService.findPageOptionByListing(listing, optionPageable);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

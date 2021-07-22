@@ -20,7 +20,7 @@ public class SectionService {
     public List<Section> saveAllByParsedSectionCollection(Iterable<ParsedSection> collection) {
         List<Section> sections = new ArrayList<>();
         for (ParsedSection parsedSection : collection) {
-            Optional<Section> section = getByIdentifier(parsedSection.getSectionId());
+            Optional<Section> section = findByIdentifier(parsedSection.getSectionId());
             Section modifiedSection = section.
                     orElse(new Section());
             modifiedSection.setName(parsedSection.getTitle());
@@ -32,11 +32,11 @@ public class SectionService {
        return sectionRepository.saveAll(sections);
     }
 
-    public Optional<Section> getByIdentifier(Integer id) {
-        return sectionRepository.getByIdentifier(id);
+    public Optional<Section> findByIdentifier(Integer id) {
+        return sectionRepository.findByIdentifier(id);
     }
 
-    public List<Section> getActiveSections() {
+    public List<Section> findActiveSections() {
         return sectionRepository.findAllByActiveTrue();
     }
 

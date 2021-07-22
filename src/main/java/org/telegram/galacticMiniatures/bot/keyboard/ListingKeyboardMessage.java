@@ -63,7 +63,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                 break;
         }
 
-        Page<Listing> listingPage = listingService.getPageListingActiveBySectionIdentifier(
+        Page<Listing> listingPage = listingService.findPageListingActiveBySectionIdentifier(
                         searchInfo.getSectionId(), listingPageable);
         Listing listing;
         try {
@@ -74,9 +74,9 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         }
 
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesActiveByListing(listing, imagePageable);
+                listingWithImageService.findPageImagesActiveByListing(listing, imagePageable);
         Page<ListingWithOption> listingWithOptionPage =
-                listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                listingWithOptionService.findPageOptionByListing(listing, optionPageable);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();

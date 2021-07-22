@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.*;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
@@ -18,7 +17,6 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -31,12 +29,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartCallbackHandler implements AbstractHandler {
 
-    private final KeyboardService keyboardService;
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final CartKeyboardMessage cartKeyboardMessage;
     private final CartService cartService;
     private final UserService userService;
+    private final OrderService orderService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -59,21 +57,24 @@ public class CartCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND:
+
                 sendPhoto = cartKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND:
+
                 sendPhoto = cartKeyboardMessage.prepareSendPhoto(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND:
+
                 cartInfo = cacheService.get(chatId).getCartInfo();
                 pageable = cartInfo.getListingPageable();
-                pageCart = cartService.getPageCartByChatId(chatId, pageable);
+                pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 cartService.delete(listingCart);
                 answer.add(
@@ -81,7 +82,7 @@ public class CartCallbackHandler implements AbstractHandler {
                                 "Removed from cart", true, callbackQuery));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 Page<ListingCart> newPageCart =
-                        cartService.getPageCartByChatId(chatId, pageable);
+                        cartService.findPageCartByChatId(chatId, pageable);
                 if (newPageCart.getTotalElements() > 0) {
                     sendPhoto = cartKeyboardMessage.prepareSendPhoto(
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
@@ -92,9 +93,10 @@ public class CartCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_COMMAND:
+
                 cartInfo = cacheService.get(chatId).getCartInfo();
                 pageable = cartInfo.getListingPageable();
-                pageCart = cartService.getPageCartByChatId(chatId, pageable);
+                pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 Listing listing = listingCart.getId().getListing();
                 favoriteService.save(
@@ -105,9 +107,10 @@ public class CartCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_ADD_PLUS_COMMAND:
+
                 cartInfo = cacheService.get(chatId).getCartInfo();
                 pageable = cartInfo.getListingPageable();
-                pageCart = cartService.getPageCartByChatId(chatId, pageable);
+                pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
                 cartService.save(listingCart);
@@ -117,9 +120,10 @@ public class CartCallbackHandler implements AbstractHandler {
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND:
+
                 cartInfo = cacheService.get(chatId).getCartInfo();
                 pageable = cartInfo.getListingPageable();
-                pageCart = cartService.getPageCartByChatId(chatId, pageable);
+                pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 int newQuantity = listingCart.getQuantity() - 1;
                 if (newQuantity == 0) {
@@ -140,13 +144,19 @@ public class CartCallbackHandler implements AbstractHandler {
                 }
                 break;
 
+            case Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND:
+
+                orderService.createNewOrderWithListings(chatId);
+                answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
+                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+
             default:
         }
         return answer;
     }
 
     private User getUser(Message message) {
-        return userService.getUser(message.getChatId())
+        return userService.findUser(message.getChatId())
                 .orElseGet(() -> userService.add(new User(message)));
     }
 

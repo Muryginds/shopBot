@@ -6,7 +6,6 @@ import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -52,7 +51,7 @@ public class UpdateHandler {
   }
 
   private User getUser(Message message) {
-    return userService.getUser(message.getChatId())
+    return userService.findUser(message.getChatId())
             .orElseGet(() -> userService.add(new User(message)));
   }
 

@@ -106,7 +106,7 @@ public class ListingCallbackHandler implements AbstractHandler {
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
                 listingPage =
-                        listingService.getPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
+                        listingService.findPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
                     favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing, getUser(message))));
@@ -122,13 +122,13 @@ public class ListingCallbackHandler implements AbstractHandler {
 
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
-                listingPage = listingService.getPageListingActiveBySectionIdentifier(
+                listingPage = listingService.findPageListingActiveBySectionIdentifier(
                                 searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
                     Pageable optionPageable = searchInfo.getOptionPageable();
                     Page<ListingWithOption> optionPage =
-                            listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                            listingWithOptionService.findPageOptionByListing(listing, optionPageable);
                     ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
                     var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
@@ -153,7 +153,7 @@ public class ListingCallbackHandler implements AbstractHandler {
 
 
     private User getUser(Message message) {
-        return userService.getUser(message.getChatId())
+        return userService.findUser(message.getChatId())
                 .orElseGet(() -> userService.add(new User(message)));
     }
 

@@ -48,7 +48,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
             listingPageable = getPageableByScrollerType(cartInfo.getListingPageable(), scrollerType);
         }
 
-        Page<ListingCart> listingPage = cartService.getPageCartByChatId(chatId, listingPageable);
+        Page<ListingCart> listingPage = cartService.findPageCartByChatId(chatId, listingPageable);
 
         ListingCart listingCart;
         try {
@@ -60,7 +60,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
 
         Listing listing = listingCart.getId().getListing();
         String imageUrl = listingWithImageService.
-                getImageByListingIdentifier(listing.getIdentifier()).orElse("");
+                findAnyImageByListingIdentifier(listing.getIdentifier()).orElse("");
         ListingWithOption listingWithOption = listingCart.getId().getOption();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -118,7 +118,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                 Constants.KEYBOARD_CART_BUTTON_ORDER_NAME,
                 Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND));
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                "Total: " + cartService.getCartSummaryByChatId(chatId.toString()).orElse(0),
+                "Total: " + cartService.getCartSummaryByChatId(chatId).orElse(0),
                 Constants.KEYBOARD_CART_OPERATED_CALLBACK));
         rowList.add(keyboardButtonsRow4);
 
