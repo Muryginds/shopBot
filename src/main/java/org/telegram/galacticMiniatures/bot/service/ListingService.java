@@ -25,7 +25,7 @@ public class ListingService {
         List<Listing> listings = new ArrayList<>();
         for (Map.Entry<Section, List<ParsedListing>> entry : listingsMap.entrySet()) {
             for (ParsedListing parsedListing : entry.getValue()) {
-                Optional<Listing> listing = getByIdentifier(parsedListing.getId());
+                Optional<Listing> listing = findByIdentifier(parsedListing.getId());
                 Listing modifiedListing = listing.orElse(new Listing());
                 modifiedListing.setTitle(parsedListing.getTitle());
                 modifiedListing.setIdentifier(parsedListing.getId());
@@ -41,15 +41,15 @@ public class ListingService {
        return listingRepository.saveAll(listings);
     }
 
-    public Optional<Listing> getByIdentifier(Integer identifier) {
-        return listingRepository.getByIdentifier(identifier);
+    public Optional<Listing> findByIdentifier(Integer identifier) {
+        return listingRepository.findByIdentifier(identifier);
     }
 
     public Integer countSizeActiveBySectionIdentifier(Integer sectionId) {
         return listingRepository.countBySectionIdentifierAndActiveTrue(sectionId);
     }
 
-    public Page<Listing> getPageListingActiveBySectionIdentifier(Integer identifier, Pageable pageable) {
+    public Page<Listing> findPageListingActiveBySectionIdentifier(Integer identifier, Pageable pageable) {
         return listingRepository.findBySection_IdentifierAndActiveTrue(identifier, pageable);
     }
 

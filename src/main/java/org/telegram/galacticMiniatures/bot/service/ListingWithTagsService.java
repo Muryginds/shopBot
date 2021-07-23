@@ -24,12 +24,12 @@ public class ListingWithTagsService {
     public void saveAllByParsedListingCollection(Iterable<ParsedListing> collection) {
         List<ListingWithTag> listingsWithTags = new ArrayList<>();
         for (ParsedListing parsedListing : collection) {
-            Optional<Listing> listing = listingService.getByIdentifier(parsedListing.getId());
+            Optional<Listing> listing = listingService.findByIdentifier(parsedListing.getId());
             if (listing.isPresent()) {
-                List<Tag> tags = tagService.getTagsByCollection(parsedListing.getTags());
+                List<Tag> tags = tagService.findTagsByCollection(parsedListing.getTags());
                 for (Tag tag : tags) {
                     ListingWithTag.Key key = new ListingWithTag.Key(listing.get(), tag);
-                    Optional<ListingWithTag> listingWithTags = getByKey(key);
+                    Optional<ListingWithTag> listingWithTags = findByKey(key);
                     listingsWithTags.add(
                             listingWithTags.orElse(new ListingWithTag(key, LocalDateTime.now(), true)));
                 }
@@ -38,7 +38,7 @@ public class ListingWithTagsService {
         listingWithTagRepository.saveAll(listingsWithTags);
     }
 
-    public Optional<ListingWithTag> getByKey(ListingWithTag.Key key) {
+    public Optional<ListingWithTag> findByKey(ListingWithTag.Key key) {
         return listingWithTagRepository.findById(key);
     }
 }

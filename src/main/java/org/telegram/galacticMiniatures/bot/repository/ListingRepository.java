@@ -15,7 +15,7 @@ import java.util.Optional;
 @Transactional
 public interface ListingRepository extends JpaRepository<Listing, Integer> {
 
-    Optional<Listing> getByIdentifier(Integer id);
+    Optional<Listing> findByIdentifier(Integer id);
 
     Page<Listing> findBySection_IdentifierAndActiveTrue(Integer id, Pageable pageable);
 

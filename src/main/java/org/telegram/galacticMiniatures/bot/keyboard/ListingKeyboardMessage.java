@@ -31,8 +31,6 @@ import java.util.Optional;
 @Slf4j
 public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "MODELS:";
-
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingWithImageService listingWithImageService;
@@ -63,7 +61,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                 break;
         }
 
-        Page<Listing> listingPage = listingService.getPageListingActiveBySectionIdentifier(
+        Page<Listing> listingPage = listingService.findPageListingActiveBySectionIdentifier(
                         searchInfo.getSectionId(), listingPageable);
         Listing listing;
         try {
@@ -74,9 +72,9 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         }
 
         Page<ListingWithImage> imagePage =
-                listingWithImageService.getPageImagesActiveByListing(listing, imagePageable);
+                listingWithImageService.findPageImagesActiveByListing(listing, imagePageable);
         Page<ListingWithOption> listingWithOptionPage =
-                listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                listingWithOptionService.findPageOptionByListing(listing, optionPageable);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -219,9 +217,6 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

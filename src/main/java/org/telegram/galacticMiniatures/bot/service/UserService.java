@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.repository.UserRepository;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Optional;
 
@@ -13,11 +14,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public Optional<User> getUser(long chatId) {
-        return userRepository.getByChatId(String.valueOf(chatId));
+    public Optional<User> findUser(Long chatId) {
+        return userRepository.findByChatId(chatId.toString());
     }
 
     public User add(User user) {
         return userRepository.save(user);
+    }
+
+    public User getUser(Message message) {
+        return findUser(message.getChatId())
+                .orElseGet(() -> add(new User(message)));
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

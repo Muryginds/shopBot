@@ -13,6 +13,7 @@ public class KeyboardService {
 
     private final SectionsKeyboardMessage sectionsKeyboardMessage;
     private final StarterKeyboardMessage starterKeyboardMessage;
+    private final AddressKeyboardMessage addressKeyboardMessage;
     private final DefaultKeyboardMessage defaultKeyboardMessage;
 
     public SendMessage getSendMessage(KeyboardType keyboardType, long chatId, String text) {
@@ -27,6 +28,9 @@ public class KeyboardService {
                 break;
             case STARTER:
                 result = starterKeyboardMessage;
+                break;
+            case ADDRESS:
+                result = addressKeyboardMessage;
                 break;
             default:
                 result = defaultKeyboardMessage;

@@ -30,8 +30,6 @@ import java.util.*;
 @Slf4j
 public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "FAVORITES:";
-
     private final CacheService cacheService;
     private final FavoriteService favoriteService;
     private final ListingWithImageService listingWithImageService;
@@ -63,7 +61,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         }
 
         Page<ListingFavorite> listingPage =
-                favoriteService.getPageFavoriteByChatId(chatId, listingPageable);
+                favoriteService.findPageFavoriteByChatId(chatId, listingPageable);
         ListingFavorite listingFavorite;
         try {
             listingFavorite = listingPage.getContent().get(0);
@@ -74,11 +72,11 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
 
         Listing listing = listingFavorite.getId().getListing();
 
-        Page<ListingWithImage> imagePage = listingWithImageService.getPageImagesActiveByListing(
+        Page<ListingWithImage> imagePage = listingWithImageService.findPageImagesActiveByListing(
                 listing, imagePageable);
 
         Page<ListingWithOption> listingWithOptionPage =
-                listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                listingWithOptionService.findPageOptionByListing(listing, optionPageable);
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -221,9 +219,6 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

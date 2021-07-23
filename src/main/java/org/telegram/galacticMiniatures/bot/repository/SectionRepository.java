@@ -13,7 +13,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface SectionRepository extends JpaRepository<Section, Integer> {
-    Optional<Section> getByIdentifier(Integer id);
+
+    Optional<Section> findByIdentifier(Integer id);
 
     @Modifying
     @Query(value = "UPDATE sections SET active = 0 WHERE updated - (SELECT * FROM (SELECT updated FROM sections " +

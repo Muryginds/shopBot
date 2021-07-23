@@ -24,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SectionsCallbackHandler implements AbstractHandler {
 
-    private final KeyboardService keyboardService;
     private final ListingService listingService;
     private final CacheService cacheService;
     private final ListingKeyboardMessage listingKeyboardMessage;

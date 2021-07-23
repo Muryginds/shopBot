@@ -22,7 +22,4 @@ public interface ListingWithTagRepository
                   "HAVING COUNT(*) >= :tagsNum)",
           nativeQuery = true)
   List<Integer> getListMessageIdByTagIn(@Param("tags") Iterable<Tag> tags, @Param("tagsNum") Integer tagsNum);*/
-
-    @Override
-    Optional<ListingWithTag> findById(ListingWithTag.Key key);
 }

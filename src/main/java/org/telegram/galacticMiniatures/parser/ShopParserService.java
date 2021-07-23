@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ParserService {
+public class ShopParserService {
 
     private static final String SITE_URL = "https://openapi.etsy.com/v2/";
 

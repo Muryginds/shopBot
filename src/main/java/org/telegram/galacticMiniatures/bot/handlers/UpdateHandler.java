@@ -6,7 +6,6 @@ import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -28,38 +27,30 @@ public class UpdateHandler {
     List<PartialBotApiMethod<?>> result = new ArrayList<>();
     Optional <AbstractHandler> handler = Optional.empty();
     BotApiObject returnBotApiObject = null;
-    Message message = new Message();
-
 
     if(update.hasCallbackQuery()) {
       CallbackQuery callbackQuery = update.getCallbackQuery();
       handler = getHandler(callbackQuery.getData());
-      message = update.getCallbackQuery().getMessage();
       returnBotApiObject = callbackQuery;
     } else if(update.hasMessage()) {
-      if (update.getMessage().hasText()) {
-        handler = getHandler(BotState.WORKING);
-        message = update.getMessage();
+      Message message = update.getMessage();
+      if (message.hasText()) {
+        User user = userService.getUser(message);
+        handler = getHandler(user.getBotState());
         returnBotApiObject = message;
       }
     }
 
-    if (handler.isPresent() && returnBotApiObject != null) {
+    if (handler.isPresent()) {
       result = handler.get().getAnswerList(returnBotApiObject);
     }
 
     return result;
   }
 
-  private User getUser(Message message) {
-    return userService.getUser(message.getChatId())
-            .orElseGet(() -> userService.add(new User(message)));
-  }
-
   private Optional<AbstractHandler> getHandler(BotState botState) {
     return handlers.stream()
-        .filter(h -> h.getOperatedBotState() != null)
-        .filter(h -> h.getOperatedBotState().equals(botState))
+        .filter(h -> h.getOperatedBotState().contains(botState))
         .findAny();
   }
 

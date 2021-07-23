@@ -2,11 +2,9 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.*;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
@@ -101,7 +99,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
                 pageable = favoriteInfo.getListingPageable();
-                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId, pageable);
+                pageFavorite = favoriteService.findPageFavoriteByChatId(chatId, pageable);
 
                 try {
                     listingFavorite = pageFavorite.getContent().get(0);
@@ -128,16 +126,16 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
                 pageable = favoriteInfo.getListingPageable();
-                pageFavorite = favoriteService.getPageFavoriteByChatId(chatId, pageable);
+                pageFavorite = favoriteService.findPageFavoriteByChatId(chatId, pageable);
                 try {
                     listingFavorite = pageFavorite.getContent().get(0);
                     Listing listing = listingFavorite.getId().getListing();
                     Pageable optionPageable = favoriteInfo.getOptionPageable();
                     Page<ListingWithOption> optionPage = listingWithOptionService.
-                            getPageOptionByListing(listing, optionPageable);
+                            findPageOptionByListing(listing, optionPageable);
                     ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
-                    var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
+                    var key = new ListingCart.Key(listing, userService.getUser(message), listingWithOption);
                     Optional<ListingCart> optionalListingCart = cartService.findById(key);
                     ListingCart listingCart = optionalListingCart.orElse(new ListingCart(key,0));
                     listingCart.setQuantity(listingCart.getQuantity() + 1);
@@ -151,15 +149,8 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                 }
 
                 break;
-
-            default:
         }
         return answer;
-    }
-
-    private User getUser(Message message) {
-        return userService.getUser(message.getChatId())
-                .orElseGet(() -> userService.add(new User(message)));
     }
 
     @Override

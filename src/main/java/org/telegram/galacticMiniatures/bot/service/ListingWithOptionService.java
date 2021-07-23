@@ -58,7 +58,7 @@ public class ListingWithOptionService {
                 }
 
                 Optional<ListingWithOption> listingWithOption =
-                        getByListingAndParsedOption(entry.getKey(),
+                        findByListingAndParsedOption(entry.getKey(),
                                 firstOptionName, firstOptionValue, secondOptionName, secondOptionValue);
                 ListingWithOption modifiedListingWithOption =
                         listingWithOption.orElse(new ListingWithOption(entry.getKey(),
@@ -72,7 +72,7 @@ public class ListingWithOptionService {
         listingWithOptionRepository.saveAll(list);
     }
 
-    public Optional<ListingWithOption> getByListingAndParsedOption(
+    public Optional<ListingWithOption> findByListingAndParsedOption(
             Listing listing, String firstOptionName, String firstOptionValue,
             String secondOptionName, String secondOptionValue) {
         return listingWithOptionRepository.
@@ -80,7 +80,7 @@ public class ListingWithOptionService {
                         listing, firstOptionName, firstOptionValue, secondOptionName, secondOptionValue);
     }
 
-    public Page<ListingWithOption> getPageOptionByListing(Listing listing, Pageable pageable) {
+    public Page<ListingWithOption> findPageOptionByListing(Listing listing, Pageable pageable) {
         return listingWithOptionRepository.findByListingAndActiveTrue(listing, pageable);
     }
 

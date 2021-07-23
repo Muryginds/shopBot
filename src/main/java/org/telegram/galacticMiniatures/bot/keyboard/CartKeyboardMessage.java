@@ -28,8 +28,6 @@ import java.util.*;
 @Slf4j
 public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
-    private static final String HEADER = "CART:";
-
     private final CacheService cacheService;
     private final CartService cartService;
     private final ListingWithImageService listingWithImageService;
@@ -48,7 +46,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
             listingPageable = getPageableByScrollerType(cartInfo.getListingPageable(), scrollerType);
         }
 
-        Page<ListingCart> listingPage = cartService.getPageCartByChatId(chatId, listingPageable);
+        Page<ListingCart> listingPage = cartService.findPageCartByChatId(chatId, listingPageable);
 
         ListingCart listingCart;
         try {
@@ -60,7 +58,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
 
         Listing listing = listingCart.getId().getListing();
         String imageUrl = listingWithImageService.
-                getImageByListingIdentifier(listing.getIdentifier()).orElse("");
+                findAnyImageByListingIdentifier(listing.getIdentifier()).orElse("");
         ListingWithOption listingWithOption = listingCart.getId().getOption();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -118,7 +116,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                 Constants.KEYBOARD_CART_BUTTON_ORDER_NAME,
                 Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND));
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                "Total: " + cartService.getCartSummaryByChatId(chatId.toString()).orElse(0),
+                "Total: " + cartService.getCartSummaryByChatId(chatId).orElse(0),
                 Constants.KEYBOARD_CART_OPERATED_CALLBACK));
         rowList.add(keyboardButtonsRow4);
 
@@ -160,9 +158,6 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
         }
 
         StringBuilder caption = new StringBuilder()
-                .append("<b>")
-                .append(HEADER)
-                .append("</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

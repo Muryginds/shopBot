@@ -106,10 +106,11 @@ public class ListingCallbackHandler implements AbstractHandler {
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
                 listingPage =
-                        listingService.getPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
+                        listingService.findPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
-                    favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing, getUser(message))));
+                    favoriteService.save(new ListingFavorite(new ListingFavorite.Key(listing,
+                            userService.getUser(message))));
                     answer.add(Utils.prepareAnswerCallbackQuery(
                             "Added to favorite", true, callbackQuery));
                 } catch (IndexOutOfBoundsException ex) {
@@ -122,16 +123,16 @@ public class ListingCallbackHandler implements AbstractHandler {
 
                 searchInfo = cacheService.get(chatId).getSearchInfo();
                 pageable = searchInfo.getListingPageable();
-                listingPage = listingService.getPageListingActiveBySectionIdentifier(
+                listingPage = listingService.findPageListingActiveBySectionIdentifier(
                                 searchInfo.getSectionId(), pageable);
                 try {
                     listing = listingPage.getContent().get(0);
                     Pageable optionPageable = searchInfo.getOptionPageable();
                     Page<ListingWithOption> optionPage =
-                            listingWithOptionService.getPageOptionByListing(listing, optionPageable);
+                            listingWithOptionService.findPageOptionByListing(listing, optionPageable);
                     ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
-                    var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
+                    var key = new ListingCart.Key(listing, userService.getUser(message), listingWithOption);
                     Optional<ListingCart> optionalListingCart = cartService.findById(key);
                     ListingCart listingCart = optionalListingCart.orElse(new ListingCart(key,0));
                     listingCart.setQuantity(listingCart.getQuantity() + 1);
@@ -144,17 +145,8 @@ public class ListingCallbackHandler implements AbstractHandler {
                             Constants.ERROR_RESTART_MENU, true, callbackQuery));
                 }
                 break;
-
-            default:
         }
         return answer;
-    }
-
-
-
-    private User getUser(Message message) {
-        return userService.getUser(message.getChatId())
-                .orElseGet(() -> userService.add(new User(message)));
     }
 
     @Override

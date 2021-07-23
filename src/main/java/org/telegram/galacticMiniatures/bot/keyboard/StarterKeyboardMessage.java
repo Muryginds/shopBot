@@ -26,13 +26,13 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
     keyboard.add(keyboardRow0);
 
     KeyboardRow keyboardRow1 = new KeyboardRow();
-    keyboardRow1.addAll(List.of(Constants.KEYBOARD_STARTER_ABOUT_COMMAND,
-            Constants.KEYBOARD_STARTER_FAVORITE_COMMAND));
+    keyboardRow1.addAll(List.of(Constants.KEYBOARD_STARTER_ADDRESS_COMMAND,
+            Constants.KEYBOARD_STARTER_ORDER_COMMAND));
     keyboard.add(keyboardRow1);
 
     KeyboardRow keyboardRow2 = new KeyboardRow();
-    keyboardRow2.addAll(List.of(Constants.KEYBOARD_STARTER_ADDRESS_COMMAND,
-            Constants.KEYBOARD_STARTER_SHIPPING_COMMAND));
+    keyboardRow2.addAll(List.of(Constants.KEYBOARD_STARTER_INFORMATION_COMMAND,
+            Constants.KEYBOARD_STARTER_FAVORITE_COMMAND));
     keyboard.add(keyboardRow2);
 
     keyboardMarkup.setKeyboard(keyboard);

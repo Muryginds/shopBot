@@ -25,7 +25,7 @@ public class ListingWithImageService {
         for (Map.Entry<Listing, List<ParsedImage>> entry : listingsMap.entrySet()) {
             for (ParsedImage parsedImage : entry.getValue()) {
                 Optional<ListingWithImage> listingWithImage =
-                        getByListingAndImageUrl(entry.getKey(), parsedImage.getImageUrl());
+                        findByListingAndImageUrl(entry.getKey(), parsedImage.getImageUrl());
                 ListingWithImage modifiedListingWithImage =
                         listingWithImage.orElse(new ListingWithImage(entry.getKey(),
                                 parsedImage.getImageUrl(), null, null));
@@ -37,20 +37,17 @@ public class ListingWithImageService {
         listingWithImageRepository.saveAll(list);
     }
 
-    public Optional<ListingWithImage> getByListingAndImageUrl(Listing listing, String url) {
+    public Optional<ListingWithImage> findByListingAndImageUrl(Listing listing, String url) {
         return listingWithImageRepository.findByListingAndImageUrl(listing, url);
     }
 
-    public List<ListingWithImage> getActiveByListingIdentifier(Integer listingId) {
-        return listingWithImageRepository.findAllByListing_IdentifierAndActiveTrue(listingId);
+    public Optional<String> findAnyImageByListingIdentifier(Integer listingId) {
+        return listingWithImageRepository.findAllByListing_IdentifierAndActiveTrue(listingId).stream()
+                .map(ListingWithImage::getImageUrl)
+                .findAny();
     }
 
-    public Optional<String> getImageByListingIdentifier(Integer listingId) {
-        return getActiveByListingIdentifier(listingId).stream()
-                .map(ListingWithImage::getImageUrl).findAny();
-    }
-
-    public Page<ListingWithImage> getPageImagesActiveByListing(Listing listing, Pageable pageable) {
+    public Page<ListingWithImage> findPageImagesActiveByListing(Listing listing, Pageable pageable) {
         return listingWithImageRepository.findByListingAndActiveTrue(listing, pageable);
     }
 
