@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_info")
@@ -20,6 +19,9 @@ public class UserInfo extends AbstractEntity {
 
     @Column(name = "full_name")
     String fullName;
+
+    @ManyToOne
+    Country country;
 
     @Column(name = "town")
     String town;

@@ -26,7 +26,7 @@ public interface ListingWithImageRepository
 
     @Modifying
     @Query(value = "UPDATE listings_images SET active = 0 WHERE updated - " +
-            "(SELECT * FROM (SELECT updated FROM listings_images ORDER BY updated DESC LIMIT 1) as upd) " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM listings_images) as upd) " +
             "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
 }

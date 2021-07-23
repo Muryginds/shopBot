@@ -23,7 +23,7 @@ public interface ListingRepository extends JpaRepository<Listing, Integer> {
 
     @Modifying
     @Query(value = "UPDATE listings SET active = 0 WHERE updated - " +
-            "(SELECT * FROM (SELECT updated FROM listings ORDER BY updated DESC LIMIT 1) as upd) " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM listings) as upd) " +
             "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
 }

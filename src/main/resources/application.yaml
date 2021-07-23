@@ -5,7 +5,7 @@ etsy:
   shopId: ${ETSY_SHOP_ID}
   apiKey: ${ETSY_API_KEY}
 schedule:
-  sectionParsePeriod: 12000000
+  sectionParsePeriod: PT6H
   entityExpirationTime: 20000
 spring:
   datasource:

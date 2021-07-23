@@ -17,8 +17,9 @@ public interface SectionRepository extends JpaRepository<Section, Integer> {
     Optional<Section> findByIdentifier(Integer id);
 
     @Modifying
-    @Query(value = "UPDATE sections SET active = 0 WHERE updated - (SELECT * FROM (SELECT updated FROM sections " +
-            "ORDER BY updated DESC LIMIT 1) as upd) < -?1", nativeQuery = true)
+    @Query(value = "UPDATE sections SET active = 0 WHERE updated - " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM sections) as upd) " +
+            "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
 
     List<Section> findAllByActiveTrue();

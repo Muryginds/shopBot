@@ -4,14 +4,6 @@ final public class Constants {
 
     private Constants() {}
 
-
-    public static final String QUERY_ADDRESS_QUESTION_1 = "Type your full name correctly. Only letters allowed";
-    public static final String QUERY_ADDRESS_QUESTION_2 = "Type your town correctly. Only letters allowed";
-    public static final String QUERY_ADDRESS_QUESTION_3 = "Type your address";
-    public static final String QUERY_ADDRESS_QUESTION_4 =
-            "Type your post index correctly. Only letters and numbers allowed";
-    public static final String QUERY_ADDRESS_QUESTION_5 = "Type your contacts (vk/phone)";
-
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -31,8 +23,14 @@ final public class Constants {
     public static final String KEYBOARD_ADDRESS_OPERATED_CALLBACK = "AddressCallback";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_NAME = "\u270F  Edit";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_COMMAND = "AddressCallbackEdit";
-    public static final String KEYBOARD_ADDRESS_BUTTON_CANCEL_NAME = "\u2716  Cancel";
-    public static final String KEYBOARD_ADDRESS_BUTTON_CANCEL_COMMAND = "AddressCallbackCancel";
+    public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_COMMAND = "AddressCallbackClose";
+    public static final String QUERY_ADDRESS_QUESTION_1 = "Type your full name correctly. Only letters allowed";
+    public static final String QUERY_ADDRESS_QUESTION_2 = "Type your town correctly. Only letters allowed";
+    public static final String QUERY_ADDRESS_QUESTION_3 = "Type your address";
+    public static final String QUERY_ADDRESS_QUESTION_4 =
+            "Type your post index correctly. Only letters and numbers allowed";
+    public static final String QUERY_ADDRESS_QUESTION_5 = "Type your contacts (vk/phone)";
 
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";

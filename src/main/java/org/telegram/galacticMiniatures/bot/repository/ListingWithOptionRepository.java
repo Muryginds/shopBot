@@ -28,7 +28,7 @@ public interface ListingWithOptionRepository
 
     @Modifying
     @Query(value = "UPDATE listings_options SET active = 0 WHERE updated - " +
-            "(SELECT * FROM (SELECT updated FROM listings_options ORDER BY updated DESC LIMIT 1) as upd) " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM listings_options) as upd) " +
             "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
 }

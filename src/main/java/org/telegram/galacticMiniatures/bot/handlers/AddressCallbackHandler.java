@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import org.telegram.galacticMiniatures.bot.enums.BotState;
+import org.telegram.galacticMiniatures.bot.model.Country;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.model.UserInfo;
+import org.telegram.galacticMiniatures.bot.service.CountryService;
 import org.telegram.galacticMiniatures.bot.service.UserInfoService;
 import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -25,6 +27,7 @@ public class AddressCallbackHandler implements AbstractHandler {
 
     private final UserService userService;
     private final UserInfoService userInfoService;
+    private final CountryService countryService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -57,7 +60,10 @@ public class AddressCallbackHandler implements AbstractHandler {
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 if (text.matches("[A-zА-я\\s-]+")) {
-                    userInfo.ifPresent(u -> {u.setFullName(text); userInfoService.save(u);});
+                    userInfo.ifPresent(u -> {u.setFullName(text);
+                        Optional<Country> optional = countryService.findByCountryId(181);
+                        optional.ifPresent(u::setCountry);
+                        userInfoService.save(u);});
                     user.setBotState(BotState.FILLING_TOWN);
                     userService.save(user);
                     answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_2));
@@ -134,7 +140,7 @@ public class AddressCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_1));
                 break;
 
-            case Constants.KEYBOARD_ADDRESS_BUTTON_CANCEL_COMMAND:
+            case Constants.KEYBOARD_ADDRESS_BUTTON_CLOSE_COMMAND:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 break;
