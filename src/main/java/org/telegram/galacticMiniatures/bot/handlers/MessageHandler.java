@@ -8,9 +8,7 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.model.Order;
-import org.telegram.galacticMiniatures.bot.model.OrderedListing;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -98,7 +96,8 @@ public class MessageHandler implements AbstractHandler {
 
         case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
 
-        answer.add(Utils.prepareSendMessage(chatId, "User address here"));
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.ADDRESS, chatId, Constants.BOT_ADDRESS_REQUEST));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
 
@@ -126,7 +125,7 @@ public class MessageHandler implements AbstractHandler {
   }
 
   @Override
-  public BotState getOperatedBotState() {
-    return BotState.WORKING;
+  public List<BotState> getOperatedBotState() {
+    return List.of(BotState.WORKING);
   }
 }

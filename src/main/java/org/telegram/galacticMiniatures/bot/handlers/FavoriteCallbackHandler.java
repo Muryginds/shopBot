@@ -135,7 +135,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                             findPageOptionByListing(listing, optionPageable);
                     ListingWithOption listingWithOption = optionPage.getContent().get(0);
 
-                    var key = new ListingCart.Key(listing, getUser(message), listingWithOption);
+                    var key = new ListingCart.Key(listing, userService.getUser(message), listingWithOption);
                     Optional<ListingCart> optionalListingCart = cartService.findById(key);
                     ListingCart listingCart = optionalListingCart.orElse(new ListingCart(key,0));
                     listingCart.setQuantity(listingCart.getQuantity() + 1);
@@ -149,15 +149,8 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                 }
 
                 break;
-
-            default:
         }
         return answer;
-    }
-
-    private User getUser(Message message) {
-        return userService.findUser(message.getChatId())
-                .orElseGet(() -> userService.add(new User(message)));
     }
 
     @Override

@@ -2,7 +2,9 @@ package org.telegram.galacticMiniatures.bot.enums;
 
 public enum BotState {
   WORKING,
-  NONE,
-  ADDING_TO_CART,
-  EDITING_TAGS
+  FILLING_FULL_NAME,
+  FILLING_TOWN,
+  FILLING_ADDRESS,
+  FILLING_POST_INDEX,
+  FILLING_CONTACTS
 }

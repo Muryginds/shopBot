@@ -8,10 +8,7 @@ import org.telegram.galacticMiniatures.bot.cache.*;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.Listing;
-import org.telegram.galacticMiniatures.bot.model.ListingCart;
-import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
-import org.telegram.galacticMiniatures.bot.model.User;
+import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
@@ -35,6 +32,7 @@ public class CartCallbackHandler implements AbstractHandler {
     private final CartService cartService;
     private final UserService userService;
     private final OrderService orderService;
+    private final UserInfoService userInfoService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -101,7 +99,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 Listing listing = listingCart.getId().getListing();
                 favoriteService.save(
                         new ListingFavorite(
-                                new ListingFavorite.Key(listing, getUser(message))));
+                                new ListingFavorite.Key(listing, userService.getUser(message))));
                 answer.add(
                         Utils.prepareAnswerCallbackQuery("Added to favorite", true, callbackQuery));
                 break;
@@ -146,25 +144,24 @@ public class CartCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND:
 
-                if (cartService.countSizeCartByChatId(chatId) > 0) {
+                Optional<UserInfo> userInfo = userInfoService.findByUser(
+                        userService.findUser(chatId).orElse(new User(message)));
+                String replyText;
+                if (userInfo.isEmpty()) {
+                    replyText = "Please fill in Address information before ordering";
+                } else if (cartService.countSizeCartByChatId(chatId) > 0) {
                     orderService.createNewOrderWithListings(chatId);
-                    answer.add(Utils.prepareSendMessage(chatId, "Gratz! Order created. " +
-                            "Please fill you address and read information" +
-                            " about shipping cost carefully"));
+                    replyText = "Gratz! Order created. " +
+                            "Please read information about shipping cost carefully";
                     answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
                 } else {
-                    answer.add(Utils.prepareSendMessage(chatId, "Cart is empty, nothing to order"));
+                    replyText = "Cart is empty, nothing to order";
                 }
+                answer.add(Utils.prepareSendMessage(chatId, replyText));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
 
-            default:
         }
         return answer;
-    }
-
-    private User getUser(Message message) {
-        return userService.findUser(message.getChatId())
-                .orElseGet(() -> userService.add(new User(message)));
     }
 
     @Override
