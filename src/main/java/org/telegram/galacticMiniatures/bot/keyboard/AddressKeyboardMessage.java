@@ -40,8 +40,6 @@ public class AddressKeyboardMessage implements AbstractKeyboardMessage {
                         .append(userInfo.getAddress())
                         .append("\nPost index: ")
                         .append(userInfo.getPostIndex())
-                        .append("\nContacts: ")
-                        .append(userInfo.getContacts())
                         .toString();
             }
         }
@@ -58,8 +56,8 @@ public class AddressKeyboardMessage implements AbstractKeyboardMessage {
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         keyboardButtonsRow.add(createInlineKeyboardButton(Constants.KEYBOARD_ADDRESS_BUTTON_EDIT_NAME,
                 Constants.KEYBOARD_ADDRESS_BUTTON_EDIT_COMMAND));
-        keyboardButtonsRow.add(createInlineKeyboardButton(Constants.KEYBOARD_ADDRESS_BUTTON_CANCEL_NAME,
-                Constants.KEYBOARD_ADDRESS_BUTTON_CANCEL_COMMAND));
+        keyboardButtonsRow.add(createInlineKeyboardButton(Constants.KEYBOARD_ADDRESS_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_ADDRESS_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow);
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;

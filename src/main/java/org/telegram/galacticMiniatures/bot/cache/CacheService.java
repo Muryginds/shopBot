@@ -1,7 +1,6 @@
 package org.telegram.galacticMiniatures.bot.cache;
 
 import org.springframework.stereotype.Service;
-import org.telegram.galacticMiniatures.bot.enums.BotState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +29,15 @@ public class CacheService {
         cache.put(chatId, chatInfo);
     }
 
-    public void add(long chatId, BotState botState) {
+    public void add(long chatId, OrderedListingsInfo orderedListingsInfo) {
         ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
-        chatInfo.setBotState(botState);
+        chatInfo.setOrderedListingsInfo(orderedListingsInfo);
+        cache.put(chatId, chatInfo);
+    }
+
+    public void add(long chatId, OrderInfo orderInfo) {
+        ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
+        chatInfo.setOrderInfo(orderInfo);
         cache.put(chatId, chatInfo);
     }
 

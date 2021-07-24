@@ -52,7 +52,7 @@ public final class Utils {
     return answerCallbackQuery;
   }
 
-  public static List<PartialBotApiMethod<?>> handleOptionalSendPhoto(Optional<SendPhoto> sendPhoto,
+  public static List<PartialBotApiMethod<?>> handleOptionalSendPhoto(Optional<PartialBotApiMethod<?>> sendPhoto,
                                                                      CallbackQuery callbackQuery) {
     List<PartialBotApiMethod<?>> answer = new ArrayList<>();
     Message message = callbackQuery.getMessage();

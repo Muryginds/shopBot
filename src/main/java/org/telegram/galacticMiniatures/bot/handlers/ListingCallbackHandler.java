@@ -48,7 +48,7 @@ public class ListingCallbackHandler implements AbstractHandler {
         Pageable pageable;
         Page<Listing> listingPage;
         Listing listing;
-        Optional<SendPhoto> sendPhoto;
+        Optional<PartialBotApiMethod<?>> sendPhoto;
 
         switch (data) {
             case Constants.KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND:
@@ -61,42 +61,42 @@ public class ListingCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND:
 
-                sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;

@@ -5,20 +5,27 @@ final public class Constants {
     private Constants() {}
 
 
-    public static final String QUERY_ADDRESS_QUESTION_1 = "Type your full name correctly. Only letters allowed";
-    public static final String QUERY_ADDRESS_QUESTION_2 = "Type your town correctly. Only letters allowed";
-    public static final String QUERY_ADDRESS_QUESTION_3 = "Type your address";
-    public static final String QUERY_ADDRESS_QUESTION_4 =
-            "Type your post index correctly. Only letters and numbers allowed";
-    public static final String QUERY_ADDRESS_QUESTION_5 = "Type your contacts (vk/phone)";
-
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
     private static final String NEXT = "\u276F";
     private static final String PREVIOUS = "\u276E";
 
-    public static final String BOT_START_COMMAND = "/start";
+    public static final String KEYBOARD_ORDER_HEADER = "\uD83D\uDC34  Orders";
+    public static final String KEYBOARD_ORDER_OPERATED_CALLBACK = "OrderCallback";
+    public static final String KEYBOARD_ORDER_BUTTON_CLOSE_COMMAND = "OrderCallbackClose";
+    public static final String KEYBOARD_ORDER_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_ORDER_BUTTON_NEXT_COMMAND = "OrderCallbackNext";
+    public static final String KEYBOARD_ORDER_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND = "OrderCallbackPrevious";
+    public static final String KEYBOARD_ORDER_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND = "OrderCallbackCancelOrder";
+    public static final String KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_NAME = "Cancel";
+    public static final String KEYBOARD_ORDER_BUTTON_EDIT_COMMAND = "OrderCallbackEditOrder";
+    public static final String KEYBOARD_ORDER_BUTTON_EDIT_NAME = "Edit";
+    public static final String KEYBOARD_ORDER_BUTTON_TRACK_COMMAND = "OrderCallbackTrack";
+    public static final String KEYBOARD_ORDER_BUTTON_TRACK_NAME = "Track";
+
     public static final String KEYBOARD_STARTER_SHOP_COMMAND = "\uD83E\uDDD9  Магазин";
     public static final String KEYBOARD_STARTER_INFORMATION_COMMAND = "\uD83D\uDCDC  Информация";
     public static final String KEYBOARD_STARTER_ADDRESS_COMMAND = "\uD83C\uDFF0  Адрес";
@@ -31,8 +38,12 @@ final public class Constants {
     public static final String KEYBOARD_ADDRESS_OPERATED_CALLBACK = "AddressCallback";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_NAME = "\u270F  Edit";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_COMMAND = "AddressCallbackEdit";
-    public static final String KEYBOARD_ADDRESS_BUTTON_CANCEL_NAME = "\u2716  Cancel";
-    public static final String KEYBOARD_ADDRESS_BUTTON_CANCEL_COMMAND = "AddressCallbackCancel";
+    public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_COMMAND = "AddressCallbackClose";
+    public static final String QUERY_ADDRESS_QUESTION_1 = "\uD83E\uDDD9  Enter your full name";
+    public static final String QUERY_ADDRESS_QUESTION_2 = "\uD83E\uDDD9  Enter your town";
+    public static final String QUERY_ADDRESS_QUESTION_3 = "\uD83E\uDDD9  Enter your address";
+    public static final String QUERY_ADDRESS_QUESTION_4 = "\uD83E\uDDD9  Enter your post index";
 
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";
@@ -101,6 +112,7 @@ final public class Constants {
     public static final String KEYBOARD_SECTIONS_BUTTON_CLOSE_NAME = CLOSE;
 
     public static final String BOT_START = "Добро пожаловать! Этот бот магазина 3Д моделек";
+    public static final String BOT_START_COMMAND = "/start";
     public static final String BOT_ABOUT = "This bot represents GalacticMiniatures store";
     public static final String BOT_ADDRESS_REQUEST = "Вы не заполнили адрес доставки. Пожалуйста сделайте это";
 

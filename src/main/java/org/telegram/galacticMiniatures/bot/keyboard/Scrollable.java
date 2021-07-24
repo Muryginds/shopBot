@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public interface Scrollable {
 
-    Optional<SendPhoto> prepareSendPhoto(Long chatId, ScrollerType scrollerType, ScrollerObjectType scrollerObjectType);
+    Optional<PartialBotApiMethod<?>> prepareScrollingMessage(Long chatId, ScrollerType scrollerType, ScrollerObjectType scrollerObjectType);
 
     default Pageable getPageableByScrollerType(Pageable pageable, ScrollerType scrollerType) {
         Pageable newPageable;
@@ -51,7 +52,7 @@ public interface Scrollable {
         return newPageable;
     }
 
-    default Optional<SendPhoto> getSendPhoto(Long chatId, InlineKeyboardMarkup keyboardMarkup, StringBuilder optionsText, InputFile inputFile) {
+    default Optional<PartialBotApiMethod<?>> getSendPhoto(Long chatId, InlineKeyboardMarkup keyboardMarkup, StringBuilder optionsText, InputFile inputFile) {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(inputFile);
         sendPhoto.setChatId(chatId.toString());

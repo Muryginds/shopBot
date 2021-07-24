@@ -52,7 +52,7 @@ public class Bot extends TelegramLongPollingBot {
       Message message =
               update.getMessage() == null ? update.getCallbackQuery().getMessage() : update.getMessage();
       long chatId = message.getChatId();
-      log.error("Error while executing message for chatId: " + chatId, e);
+      log.error("Error while executing message for chatId: " + chatId + ". " + e.getMessage());
     }
   }
 }

@@ -1,5 +1,6 @@
 package org.telegram.galacticMiniatures.parser;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.telegram.galacticMiniatures.parser.entity.*;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,11 +24,13 @@ import java.util.stream.Collectors;
 public class ShopParserService {
 
     private static final String SITE_URL = "https://openapi.etsy.com/v2/";
+    private static final String FILE_COUNTRIES = "src/main/resources/countries.json";
 
     private final SectionService sectionService;
     private final ListingService listingService;
     private final ListingWithImageService listingWithImageService;
     private final ListingWithOptionService listingWithOptionService;
+    private final CountryService countryService;
     //private final TagService tagService;
     //private final ListingWithTagsService listingWithTagsService;
 
@@ -51,14 +55,26 @@ public class ShopParserService {
         // parseListingsWithTags();
         makeExpiredEntitiesNotActive();
 
+//        oneTimeCountyParser();
     }
 
-    private void makeExpiredEntitiesNotActive() {
-        listingWithOptionService.modifyExpiredEntities(expirationTime);
-        listingWithImageService.modifyExpiredEntities(expirationTime);
-        listingService.modifyExpiredEntities(expirationTime);
-        sectionService.modifyExpiredEntities(expirationTime);
+    private void oneTimeCountyParser() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<ParsedCountry> resultList = null;
+        File file = Paths.get(FILE_COUNTRIES).toFile();
 
+        try {
+            resultList = mapper.readValue(file, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            log.error("Cant read file Countries. " + e.getMessage());
+        }
+        if (resultList != null) {
+            countryService.saveAllParsedCountries(resultList);
+            log.info("Task: COUNTRIES saved to DB");
+        }
+
+        log.info("Task: Country parser finished");
     }
 
     private void parseSections() {
@@ -143,6 +159,7 @@ public class ShopParserService {
 //        log.info("Scheduled task: LISTINGS WITH TAGS saved to DB");
 //        log.info("Scheduled task: LISTINGS WITH TAGS parser finished");
 //    }
+
     private void parseListingImages() {
         ObjectMapper mapper = new ObjectMapper();
         Map<Listing, List<ParsedImage>> images = new HashMap<>();
@@ -175,7 +192,6 @@ public class ShopParserService {
 
         log.info("Scheduled task: LISTING IMAGES parser finished");
     }
-
     private void parseListingOptions() {
         ObjectMapper mapper = new ObjectMapper();
         Map<Listing, List<ParsedOption>> options = new HashMap<>();
@@ -210,5 +226,12 @@ public class ShopParserService {
         }
 
         log.info("Scheduled task: LISTING OPTIONS parser finished");
+    }
+
+    private void makeExpiredEntitiesNotActive() {
+        listingWithOptionService.modifyExpiredEntities(expirationTime);
+        listingWithImageService.modifyExpiredEntities(expirationTime);
+        listingService.modifyExpiredEntities(expirationTime);
+        sectionService.modifyExpiredEntities(expirationTime);
     }
 }
