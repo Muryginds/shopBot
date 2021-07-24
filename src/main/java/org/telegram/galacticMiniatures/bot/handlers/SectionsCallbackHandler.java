@@ -7,7 +7,6 @@ import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.service.KeyboardService;
 import org.telegram.galacticMiniatures.bot.service.ListingService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
@@ -44,7 +43,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
             if (listingService.countSizeActiveBySectionIdentifier(sectionId) > 0) {
                 SearchInfo searchInfo = new SearchInfo(sectionId);
                 cacheService.add(chatId, searchInfo);
-                Optional<SendPhoto> sendPhoto = listingKeyboardMessage.prepareSendPhoto(
+                Optional<PartialBotApiMethod<?>> sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
             } else {

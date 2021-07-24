@@ -59,30 +59,22 @@ public class AddressCallbackHandler implements AbstractHandler {
             case FILLING_FULL_NAME:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                if (text.matches("[A-zА-я\\s-]+")) {
-                    userInfo.ifPresent(u -> {u.setFullName(text);
-                        Optional<Country> optional = countryService.findByCountryId(181);
-                        optional.ifPresent(u::setCountry);
-                        userInfoService.save(u);});
-                    user.setBotState(BotState.FILLING_TOWN);
-                    userService.save(user);
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_2));
-                } else {
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_1));
-                }
+                userInfo.ifPresent(u -> {u.setFullName(text);
+                    Optional<Country> optional = countryService.findByCountryId(181);
+                    optional.ifPresent(u::setCountry);
+                    userInfoService.save(u);});
+                user.setBotState(BotState.FILLING_TOWN);
+                userService.save(user);
+                answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_2));
                 break;
 
             case FILLING_TOWN:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                if (text.matches("[A-zА-я\\s-]+")) {
-                    userInfo.ifPresent(u -> {u.setTown(text); userInfoService.save(u);});
-                    user.setBotState(BotState.FILLING_ADDRESS);
-                    userService.save(user);
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_3));
-                } else {
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_2));
-                }
+                userInfo.ifPresent(u -> {u.setTown(text); userInfoService.save(u);});
+                user.setBotState(BotState.FILLING_ADDRESS);
+                userService.save(user);
+                answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_3));
                 break;
 
             case FILLING_ADDRESS:
@@ -97,20 +89,7 @@ public class AddressCallbackHandler implements AbstractHandler {
             case FILLING_POST_INDEX:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                if (text.matches("[\\w\\s-]+")) {
-                    userInfo.ifPresent(u -> {u.setPostIndex(text); userInfoService.save(u);});
-                    user.setBotState(BotState.FILLING_CONTACTS);
-                    userService.save(user);
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_5));
-                } else {
-                    answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_4));
-                }
-                break;
-
-            case FILLING_CONTACTS:
-
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                userInfo.ifPresent(u -> {u.setContacts(text); userInfoService.save(u);});
+                userInfo.ifPresent(u -> {u.setPostIndex(text); userInfoService.save(u);});
                 user.setBotState(BotState.WORKING);
                 userService.save(user);
                 answer.add(Utils.prepareSendMessage(chatId, "Address is set!"));

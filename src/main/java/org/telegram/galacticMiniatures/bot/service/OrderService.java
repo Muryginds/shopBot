@@ -3,6 +3,7 @@ package org.telegram.galacticMiniatures.bot.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
@@ -26,8 +27,8 @@ public class OrderService {
     private final CartService cartService;
     private final UserService userService;
 
-    public Page<Order> findPageOrderByCharId(String chatId, Pageable pageable) {
-        return orderRepository.findByUser_ChatId(chatId, pageable);
+    public Page<Order> findPageOrderByChatId(Long chatId, Pageable pageable) {
+        return orderRepository.findByUser_ChatId(chatId.toString(), pageable);
     }
 
     public Optional<Order> findById(Integer id) {
@@ -35,7 +36,7 @@ public class OrderService {
     }
 
     public List<Order> findAllByChatId(String chatId){
-        return orderRepository.findAllByUser_ChatId(chatId);
+        return orderRepository.findAllByUser_ChatId(chatId, Sort.by("created").descending());
     }
 
     @Transactional

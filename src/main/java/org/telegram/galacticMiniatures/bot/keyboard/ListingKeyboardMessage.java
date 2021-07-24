@@ -17,7 +17,7 @@ import org.telegram.galacticMiniatures.bot.service.ListingService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithOptionService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -37,9 +37,9 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
     private final ListingWithOptionService listingWithOptionService;
 
     @Override
-    public Optional<SendPhoto> prepareSendPhoto(Long chatId,
-                                                ScrollerType scrollerType,
-                                                ScrollerObjectType scrollerObjectType) {
+    public Optional<PartialBotApiMethod<?>> prepareScrollingMessage(Long chatId,
+                                                                    ScrollerType scrollerType,
+                                                                    ScrollerObjectType scrollerObjectType) {
 
         SearchInfo searchInfo = cacheService.get(chatId).getSearchInfo();
         Pageable listingPageable = searchInfo.getListingPageable();

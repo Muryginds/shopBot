@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS user_info
     town        varchar (250),
     address     varchar (250),
     post_index  varchar (250),
-    contacts    varchar (250),
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (country_id) REFERENCES countries (id)

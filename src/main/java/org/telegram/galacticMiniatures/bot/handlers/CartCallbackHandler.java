@@ -46,7 +46,7 @@ public class CartCallbackHandler implements AbstractHandler {
         Pageable pageable;
         Page<ListingCart> pageCart;
         ListingCart listingCart;
-        Optional<SendPhoto> sendPhoto;
+        Optional<PartialBotApiMethod<?>> sendPhoto;
 
         switch (data) {
             case Constants.KEYBOARD_CART_BUTTON_EXIT_COMMAND:
@@ -54,16 +54,16 @@ public class CartCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 break;
 
-            case Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND:
+            case Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND:
 
-                sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND:
 
-                sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
@@ -82,7 +82,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 Page<ListingCart> newPageCart =
                         cartService.findPageCartByChatId(chatId, pageable);
                 if (newPageCart.getTotalElements() > 0) {
-                    sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                    sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
                     sendPhoto.ifPresent(answer::add);
                 } else {
@@ -112,7 +112,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 listingCart = pageCart.getContent().get(0);
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
                 cartService.save(listingCart);
-                sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
                 break;
@@ -136,7 +136,7 @@ public class CartCallbackHandler implements AbstractHandler {
                     answer.add(
                             Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));
                 } else {
-                    sendPhoto = cartKeyboardMessage.prepareSendPhoto(
+                    sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
                     sendPhoto.ifPresent(answer::add);
                 }

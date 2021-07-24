@@ -32,9 +32,6 @@ public class UserInfo extends AbstractEntity {
     @Column(name = "post_index")
     String postIndex;
 
-    @Column(name = "contacts")
-    String contacts;
-
     public UserInfo(User user) {
         this.user = user;
     }

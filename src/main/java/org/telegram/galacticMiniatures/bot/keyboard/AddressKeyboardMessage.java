@@ -40,8 +40,6 @@ public class AddressKeyboardMessage implements AbstractKeyboardMessage {
                         .append(userInfo.getAddress())
                         .append("\nPost index: ")
                         .append(userInfo.getPostIndex())
-                        .append("\nContacts: ")
-                        .append(userInfo.getContacts())
                         .toString();
             }
         }
