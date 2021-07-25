@@ -39,7 +39,7 @@ public class OrderCallbackHandler implements AbstractHandler {
         Integer messageId = callbackQuery.getMessage().getMessageId();
         Optional<PartialBotApiMethod<?>> sendMethod;
         OrderedListingsInfo orderedListingsInfo;
-        Integer orderId;
+        int orderId;
 
         if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND)) {
 
@@ -49,8 +49,22 @@ public class OrderCallbackHandler implements AbstractHandler {
             cacheService.add(chatId, orderedListingsInfo);
             sendMethod = orderedListingsKeyboardMessage.prepareScrollingMessage(
                     chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-            answer.addAll(Utils.handleOptionalSendPhoto(sendMethod, callbackQuery));
+            answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
 
+        }  else if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND)) {
+
+            orderId = Integer.parseInt(
+                    data.replace(Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND, ""));
+            Optional<Order> orderOptional = orderService.findById(orderId);
+            orderOptional.ifPresent(o -> {
+                o.setStatus(OrderStatus.CANCELED);
+                orderService.save(o);
+                answer.add(Utils.prepareAnswerCallbackQuery(
+                        "Order canceled", true, callbackQuery));
+                answer.addAll(
+                        Utils.handleOptionalSendMessage(orderKeyboardMessage.prepareScrollingMessage(
+                        chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING), callbackQuery));
+            });
         } else {
 
             switch (data) {
@@ -63,32 +77,20 @@ public class OrderCallbackHandler implements AbstractHandler {
 
                     sendMethod = orderKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
-                    answer.addAll(Utils.handleOptionalSendPhoto(sendMethod, callbackQuery));
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
                     break;
 
                 case Constants.KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND:
 
                     sendMethod = orderKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
-                    answer.addAll(Utils.handleOptionalSendPhoto(sendMethod, callbackQuery));
-                    break;
-
-                case Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND:
-
-                    orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-                    orderId = orderedListingsInfo.getOrderId();
-                    Optional<Order> orderOptional = orderService.findById(orderId);
-                    orderOptional.ifPresent(o -> {
-                        o.setStatus(OrderStatus.CANCELED);
-                        Utils.prepareAnswerCallbackQuery(
-                                "Order canceled", true, callbackQuery);
-                    });
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
                     break;
 
                 case Constants.KEYBOARD_ORDER_BUTTON_TRACK_COMMAND:
 
                     answer.add(Utils.prepareAnswerCallbackQuery(
-                            "Method under construction", false, callbackQuery));
+                            "No track number yet", false, callbackQuery));
                     break;
             }
         }

@@ -19,7 +19,7 @@ public interface ListingRepository extends JpaRepository<Listing, Integer> {
 
     Page<Listing> findBySection_IdentifierAndActiveTrue(Integer id, Pageable pageable);
 
-    Integer countBySectionIdentifierAndActiveTrue(Integer sectionId);
+    Optional<Integer> countBySectionIdentifierAndActiveTrue(Integer sectionId);
 
     @Modifying
     @Query(value = "UPDATE listings SET active = 0 WHERE updated - " +

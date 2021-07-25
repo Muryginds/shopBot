@@ -12,7 +12,6 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.ArrayList;
@@ -40,12 +39,12 @@ public class SectionsCallbackHandler implements AbstractHandler {
         } else {
             Integer sectionId = Integer.parseInt(
                     data.replace(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK, ""));
-            if (listingService.countSizeActiveBySectionIdentifier(sectionId) > 0) {
+            if (listingService.countSizeActiveBySectionIdentifier(sectionId).orElse(0) > 0) {
                 SearchInfo searchInfo = new SearchInfo(sectionId);
                 cacheService.add(chatId, searchInfo);
                 Optional<PartialBotApiMethod<?>> sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
             } else {
                 answer.add(Utils.prepareAnswerCallbackQuery(
                         "No items in chosen category", false, callbackQuery));

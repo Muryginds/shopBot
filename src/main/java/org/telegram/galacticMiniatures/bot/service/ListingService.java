@@ -45,7 +45,7 @@ public class ListingService {
         return listingRepository.findByIdentifier(identifier);
     }
 
-    public Integer countSizeActiveBySectionIdentifier(Integer sectionId) {
+    public Optional<Integer> countSizeActiveBySectionIdentifier(Integer sectionId) {
         return listingRepository.countBySectionIdentifierAndActiveTrue(sectionId);
     }
 

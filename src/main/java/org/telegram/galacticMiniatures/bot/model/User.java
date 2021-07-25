@@ -27,6 +27,9 @@ public class User extends AbstractEntity {
   @Column(name = "bot_state")
   BotState botState = BotState.WORKING;
 
+  @Column(name = "is_admin")
+  Boolean isAdmin = false;
+
   public User(String chatId, String name) {
     this.chatId = chatId;
     this.name = name;

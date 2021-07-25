@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.ListingFavorite;
 
+import java.util.Optional;
+
 @Repository
 @Transactional
 public interface ListingFavoriteRepository
@@ -14,5 +16,5 @@ public interface ListingFavoriteRepository
 
     Page<ListingFavorite> findById_User_ChatId(String chatId, Pageable pageable);
 
-    int countListingFavoriteById_User_ChatId(String chatId);
+    Optional<Integer> countListingFavoriteById_User_ChatId(String chatId);
 }

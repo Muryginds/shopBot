@@ -17,7 +17,6 @@ import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -63,42 +62,42 @@ public class ListingCallbackHandler implements AbstractHandler {
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_NEXT_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PHOTO_PREVIOUS_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_NEXT_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_OPTION_PREVIOUS_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND:

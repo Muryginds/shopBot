@@ -52,14 +52,14 @@ public final class Utils {
     return answerCallbackQuery;
   }
 
-  public static List<PartialBotApiMethod<?>> handleOptionalSendPhoto(Optional<PartialBotApiMethod<?>> sendPhoto,
-                                                                     CallbackQuery callbackQuery) {
+  public static List<PartialBotApiMethod<?>> handleOptionalSendMessage(Optional<PartialBotApiMethod<?>> sendMessage,
+                                                                       CallbackQuery callbackQuery) {
     List<PartialBotApiMethod<?>> answer = new ArrayList<>();
     Message message = callbackQuery.getMessage();
     Long chatId = message.getChatId();
     Integer messageId = message.getMessageId();
-    if (sendPhoto.isPresent()) {
-      answer.add(sendPhoto.get());
+    if (sendMessage.isPresent()) {
+      answer.add(sendMessage.get());
       answer.add(prepareDeleteMessage(chatId, messageId));
     } else {
       answer.add(prepareAnswerCallbackQuery(Constants.ERROR_RESTART_MENU, true, callbackQuery));

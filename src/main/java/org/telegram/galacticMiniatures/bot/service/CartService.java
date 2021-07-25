@@ -37,7 +37,7 @@ public class CartService {
         return listingCartRepository.findById_User_ChatId(chatId.toString(), pageable);
     }
 
-    public int countSizeCartByChatId(Long chatId) {
+    public Optional<Integer> countSizeCartByChatId(Long chatId) {
         return listingCartRepository.countListingCartById_User_ChatId(chatId.toString());
     }
 

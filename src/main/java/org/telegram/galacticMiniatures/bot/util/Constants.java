@@ -4,12 +4,30 @@ final public class Constants {
 
     private Constants() {}
 
-
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
     private static final String NEXT = "\u276F";
     private static final String PREVIOUS = "\u276E";
+    private static final String MINUS = "\u2796";
+    private static final String PLUS = "\u2795";
+    private static final String BACK = "\u2B05  Back";
+
+    public static final String KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK = "OrderedListingCallBack";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_COMMAND = "OrderedListingCallBackPrevious";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_NEXT_COMMAND = "OrderedListingCallBackBack";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_COMMAND = "OrderedListingCallBackMinus";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_NAME = MINUS;
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_ADD_PLUS_COMMAND = "OrderedListingCallBackPlus";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_ADD_PLUS_NAME = PLUS;
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_COMMAND =
+            "OrderedListingCallBackRemoveFromOrder";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_NAME = "Remove from Order";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_COMMAND = "OrderedListingCallBackGoBack";
+    public static final String KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_NAME = BACK;
+    public static final String KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY ="Order is empty. Deleting order";
 
     public static final String KEYBOARD_ORDER_HEADER = "\uD83D\uDC34  Orders";
     public static final String KEYBOARD_ORDER_OPERATED_CALLBACK = "OrderCallback";
@@ -34,6 +52,7 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
     public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
     public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
+    public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";
 
     public static final String KEYBOARD_ADDRESS_OPERATED_CALLBACK = "AddressCallback";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_NAME = "\u270F  Edit";
@@ -49,7 +68,7 @@ final public class Constants {
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_NAME = PREVIOUS;
     public static final String KEYBOARD_LISTING_BUTTON_GO_BACK_COMMAND = "ListingCallbackGoBack";
-    public static final String KEYBOARD_LISTING_BUTTON_GO_BACK_NAME = "\u2B05  Back";
+    public static final String KEYBOARD_LISTING_BUTTON_GO_BACK_NAME = BACK;
     public static final String KEYBOARD_LISTING_BUTTON_NEXT_COMMAND = "ListingCallbackNext";
     public static final String KEYBOARD_LISTING_BUTTON_NEXT_NAME = NEXT;
     public static final String KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND = "ListingCallbackToFavorite";
@@ -87,6 +106,7 @@ final public class Constants {
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_NAME = PREVIOUS;
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_COMMAND = "FavoriteCallbackNextOption";
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_FAVORITE_LIST_EMPTY = "Список пуст";
 
     public static final String KEYBOARD_CART_OPERATED_CALLBACK = "CartCallback";
     public static final String KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND = "CartCallbackPrevious";
@@ -99,9 +119,9 @@ final public class Constants {
     public static final String KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_NAME = "\uD83D\uDCB0  Remove";
     public static final String KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_COMMAND = "CartCallbackToFavorite";
     public static final String KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_NAME = ADD_FAVORITE;
-    public static final String KEYBOARD_CART_BUTTON_ADD_PLUS_NAME = "\u2795";
+    public static final String KEYBOARD_CART_BUTTON_ADD_PLUS_NAME = PLUS;
     public static final String KEYBOARD_CART_BUTTON_ADD_PLUS_COMMAND = "CartCallbackPlus";
-    public static final String KEYBOARD_CART_BUTTON_ADD_MINUS_NAME = "\u2796";
+    public static final String KEYBOARD_CART_BUTTON_ADD_MINUS_NAME = MINUS;
     public static final String KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND = "CartCallbackMinus";
     public static final String KEYBOARD_CART_BUTTON_ORDER_COMMAND = "CartCallbackOrder";
     public static final String KEYBOARD_CART_BUTTON_ORDER_NAME = "Make Order";

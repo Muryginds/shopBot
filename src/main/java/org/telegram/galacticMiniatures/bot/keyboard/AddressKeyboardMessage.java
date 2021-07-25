@@ -26,22 +26,20 @@ public class AddressKeyboardMessage implements AbstractKeyboardMessage {
     @Override
     public SendMessage prepareKeyboardMessage(Long chatId, String text) {
 
-        Optional<User> user = userService.findUser(chatId);
-        if (user.isPresent()) {
-            Optional<UserInfo> userInfoOptional = userInfoService.findByUser(user.get());
-            if (userInfoOptional.isPresent()) {
-                UserInfo userInfo = userInfoOptional.get();
-                text = new StringBuilder()
-                        .append("Full name: ")
-                        .append(userInfo.getFullName())
-                        .append("\nTown: ")
-                        .append(userInfo.getTown())
-                        .append("\nAddress: ")
-                        .append(userInfo.getAddress())
-                        .append("\nPost index: ")
-                        .append(userInfo.getPostIndex())
-                        .toString();
-            }
+        User user = userService.findUser(chatId).orElse(new User(chatId.toString(), chatId.toString()));
+        Optional<UserInfo> userInfoOptional = userInfoService.findByUser(user);
+        if (userInfoOptional.isPresent()) {
+            UserInfo userInfo = userInfoOptional.get();
+            text = new StringBuilder()
+                    .append("Full name: ")
+                    .append(userInfo.getFullName())
+                    .append("\nTown: ")
+                    .append(userInfo.getTown())
+                    .append("\nAddress: ")
+                    .append(userInfo.getAddress())
+                    .append("\nPost index: ")
+                    .append(userInfo.getPostIndex())
+                    .toString();
         }
         SendMessage message = Utils.prepareSendMessage(chatId, text);
         message.setReplyMarkup(formKeyboard(chatId));

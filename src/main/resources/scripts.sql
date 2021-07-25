@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users
     id         int  AUTO_INCREMENT NOT NULL,
     chat_id    varchar (20)     UNIQUE  NOT NULL,
     name       varchar (100)    NOT NULL,
+    is_admin  tinyint(1) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -99,7 +100,7 @@ CREATE TABLE listings_options
 
 CREATE TABLE orders
 (
-    id          int  AUTO_INCREMENT NOT NULL,
+    id          int  AUTO_INCREMENT NOT NULL IDENTITY(545,1),
     user_id     int,
     status      varchar (20),
     created     timestamp NOT NULL,

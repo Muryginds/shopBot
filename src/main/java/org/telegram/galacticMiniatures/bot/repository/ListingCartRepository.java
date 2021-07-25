@@ -29,7 +29,7 @@ public interface ListingCartRepository
             nativeQuery = true)
     Optional<Integer> countCartSummaryByChatId(@Param("chatId")String chatId);
 
-    int countListingCartById_User_ChatId(String chatId);
+    Optional<Integer> countListingCartById_User_ChatId(String chatId);
 
     void deleteAllById_User(User user);
 }

@@ -14,7 +14,6 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -46,7 +45,7 @@ public class CartCallbackHandler implements AbstractHandler {
         Pageable pageable;
         Page<ListingCart> pageCart;
         ListingCart listingCart;
-        Optional<PartialBotApiMethod<?>> sendPhoto;
+        Optional<PartialBotApiMethod<?>> sendMessage;
 
         switch (data) {
             case Constants.KEYBOARD_CART_BUTTON_EXIT_COMMAND:
@@ -54,18 +53,18 @@ public class CartCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 break;
 
-            case Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND:
+            case Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND:
 
-                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
+                sendMessage = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND:
 
-                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
+                sendMessage = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND:
@@ -78,13 +77,11 @@ public class CartCallbackHandler implements AbstractHandler {
                 answer.add(
                         Utils.prepareAnswerCallbackQuery(
                                 "Removed from cart", true, callbackQuery));
-                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                Page<ListingCart> newPageCart =
-                        cartService.findPageCartByChatId(chatId, pageable);
-                if (newPageCart.getTotalElements() > 0) {
-                    sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
+                pageCart = cartService.findPageCartByChatId(chatId, pageable);
+                if (pageCart.getTotalElements() > 0) {
+                    sendMessage = cartKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-                    sendPhoto.ifPresent(answer::add);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 }
@@ -112,9 +109,9 @@ public class CartCallbackHandler implements AbstractHandler {
                 listingCart = pageCart.getContent().get(0);
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
                 cartService.save(listingCart);
-                sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
+                sendMessage = cartKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendPhoto(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND:
@@ -135,21 +132,26 @@ public class CartCallbackHandler implements AbstractHandler {
                 if (pageCart.getTotalPages() - 1 == 0 && newQuantity == 0) {
                     answer.add(
                             Utils.prepareAnswerCallbackQuery("Cart is empty", false, callbackQuery));
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                } else if (newQuantity > 0) {
+                    sendMessage = cartKeyboardMessage.prepareScrollingMessage(
+                            chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
-                    sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
+                    sendMessage = cartKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-                    sendPhoto.ifPresent(answer::add);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 }
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND:
 
                 Optional<UserInfo> userInfo = userInfoService.findByUser(
-                        userService.findUser(chatId).orElse(new User(message)));
+                        userService.getUser(message));
                 String replyText;
                 if (userInfo.isEmpty()) {
                     replyText = "Please fill in Address information before ordering";
-                } else if (cartService.countSizeCartByChatId(chatId) > 0) {
+                } else if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
                     orderService.createNewOrderWithListings(chatId);
                     replyText = "Gratz! Order created. " +
                             "Please read information about shipping cost carefully";
@@ -159,7 +161,6 @@ public class CartCallbackHandler implements AbstractHandler {
                 }
                 answer.add(Utils.prepareSendMessage(chatId, replyText));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-
         }
         return answer;
     }

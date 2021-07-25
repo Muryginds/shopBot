@@ -13,12 +13,10 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.model.OrderedListing;
-import org.telegram.galacticMiniatures.bot.service.CartService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.service.OrderedListingService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -33,7 +31,6 @@ import java.util.Optional;
 public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final CacheService cacheService;
-    private final CartService cartService;
     private final OrderedListingService orderedListingService;
     private final ListingWithImageService listingWithImageService;
 
@@ -67,6 +64,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
         String imageUrl = listingWithImageService.
                 findAnyImageByListingIdentifier(listing.getIdentifier()).orElse("");
         ListingWithOption listingWithOption = orderedListing.getId().getOption();
+        int orderId = orderedListing.getId().getOrder().getId();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
@@ -76,63 +74,57 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
         List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
         if(listingPage.getTotalPages() > 1) {
-            String listingPreviousCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
+            String listingPreviousCommand = Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK;
             if (listingPage.getNumber() > 0) {
-                listingPreviousCommand = Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND;
+                listingPreviousCommand = Constants.KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_CART_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+                    Constants.KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
                             .append(listingPage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+                    Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
 
-            String listingNextCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
+            String listingNextCommand = Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK;
             if (listingPage.getNumber() + 1 < listingPage.getTotalPages()) {
-                listingNextCommand = Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND;
+                listingNextCommand = Constants.KEYBOARD_ORDEREDLISTING_BUTTON_NEXT_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_CART_BUTTON_NEXT_NAME, listingNextCommand));
+                    Constants.KEYBOARD_ORDEREDLISTING_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
 
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_NAME,
-                Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND));
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_NAME,
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 orderedListing.getQuantity().toString(),
-                Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+                Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_ADD_PLUS_NAME,
-                Constants.KEYBOARD_CART_BUTTON_ADD_PLUS_COMMAND));
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_PLUS_NAME,
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_PLUS_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 "Price:",
-                Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+                Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 String.format("%d", listingWithOption.getPrice() * orderedListing.getQuantity()),
-                Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+                Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
         rowList.add(keyboardButtonsRow3);
 
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_ORDER_NAME,
-                Constants.KEYBOARD_CART_BUTTON_ORDER_COMMAND));
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_NAME,
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_COMMAND));
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                "Total: " + cartService.getCartSummaryByChatId(chatId).orElse(0),
-                Constants.KEYBOARD_CART_OPERATED_CALLBACK));
+                "Order Total: " + orderedListingService.getOrderSummary(orderId).orElse(0),
+                Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
         rowList.add(keyboardButtonsRow4);
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_NAME,
-                Constants.KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_COMMAND));
-        keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_NAME,
-                Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND));
-        keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_CART_BUTTON_EXIT_NAME,
-                Constants.KEYBOARD_CART_BUTTON_EXIT_COMMAND));
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_NAME,
+                Constants.KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
@@ -162,6 +154,9 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
         }
 
         StringBuilder caption = new StringBuilder()
+                .append("EDITING  <b>[ORDER №")
+                .append(String.format("%05d" , orderId))
+                .append("]</b>\n\n")
                 .append(listing.getTitle())
                 .append(optionsText)
                 .append("\n\n<b>Price: ")

@@ -9,6 +9,7 @@ import org.telegram.galacticMiniatures.bot.model.OrderedListing;
 import org.telegram.galacticMiniatures.bot.repository.OrderedListingRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +29,15 @@ public class OrderedListingService {
         return orderedListingRepository.findById_Order(order);
     }
 
+    public Optional<Integer> getOrderSummary(Integer orderId) {
+        return orderedListingRepository.countOrderSummaryByOrderId(orderId);
+    }
 
+    public void delete(OrderedListing orderedListing) {
+        orderedListingRepository.delete(orderedListing);
+    }
+
+    public void save(OrderedListing orderedListing) {
+        orderedListingRepository.save(orderedListing);
+    }
 }
