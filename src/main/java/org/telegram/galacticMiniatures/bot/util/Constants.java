@@ -4,6 +4,9 @@ final public class Constants {
 
     private Constants() {}
 
+
+
+
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -12,6 +15,17 @@ final public class Constants {
     private static final String MINUS = "\u2796";
     private static final String PLUS = "\u2795";
     private static final String BACK = "\u2B05  Back";
+
+    public static final String KEYBOARD_ADMIN_OPERATED_CALLBACK = "AdminPanelCallback";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_COMMAND = "AdminPanelCallbackPromote";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_NAME = "Promote user to admin";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_USER_COMMAND = "AdminPanelCallbackDemote";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_USER_NAME = "Demote admin to user";
+    public static final String KEYBOARD_ADMIN_ERROR_NO_RIGHTS = "You have no rights to do that";
+    public static final String KEYBOARD_ADMIN_ERROR_USER_NOT_FOUND = "User not found";
+    public static final String KEYBOARD_ADMIN_BUTTON_CLOSE_MENU_COMMAND = "AdminPanelCallbackCloseMenu";
+    public static final String KEYBOARD_ADMIN_BUTTON_CLOSE_MENU_NAME = CLOSE;
+    public static final String QUERY_ADMIN_QUESTION_ENTER_CHAT_ID = "Enter user Chat ID";
 
     public static final String KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK = "OrderedListingCallBack";
     public static final String KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_COMMAND = "OrderedListingCallBackPrevious";
@@ -50,6 +64,7 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
     public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
+    public static final String KEYBOARD_STARTER_ADMIN_PANEL = "Панель администратора";
     public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
     public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
     public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";

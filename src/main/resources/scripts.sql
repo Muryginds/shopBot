@@ -5,15 +5,16 @@ DROP TABLE IF EXISTS ordered_listings;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS listings_options;
 DROP TABLE IF EXISTS user_cart;
+DROP TABLE IF EXISTS user_messages;
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS sections;
 
-CREATE TABLE IF NOT EXISTS users 
+CREATE TABLE IF NOT EXISTS users
 (
     id         int  AUTO_INCREMENT NOT NULL,
     chat_id    varchar (20)     UNIQUE  NOT NULL,
     name       varchar (100)    NOT NULL,
-    is_admin  tinyint(1) NOT NULL,
+    in_admin  tinyint(1) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -27,7 +28,7 @@ CREATE TABLE IF NOT EXISTS countries
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS user_info 
+CREATE TABLE IF NOT EXISTS user_info
 (
     id          int  AUTO_INCREMENT NOT NULL,
     user_id     int,
@@ -100,7 +101,7 @@ CREATE TABLE listings_options
 
 CREATE TABLE orders
 (
-    id          int  AUTO_INCREMENT NOT NULL IDENTITY(545,1),
+    id          int  AUTO_INCREMENT NOT NULL,
     user_id     int,
     status      varchar (20),
     created     timestamp NOT NULL,
@@ -155,4 +156,17 @@ CREATE TABLE user_cart
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (listing_id) REFERENCES listings (id),
     FOREIGN KEY (option_id) REFERENCES listings_options (id)
+);
+
+CREATE TABLE user_messages
+(
+    id         int  AUTO_INCREMENT NOT NULL,
+    user_id    int,
+    order_id   int,
+    targer_user_id int,
+    message    text,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (targer_user_id) REFERENCES users (id),
+    FOREIGN KEY (order_id) REFERENCES orders (id)
 );

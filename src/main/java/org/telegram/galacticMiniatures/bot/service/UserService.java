@@ -18,6 +18,10 @@ public class UserService {
         return userRepository.findByChatId(chatId.toString());
     }
 
+    public Optional<User> findUser(String chatId) {
+        return userRepository.findByChatId(chatId);
+    }
+
     public User add(User user) {
         return userRepository.save(user);
     }

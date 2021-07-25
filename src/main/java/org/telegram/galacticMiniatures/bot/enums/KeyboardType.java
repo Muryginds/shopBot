@@ -3,5 +3,6 @@ package org.telegram.galacticMiniatures.bot.enums;
 public enum KeyboardType {
     SECTION,
     STARTER,
-    ADDRESS
+    ADDRESS,
+    ADMIN_PANEL
 }
