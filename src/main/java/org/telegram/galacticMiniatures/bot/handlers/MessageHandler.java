@@ -9,6 +9,7 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -31,6 +32,7 @@ public class MessageHandler implements AbstractHandler {
   private final UserService userService;
   private final OrderService orderService;
   private final OrderKeyboardMessage orderKeyboardMessage;
+  private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
 
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -119,9 +121,9 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
 
-        answer.add(keyboardService.getSendMessage(
-                KeyboardType.ADMIN_PANEL, chatId, "Admin panel"));
-        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        sendMessage = userChatMessageKeyboardMessage
+                .prepareScrollingMessage(chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.LISTING);
+        answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
 
       case Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND:

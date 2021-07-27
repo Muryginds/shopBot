@@ -42,9 +42,9 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
             Constants.KEYBOARD_STARTER_FAVORITE_COMMAND));
     keyboard.add(keyboardRow2);
 
-    KeyboardRow keyboardRow3 = new KeyboardRow();
-    keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MESSAGES_COMMAND));
-    keyboard.add(keyboardRow3);
+//    KeyboardRow keyboardRow3 = new KeyboardRow();
+//    keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MESSAGES_COMMAND));
+//    keyboard.add(keyboardRow3);
 
     Optional<User> user = userService.findUser(chatId);
     user.ifPresent(u -> {

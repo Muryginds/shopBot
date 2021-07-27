@@ -11,6 +11,7 @@ import org.telegram.galacticMiniatures.bot.model.UserMessage;
 @Transactional
 public interface UserMessageRepository extends JpaRepository<UserMessage, Integer> {
 
-    Page<UserMessage> getPageByUser_ChatIdOrTargetUser_ChatId(String chatId, String targetChatId, Pageable pageable);
+    Page<UserMessage> getPageByUser_ChatIdAndOrderIsNullOrTargetUser_ChatIdAndOrderIsNull(
+            String chatId, String targetChatId, Pageable pageable);
     Page<UserMessage> getPageByOrder_Id(Integer orderId, Pageable pageable);
 }

@@ -15,6 +15,16 @@ final public class Constants {
     private static final String PLUS = "\u2795";
     private static final String BACK = "\u2B05  Back";
 
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK = "UserChatMessageCallback";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_COMMAND = "UserChatMessageCallbackGoBack";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND = "UserChatMessageCallbackAddMessage";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_COMMAND = "UserChatMessageCallbackNext";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserChatMessageCallbackPrevious";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
+
     public static final String KEYBOARD_USER_ORDER_MESSAGE_OPERATED_CALLBACK = "UserOrderMessageCallback";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_COMMAND = "UserOrderMessageCallbackGoBack";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_NAME = BACK;
@@ -25,6 +35,7 @@ final public class Constants {
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserOrderMessageCallbackPrevious";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
     public static final String QUERY_ADD_MESSAGE_WARNING = "Send your message. To cancel entry send text \"NO\"";
+    public static final String QUERY_ADD_MESSAGE_CANCEL = "NO";
 
     public static final String KEYBOARD_ADMIN_OPERATED_CALLBACK = "AdminPanelCallback";
     public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_COMMAND = "AdminPanelCallbackPromote";

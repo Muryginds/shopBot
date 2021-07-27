@@ -2,18 +2,13 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
-import org.telegram.galacticMiniatures.bot.cache.UserOrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.UserOrderMessageKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.model.Order;
+import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
-import org.telegram.galacticMiniatures.bot.service.OrderService;
 import org.telegram.galacticMiniatures.bot.service.UserMessageService;
 import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -29,14 +24,11 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserOrderMessageCallbackHandler implements AbstractHandler {
+public class UserChatMessageCallbackHandler implements AbstractHandler {
 
-    private final CacheService cacheService;
-    private final UserOrderMessageKeyboardMessage userOrderMessageKeyboardMessage;
-    private final OrderKeyboardMessage orderKeyboardMessage;
+    private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
     private final UserMessageService userMessageService;
     private final UserService userService;
-    private final OrderService orderService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -52,20 +44,13 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
 
             String text = message.getText();
             if (!Constants.QUERY_ADD_MESSAGE_CANCEL.equals(text)) {
-                ChatInfo chatInfo = cacheService.get(chatId);
-                UserOrderMessageInfo userOrderMessageInfo = chatInfo.getUserOrderMessageInfo();
-
                 UserMessage userMessage = new UserMessage();
-                Optional<Order> orderOptional = orderService.findById(userOrderMessageInfo.getOrderId());
-                if (orderOptional.isPresent()) {
-                    userMessage.setOrder(orderOptional.get());
-                    userMessage.setUser(user);
-                    userMessage.setMessage(message.getText());
-                    userMessageService.save(userMessage);
-                }
+                userMessage.setUser(user);
+                userMessage.setMessage(message.getText());
+                userMessageService.save(userMessage);
             }
 
-            Optional<PartialBotApiMethod<?>> replyMessage = userOrderMessageKeyboardMessage.prepareScrollingMessage(
+            Optional<PartialBotApiMethod<?>> replyMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
                     chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.LISTING);
             answer.addAll(handleOptionalAddMessage(replyMessage, message));
             user.setBotState(BotState.WORKING);
@@ -83,28 +68,26 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
         Optional<PartialBotApiMethod<?>> sendMessage;
 
         switch (data) {
-            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_COMMAND:
+            case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_COMMAND:
 
-                sendMessage = orderKeyboardMessage.
-                        prepareScrollingMessage(chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
+                answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 break;
 
-            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_COMMAND:
+            case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_COMMAND:
 
-                sendMessage = userOrderMessageKeyboardMessage.prepareScrollingMessage(
+                sendMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
-            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND:
+            case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND:
 
-                sendMessage = userOrderMessageKeyboardMessage.prepareScrollingMessage(
+                sendMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
-            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND:
+            case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND:
 
                 User user = userService.getUser(message);
                 user.setBotState(BotState.ADDING_ORDER_MESSAGE);
@@ -138,6 +121,6 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
 
     @Override
     public List<String> getOperatedCallBackQuery() {
-        return List.of(Constants.KEYBOARD_USER_ORDER_MESSAGE_OPERATED_CALLBACK);
+        return List.of(Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK);
     }
 }

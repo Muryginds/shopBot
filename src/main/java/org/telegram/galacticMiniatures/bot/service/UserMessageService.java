@@ -14,7 +14,7 @@ public class UserMessageService {
     private final UserMessageRepository userMessageRepository;
 
     public Page<UserMessage> getPageByChatId(Long chatId, Pageable pageable) {
-        return userMessageRepository.getPageByUser_ChatIdOrTargetUser_ChatId(
+        return userMessageRepository.getPageByUser_ChatIdAndOrderIsNullOrTargetUser_ChatIdAndOrderIsNull(
                 chatId.toString(), chatId.toString(), pageable);
     }
 
