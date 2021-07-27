@@ -19,7 +19,6 @@ import org.telegram.galacticMiniatures.bot.service.ListingWithImageService;
 import org.telegram.galacticMiniatures.bot.service.ListingWithOptionService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -50,8 +49,8 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         switch (scrollerObjectType) {
             case LISTING:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);

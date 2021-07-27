@@ -163,10 +163,10 @@ CREATE TABLE user_messages
     id         int  AUTO_INCREMENT NOT NULL,
     user_id    int,
     order_id   int,
-    targer_user_id int,
+    target_user_id int,
     message    text,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (targer_user_id) REFERENCES users (id),
+    FOREIGN KEY (target_user_id) REFERENCES users (id),
     FOREIGN KEY (order_id) REFERENCES orders (id)
 );

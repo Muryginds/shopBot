@@ -15,4 +15,6 @@ public class ChatInfo {
     CartInfo cartInfo = new CartInfo();
     OrderInfo orderInfo = new OrderInfo();
     OrderedListingsInfo orderedListingsInfo = new OrderedListingsInfo();
+    UserChatMessageInfo userChatMessageInfo = new UserChatMessageInfo();
+    UserOrderMessageInfo userOrderMessageInfo = new UserOrderMessageInfo();
 }

@@ -25,7 +25,7 @@ public interface Scrollable {
             case NEXT:
                 newPageable = pageable.next();
                 break;
-            case NEW:
+            case NEW_LISTING_SCROLLER:
                 newPageable = PageRequest.of(0,1);
                 break;
             default:
@@ -43,8 +43,11 @@ public interface Scrollable {
             case NEXT:
                 newPageable = pageable.next();
                 break;
-            case NEW:
+            case NEW_LISTING_SCROLLER:
                 newPageable = PageRequest.of(0,1, sort);
+                break;
+            case NEW_MESSAGE_SCROLLER:
+                newPageable = PageRequest.of(0,15, sort);
                 break;
             default:
                 newPageable = pageable;
@@ -52,7 +55,8 @@ public interface Scrollable {
         return newPageable;
     }
 
-    default Optional<PartialBotApiMethod<?>> getSendPhoto(Long chatId, InlineKeyboardMarkup keyboardMarkup, StringBuilder optionsText, InputFile inputFile) {
+    default Optional<PartialBotApiMethod<?>> getSendPhoto(
+            Long chatId, InlineKeyboardMarkup keyboardMarkup, StringBuilder optionsText, InputFile inputFile) {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(inputFile);
         sendPhoto.setChatId(chatId.toString());

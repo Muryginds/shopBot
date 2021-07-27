@@ -3,11 +3,7 @@ package org.telegram.galacticMiniatures.bot.handlers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
-import org.telegram.galacticMiniatures.bot.model.Country;
 import org.telegram.galacticMiniatures.bot.model.User;
-import org.telegram.galacticMiniatures.bot.model.UserInfo;
-import org.telegram.galacticMiniatures.bot.service.CountryService;
-import org.telegram.galacticMiniatures.bot.service.UserInfoService;
 import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
@@ -52,7 +48,7 @@ public class AdminPanelCallbackHandler implements AbstractHandler {
         String text = message.getText();
 
         switch (botState) {
-            case PROMOTE_ADMIN:
+            case ADMIN_PROMOTE:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 if (!user.getIsAdmin()) {
@@ -78,7 +74,7 @@ public class AdminPanelCallbackHandler implements AbstractHandler {
                 userService.save(user);
                 break;
 
-            case DEMOTE_ADMIN:
+            case ADMIN_DEMOTE:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 if (!user.getIsAdmin()) {
@@ -120,7 +116,7 @@ public class AdminPanelCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_COMMAND:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                user.setBotState(BotState.PROMOTE_ADMIN);
+                user.setBotState(BotState.ADMIN_PROMOTE);
                 userService.save(user);
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADMIN_QUESTION_ENTER_CHAT_ID));
                 break;
@@ -128,7 +124,7 @@ public class AdminPanelCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ADMIN_BUTTON_DEMOTE_USER_COMMAND:
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                user.setBotState(BotState.DEMOTE_ADMIN);
+                user.setBotState(BotState.ADMIN_DEMOTE);
                 userService.save(user);
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADMIN_QUESTION_ENTER_CHAT_ID));
                 break;
@@ -143,7 +139,7 @@ public class AdminPanelCallbackHandler implements AbstractHandler {
 
     @Override
     public List<BotState> getOperatedBotState() {
-        return List.of(BotState.PROMOTE_ADMIN, BotState.DEMOTE_ADMIN);
+        return List.of(BotState.ADMIN_PROMOTE, BotState.ADMIN_DEMOTE);
     }
 
     @Override

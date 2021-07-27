@@ -91,13 +91,13 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 if (orderedListingsPage.getTotalElements() > 0) {
 
                     sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
                 } else {
                     answer.add(Utils.prepareAnswerCallbackQuery(
                             Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                     order.setStatus(OrderStatus.CANCELED);
                     sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
                 }
                 orderService.save(order);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
@@ -142,13 +142,13 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                             Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                     order.setStatus(OrderStatus.CANCELED);
                     sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
                 } else if (newQuantity > 0) {
                     sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
                             chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
                 } else {
                     sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
                 }
                 orderService.save(order);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));

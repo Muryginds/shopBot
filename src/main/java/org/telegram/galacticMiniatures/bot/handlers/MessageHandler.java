@@ -72,7 +72,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
           sendMessage = cartKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
@@ -90,7 +90,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
           sendMessage = favoriteKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
@@ -109,7 +109,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
           sendMessage = orderKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_ORDERS_EMPTY));
@@ -117,7 +117,14 @@ public class MessageHandler implements AbstractHandler {
         }
         break;
 
-      case Constants.KEYBOARD_STARTER_ADMIN_PANEL:
+      case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.ADMIN_PANEL, chatId, "Admin panel"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+
+      case Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND:
 
         answer.add(keyboardService.getSendMessage(
                 KeyboardType.ADMIN_PANEL, chatId, "Admin panel"));

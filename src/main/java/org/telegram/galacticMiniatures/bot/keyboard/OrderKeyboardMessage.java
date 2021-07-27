@@ -42,7 +42,7 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
 
         OrderInfo orderInfo = cacheService.get(chatId).getOrderInfo();
         Pageable listingPageable;
-        if (scrollerType == ScrollerType.NEW) {
+        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
             Sort sort = Sort.by("created").descending();
             listingPageable = getPageableByScrollerType(orderInfo.getOrderPageable(), scrollerType, sort);
         } else {
@@ -64,6 +64,7 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
         if(orderPage.getTotalPages() > 1) {
 
@@ -98,6 +99,10 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
                     Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND + order.getId()));
             rowList.add(keyboardButtonsRow2);
         }
+        keyboardButtonsRow4.add(createInlineKeyboardButton(
+                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_NAME,
+                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND + order.getId()));
+        rowList.add(keyboardButtonsRow4);
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_ORDER_BUTTON_TRACK_NAME,
                 Constants.KEYBOARD_ORDER_BUTTON_TRACK_COMMAND));

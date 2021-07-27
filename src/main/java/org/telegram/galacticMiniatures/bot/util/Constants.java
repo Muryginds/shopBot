@@ -6,7 +6,6 @@ final public class Constants {
 
 
 
-
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -15,6 +14,17 @@ final public class Constants {
     private static final String MINUS = "\u2796";
     private static final String PLUS = "\u2795";
     private static final String BACK = "\u2B05  Back";
+
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_OPERATED_CALLBACK = "UserOrderMessageCallback";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_COMMAND = "UserOrderMessageCallbackGoBack";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_NAME = BACK;
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND = "UserOrderMessageCallbackAddMessage";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_COMMAND = "UserOrderMessageCallbackNext";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserOrderMessageCallbackPrevious";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String QUERY_ADD_MESSAGE_WARNING = "Send your message. To cancel entry send text \"NO\"";
 
     public static final String KEYBOARD_ADMIN_OPERATED_CALLBACK = "AdminPanelCallback";
     public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_COMMAND = "AdminPanelCallbackPromote";
@@ -57,6 +67,8 @@ final public class Constants {
     public static final String KEYBOARD_ORDER_BUTTON_EDIT_NAME = "Edit";
     public static final String KEYBOARD_ORDER_BUTTON_TRACK_COMMAND = "OrderCallbackTrack";
     public static final String KEYBOARD_ORDER_BUTTON_TRACK_NAME = "Track";
+    public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND = "OrderCallbackMessages";
+    public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_NAME = "Messages";
 
     public static final String KEYBOARD_STARTER_SHOP_COMMAND = "\uD83E\uDDD9  Магазин";
     public static final String KEYBOARD_STARTER_INFORMATION_COMMAND = "\uD83D\uDCDC  Информация";
@@ -64,7 +76,8 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
     public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
-    public static final String KEYBOARD_STARTER_ADMIN_PANEL = "Панель администратора";
+    public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
+    public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
     public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
     public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
     public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";

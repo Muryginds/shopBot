@@ -50,8 +50,8 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         switch (scrollerObjectType) {
             case LISTING:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);

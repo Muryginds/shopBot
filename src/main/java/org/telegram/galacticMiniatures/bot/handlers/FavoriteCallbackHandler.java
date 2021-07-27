@@ -44,7 +44,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
         Pageable pageable;
         Page<ListingFavorite> pageFavorite;
         ListingFavorite listingFavorite;
-        Optional<PartialBotApiMethod<?>> sendPhoto;
+        Optional<PartialBotApiMethod<?>> sendMessage;
 
         switch (data) {
             case Constants.KEYBOARD_FAVORITE_BUTTON_EXIT_COMMAND:
@@ -54,44 +54,44 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.IMAGE);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PHOTO_PREVIOUS_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.IMAGE);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.OPTION);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_COMMAND:
 
-                sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
+                sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.OPTION);
-                answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_COMMAND:
@@ -108,9 +108,9 @@ public class FavoriteCallbackHandler implements AbstractHandler {
                                     "Removed from favorites", true, callbackQuery));
 
                     if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
-                        sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-                        answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
+                        sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                        answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                     } else {
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                         answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_FAVORITE_LIST_EMPTY));
