@@ -132,6 +132,20 @@ public class MessageHandler implements AbstractHandler {
                 KeyboardType.ADMIN_PANEL, chatId, "Admin panel"));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
+
+      case Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+
+      case Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.USER_MESSAGES, chatId, "Message management"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
     }
     return answer;
   }

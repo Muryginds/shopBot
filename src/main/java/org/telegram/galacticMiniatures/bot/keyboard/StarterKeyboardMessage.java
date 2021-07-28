@@ -49,9 +49,16 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
     Optional<User> user = userService.findUser(chatId);
     user.ifPresent(u -> {
       if (user.get().getIsAdmin()) {
+        KeyboardRow keyboardRow3 = new KeyboardRow();
+        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND));
+        keyboard.add(keyboardRow3);
         KeyboardRow keyboardRow4 = new KeyboardRow();
         keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND));
         keyboard.add(keyboardRow4);
+      } else {
+        KeyboardRow keyboardRow3 = new KeyboardRow();
+        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND));
+        keyboard.add(keyboardRow3);
       }
     });
 

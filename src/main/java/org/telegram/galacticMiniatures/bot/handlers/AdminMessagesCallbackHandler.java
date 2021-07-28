@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class OrderCallbackHandler implements AbstractHandler {
+public class AdminMessagesCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
     private final OrderKeyboardMessage orderKeyboardMessage;
@@ -41,36 +41,11 @@ public class OrderCallbackHandler implements AbstractHandler {
         Long chatId = callbackQuery.getMessage().getChatId();
         Integer messageId = callbackQuery.getMessage().getMessageId();
         Optional<PartialBotApiMethod<?>> sendMethod;
-        OrderedListingsInfo orderedListingsInfo;
         int orderId;
 
-        if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND)) {
-
+        if (data.startsWith(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_MESSAGES_COMMAND)) {
             orderId = Integer.parseInt(
-                    data.replace(Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND, ""));
-            orderedListingsInfo = new OrderedListingsInfo(orderId);
-            cacheService.add(chatId, orderedListingsInfo);
-            sendMethod = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
-            answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
-
-        }  else if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND)) {
-
-            orderId = Integer.parseInt(
-                    data.replace(Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND, ""));
-            Optional<Order> orderOptional = orderService.findById(orderId);
-            orderOptional.ifPresent(o -> {
-                o.setStatus(OrderStatus.CANCELED);
-                orderService.save(o);
-                answer.add(Utils.prepareAnswerCallbackQuery(
-                        "Order canceled", true, callbackQuery));
-                answer.addAll(
-                        Utils.handleOptionalSendMessage(orderKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING), callbackQuery));
-            });
-        } else if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND)) {
-            orderId = Integer.parseInt(
-                    data.replace(Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND, ""));
+                    data.replace(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_MESSAGES_COMMAND, ""));
             cacheService.add(chatId, new UserOrderMessageInfo(orderId));
             sendMethod = userOrderMessageKeyboardMessage.prepareScrollingMessage(
                     chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.LISTING);
@@ -82,29 +57,9 @@ public class OrderCallbackHandler implements AbstractHandler {
         } else {
 
                 switch (data) {
-                    case Constants.KEYBOARD_ORDER_BUTTON_CLOSE_COMMAND:
+                    case Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_COMMAND:
 
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                        break;
-
-                    case Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND:
-
-                        sendMethod = orderKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
-                        answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
-                        break;
-
-                    case Constants.KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND:
-
-                        sendMethod = orderKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
-                        answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
-                        break;
-
-                    case Constants.KEYBOARD_ORDER_BUTTON_TRACK_COMMAND:
-
-                        answer.add(Utils.prepareAnswerCallbackQuery(
-                                "No track number yet", false, callbackQuery));
                         break;
             }
         }
@@ -113,6 +68,6 @@ public class OrderCallbackHandler implements AbstractHandler {
 
     @Override
     public List<String> getOperatedCallBackQuery() {
-        return List.of(Constants.KEYBOARD_ORDER_OPERATED_CALLBACK);
+        return List.of(Constants.KEYBOARD_ADMIN_MESSAGES_OPERATED_CALLBACK);
     }
 }

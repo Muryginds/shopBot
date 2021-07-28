@@ -91,8 +91,8 @@ public class UserOrderMessageKeyboardMessage implements AbstractKeyboardMessage,
                 Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME,
                 Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_NAME,
-                Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_COMMAND));
+                Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 

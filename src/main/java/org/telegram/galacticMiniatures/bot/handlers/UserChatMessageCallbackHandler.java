@@ -90,7 +90,7 @@ public class UserChatMessageCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND:
 
                 User user = userService.getUser(message);
-                user.setBotState(BotState.ADDING_ORDER_MESSAGE);
+                user.setBotState(BotState.ADDING_CHAT_MESSAGE);
                 userService.save(user);
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 answer.add(Utils.prepareAnswerCallbackQuery(
@@ -116,7 +116,7 @@ public class UserChatMessageCallbackHandler implements AbstractHandler {
 
     @Override
     public List<BotState> getOperatedBotState() {
-        return List.of(BotState.ADDING_ORDER_MESSAGE);
+        return List.of(BotState.ADDING_CHAT_MESSAGE);
     }
 
     @Override

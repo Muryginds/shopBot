@@ -83,11 +83,9 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
         Optional<PartialBotApiMethod<?>> sendMessage;
 
         switch (data) {
-            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_GO_BACK_COMMAND:
+            case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND:
 
-                sendMessage = orderKeyboardMessage.
-                        prepareScrollingMessage(chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
+                answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 break;
 
             case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_COMMAND:

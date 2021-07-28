@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
 import org.telegram.galacticMiniatures.bot.repository.UserMessageRepository;
 
+
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UserMessageService {
@@ -26,4 +30,11 @@ public class UserMessageService {
         userMessageRepository.save(userMessage);
     }
 
+    public List<Map<String, String>> trackNewMessagesForUser(Long chatId) {
+        return userMessageRepository.trackNewMessagesForUser(chatId.toString());
+    }
+
+    public List<Map<String, String>> trackNewMessagesForAdmin(Long chatId) {
+        return userMessageRepository.trackNewMessagesForAdmin(chatId.toString());
+    }
 }

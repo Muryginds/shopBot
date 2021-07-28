@@ -20,18 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminPanelKeyboardMessage implements AbstractKeyboardMessage {
 
-
-    private final UserService userService;
-
-    @Override
-    public SendMessage prepareKeyboardMessage(Long chatId, String text) {
-
-        //User user = userService.findUser(chatId).orElse(new User(chatId.toString(), chatId.toString()));
-        SendMessage message = Utils.prepareSendMessage(chatId, text);
-        message.setReplyMarkup(formKeyboard(chatId));
-        return message;
-    }
-
     @Override
     public InlineKeyboardMarkup getInlineKeyboardMarkup(Long chatId) {
 
