@@ -8,7 +8,7 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -31,7 +31,7 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
   private final OrderService orderService;
-  private final OrderKeyboardMessage orderKeyboardMessage;
+  private final UserOrderKeyboardMessage userOrderKeyboardMessage;
   private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
 
   @Override
@@ -110,7 +110,7 @@ public class MessageHandler implements AbstractHandler {
       case Constants.KEYBOARD_STARTER_ORDER_COMMAND:
 
         if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
-          sendMessage = orderKeyboardMessage.
+          sendMessage = userOrderKeyboardMessage.
                   prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {

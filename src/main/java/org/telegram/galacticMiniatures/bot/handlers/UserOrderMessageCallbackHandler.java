@@ -8,7 +8,7 @@ import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.UserOrderMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Order;
 import org.telegram.galacticMiniatures.bot.model.User;
@@ -34,7 +34,7 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
     private final UserOrderMessageKeyboardMessage userOrderMessageKeyboardMessage;
-    private final OrderKeyboardMessage orderKeyboardMessage;
+    private final UserOrderKeyboardMessage userOrderKeyboardMessage;
     private final UserMessageService userMessageService;
     private final UserService userService;
     private final OrderService orderService;
@@ -94,7 +94,7 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
                 userChatActivityService.saveNewChatActivity(chatId, orderId);
-                sendMessage = orderKeyboardMessage.
+                sendMessage = userOrderKeyboardMessage.
                         prepareScrollingMessage(chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;

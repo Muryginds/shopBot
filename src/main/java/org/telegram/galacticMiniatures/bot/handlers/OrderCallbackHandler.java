@@ -8,7 +8,7 @@ import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.OrderedListingsKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.UserOrderMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Order;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class OrderCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
-    private final OrderKeyboardMessage orderKeyboardMessage;
+    private final UserOrderKeyboardMessage userOrderKeyboardMessage;
     private final OrderedListingsKeyboardMessage orderedListingsKeyboardMessage;
     private final OrderService orderService;
     private final UserMessageService userMessageService;
@@ -70,7 +70,7 @@ public class OrderCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareAnswerCallbackQuery(
                         "Order canceled", true, callbackQuery));
                 answer.addAll(
-                        Utils.handleOptionalSendMessage(orderKeyboardMessage.prepareScrollingMessage(
+                        Utils.handleOptionalSendMessage(userOrderKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM), callbackQuery));
             });
         } else if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND)) {
@@ -90,14 +90,14 @@ public class OrderCallbackHandler implements AbstractHandler {
 
                     case Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND:
 
-                        sendMethod = orderKeyboardMessage.prepareScrollingMessage(
+                        sendMethod = userOrderKeyboardMessage.prepareScrollingMessage(
                                 chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                         answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
                         break;
 
                     case Constants.KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND:
 
-                        sendMethod = orderKeyboardMessage.prepareScrollingMessage(
+                        sendMethod = userOrderKeyboardMessage.prepareScrollingMessage(
                                 chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                         answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
                         break;
