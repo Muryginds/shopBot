@@ -49,10 +49,13 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
       if (user.getIsModerator()) {
         keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND));
         keyboard.add(keyboardRow3);
+        KeyboardRow keyboardRow4 = new KeyboardRow();
+        keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND));
+        keyboard.add(keyboardRow4);
         if (user.getIsAdmin()) {
-          KeyboardRow keyboardRow4 = new KeyboardRow();
+          KeyboardRow keyboardRow5 = new KeyboardRow();
           keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND));
-          keyboard.add(keyboardRow4);
+          keyboard.add(keyboardRow5);
         }
       } else {
         keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND));

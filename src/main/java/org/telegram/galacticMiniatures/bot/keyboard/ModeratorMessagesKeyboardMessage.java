@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
+public class ModeratorMessagesKeyboardMessage implements AbstractKeyboardMessage {
 
     private final UserMessageService userMessageService;
 
@@ -23,7 +23,7 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
         StringBuilder command = new StringBuilder();
         StringBuilder caption = new StringBuilder();
         int count = 0;
-        List<Map<String, String>> newMessages = userMessageService.trackNewMessagesForAdmin(chatId);
+        List<Map<String, String>> newMessages = userMessageService.trackNewMessagesForModerator(chatId);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();

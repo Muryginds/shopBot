@@ -147,6 +147,13 @@ public class MessageHandler implements AbstractHandler {
                 KeyboardType.USER_MESSAGES, chatId, "Message management"));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
+
+      case Constants.KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND:
+
+        sendMessage = userOrderKeyboardMessage.
+                prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+        answer.addAll(handleOptionalMessage(sendMessage, message));
+        break;
     }
     return answer;
   }

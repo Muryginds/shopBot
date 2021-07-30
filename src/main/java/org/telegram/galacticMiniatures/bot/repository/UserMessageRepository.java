@@ -36,7 +36,7 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
             "WHERE um.order_id IS NOT NULL " +
             "GROUP BY um.order_id " +
             "ORDER BY sum DESC, orderId DESC", nativeQuery = true)
-    List<Map<String, String>> trackNewMessagesForAdmin(String chatId);
+    List<Map<String, String>> trackNewMessagesForModerator(String chatId);
 
     @Query(value = "SELECT vu.chat_id AS chatId, um.order_id AS orderId, " +
             "SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS sum " +

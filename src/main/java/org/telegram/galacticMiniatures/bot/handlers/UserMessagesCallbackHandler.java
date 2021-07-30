@@ -6,7 +6,7 @@ import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.ModeratorMessageScrollerKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserMessageScrollerKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
@@ -20,10 +20,10 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ModeratorMessagesCallbackHandler implements AbstractHandler {
+public class UserMessagesCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
-    private final ModeratorMessageScrollerKeyboardMessage moderatorMessageScrollerKeyboardMessage;
+    private final UserMessageScrollerKeyboardMessage userMessageScrollerKeyboardMessage;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -36,17 +36,17 @@ public class ModeratorMessagesCallbackHandler implements AbstractHandler {
         Optional<PartialBotApiMethod<?>> sendMethod;
         int orderId;
 
-        if (data.startsWith(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND)) {
+        if (data.startsWith(Constants.KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND)) {
             orderId = Integer.parseInt(
                     data.replace(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND, ""));
             cacheService.add(chatId, new OrderMessageInfo(orderId));
-            sendMethod = moderatorMessageScrollerKeyboardMessage.prepareScrollingMessage(
+            sendMethod = userMessageScrollerKeyboardMessage.prepareScrollingMessage(
                     chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
             answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
         } else {
 
                 switch (data) {
-                    case Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND:
+                    case Constants.KEYBOARD_USER_MESSAGES_BUTTON_CLOSE_COMMAND:
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                         break;
             }
@@ -56,6 +56,6 @@ public class ModeratorMessagesCallbackHandler implements AbstractHandler {
 
     @Override
     public List<String> getOperatedCallBackQuery() {
-        return List.of(Constants.KEYBOARD_MODERATOR_MESSAGES_OPERATED_CALLBACK);
+        return List.of(Constants.KEYBOARD_USER_MESSAGES_OPERATED_CALLBACK);
     }
 }
