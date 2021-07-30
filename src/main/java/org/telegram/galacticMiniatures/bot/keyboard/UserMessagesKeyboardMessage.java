@@ -32,7 +32,7 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
             caption.setLength(0);
             Integer sum = Integer.parseInt(messages.get("sum"));
             Integer orderId = Integer.parseInt(messages.get("orderId"));
-            String sectionCallBackData = command.append(Constants.KEYBOARD_ADMIN_MESSAGES_OPERATED_CALLBACK)
+            String sectionCallBackData = command.append(Constants.KEYBOARD_MODERATOR_MESSAGES_OPERATED_CALLBACK)
                     .append(orderId)
                     .toString();
             if (sum > 0) {

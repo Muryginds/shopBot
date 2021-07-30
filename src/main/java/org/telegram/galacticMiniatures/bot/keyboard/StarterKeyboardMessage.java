@@ -42,21 +42,19 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
             Constants.KEYBOARD_STARTER_FAVORITE_COMMAND));
     keyboard.add(keyboardRow2);
 
-//    KeyboardRow keyboardRow3 = new KeyboardRow();
-//    keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MESSAGES_COMMAND));
-//    keyboard.add(keyboardRow3);
-
-    Optional<User> user = userService.findUser(chatId);
-    user.ifPresent(u -> {
-      if (user.get().getIsAdmin()) {
-        KeyboardRow keyboardRow3 = new KeyboardRow();
-        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND));
+    Optional<User> optionalUser = userService.findUser(chatId);
+    optionalUser.ifPresent(u -> {
+      User user = optionalUser.get();
+      KeyboardRow keyboardRow3 = new KeyboardRow();
+      if (user.getIsModerator()) {
+        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND));
         keyboard.add(keyboardRow3);
-        KeyboardRow keyboardRow4 = new KeyboardRow();
-        keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND));
-        keyboard.add(keyboardRow4);
+        if (user.getIsAdmin()) {
+          KeyboardRow keyboardRow4 = new KeyboardRow();
+          keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND));
+          keyboard.add(keyboardRow4);
+        }
       } else {
-        KeyboardRow keyboardRow3 = new KeyboardRow();
         keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND));
         keyboard.add(keyboardRow3);
       }

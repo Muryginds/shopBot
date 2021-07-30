@@ -9,8 +9,7 @@ import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.AdminMessagesKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.AdminOrderMessageKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.ModeratorOrderMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Order;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
@@ -28,10 +27,10 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class AdminOrderMessageCallbackHandler implements AbstractHandler {
+public class ModeratorOrderMessageCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
-    private final AdminOrderMessageKeyboardMessage adminOrderMessageKeyboardMessage;
+    private final ModeratorOrderMessageKeyboardMessage moderatorOrderMessageKeyboardMessage;
     private final KeyboardService keyboardService;
     private final UserMessageService userMessageService;
     private final UserService userService;
@@ -65,7 +64,7 @@ public class AdminOrderMessageCallbackHandler implements AbstractHandler {
                 }
             }
 
-            Optional<PartialBotApiMethod<?>> replyMessage = adminOrderMessageKeyboardMessage.prepareScrollingMessage(
+            Optional<PartialBotApiMethod<?>> replyMessage = moderatorOrderMessageKeyboardMessage.prepareScrollingMessage(
                     chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
             answer.addAll(handleOptionalAddMessage(replyMessage, message));
             user.setBotState(BotState.WORKING);
@@ -83,7 +82,7 @@ public class AdminOrderMessageCallbackHandler implements AbstractHandler {
         Optional<PartialBotApiMethod<?>> sendMessage;
 
         switch (data) {
-            case Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND:
+            case Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND:
 
                 ChatInfo chatInfo = cacheService.get(chatId);
                 OrderMessageInfo orderMessageInfo = chatInfo.getOrderMessageInfo();
@@ -94,21 +93,21 @@ public class AdminOrderMessageCallbackHandler implements AbstractHandler {
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 break;
 
-            case Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_COMMAND:
+            case Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_NEXT_COMMAND:
 
-                sendMessage = adminOrderMessageKeyboardMessage.prepareScrollingMessage(
+                sendMessage = moderatorOrderMessageKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
-            case Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND:
+            case Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND:
 
-                sendMessage = adminOrderMessageKeyboardMessage.prepareScrollingMessage(
+                sendMessage = moderatorOrderMessageKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
-            case Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND:
+            case Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND:
 
                 User user = userService.getUser(message);
                 user.setBotState(BotState.ADDING_ADMIN_ORDER_MESSAGE);
@@ -141,6 +140,6 @@ public class AdminOrderMessageCallbackHandler implements AbstractHandler {
 
     @Override
     public List<String> getOperatedCallBackQuery() {
-        return List.of(Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK);
+        return List.of(Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_OPERATED_CALLBACK);
     }
 }

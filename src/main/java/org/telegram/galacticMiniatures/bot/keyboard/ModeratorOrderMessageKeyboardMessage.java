@@ -26,7 +26,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AdminOrderMessageKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
+public class ModeratorOrderMessageKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final CacheService cacheService;
     private final UserMessageService userMessageService;
@@ -60,12 +60,12 @@ public class AdminOrderMessageKeyboardMessage implements AbstractKeyboardMessage
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         if (messagePage.getTotalElements() > totalElementOnPage) {
-            String listingPreviousCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK;
+            String listingPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
-                listingPreviousCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND;
+                listingPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+                    Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
             long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
@@ -76,23 +76,23 @@ public class AdminOrderMessageKeyboardMessage implements AbstractKeyboardMessage
                                     totalElements / totalElementOnPage + 1 :
                                     totalElements / totalElementOnPage)
                             .toString(),
-                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK));
+                    Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_OPERATED_CALLBACK));
 
-            String listingNextCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK;
+            String listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() + 1 < messagePage.getTotalPages()) {
-                listingNextCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_COMMAND;
+                listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_NEXT_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_NAME, listingNextCommand));
+                    Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME,
-                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_NAME,
-                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 

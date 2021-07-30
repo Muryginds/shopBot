@@ -32,7 +32,7 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
             caption.setLength(0);
             Integer sum = Integer.parseInt(messages.get("sum"));
             Integer orderId = Integer.parseInt(messages.get("orderId"));
-            String sectionCallBackData = command.append(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_MESSAGES_COMMAND)
+            String sectionCallBackData = command.append(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND)
                     .append(orderId)
                     .toString();
             if (sum > 0) {
@@ -52,8 +52,8 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
         }
 
         InlineKeyboardButton goBackButton = new InlineKeyboardButton();
-        goBackButton.setText(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_NAME);
-        goBackButton.setCallbackData(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_COMMAND);
+        goBackButton.setText(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_NAME);
+        goBackButton.setCallbackData(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND);
         rowList.add(new ArrayList<>(List.of(goBackButton)));
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;

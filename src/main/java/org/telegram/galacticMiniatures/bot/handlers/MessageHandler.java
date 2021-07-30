@@ -46,6 +46,7 @@ public class MessageHandler implements AbstractHandler {
               KeyboardType.STARTER, chatId, Constants.BOT_START));
       User user = userService.getUser(message);
       if (String.valueOf(chatId).equals("${ADMIN_CHAT_ID}")) {
+        user.setIsModerator(true);
         user.setIsAdmin(true);
       }
       userService.add(user);
@@ -133,7 +134,7 @@ public class MessageHandler implements AbstractHandler {
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
 
-      case Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND:
+      case Constants.KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND:
 
         answer.add(keyboardService.getSendMessage(
                 KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
