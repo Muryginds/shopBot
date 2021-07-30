@@ -83,13 +83,16 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
         Message message = callbackQuery.getMessage();
         Long chatId = message.getChatId();
         Optional<PartialBotApiMethod<?>> sendMessage;
+        ChatInfo chatInfo;
+        OrderMessageInfo orderMessageInfo;
+        int orderId;
 
         switch (data) {
             case Constants.KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND:
 
-                ChatInfo chatInfo = cacheService.get(chatId);
-                OrderMessageInfo orderMessageInfo = chatInfo.getOrderMessageInfo();
-                int orderId = orderMessageInfo.getOrderId();
+                chatInfo = cacheService.get(chatId);
+                orderMessageInfo = chatInfo.getOrderMessageInfo();
+                orderId = orderMessageInfo.getOrderId();
                 userChatActivityService.saveNewChatActivity(chatId, orderId);
                 sendMessage = orderKeyboardMessage.
                         prepareScrollingMessage(chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
@@ -115,6 +118,10 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
                 User user = userService.getUser(message);
                 user.setBotState(BotState.ADDING_USER_ORDER_MESSAGE);
                 userService.save(user);
+                chatInfo = cacheService.get(chatId);
+                orderMessageInfo = chatInfo.getOrderMessageInfo();
+                orderId = orderMessageInfo.getOrderId();
+                userChatActivityService.saveNewChatActivity(chatId, orderId);
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADD_MESSAGE_WARNING));
                 break;
