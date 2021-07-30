@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
+public class ModeratorMessagesKeyboardMessage implements AbstractKeyboardMessage {
 
     private final UserMessageService userMessageService;
 
@@ -23,7 +23,7 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
         StringBuilder command = new StringBuilder();
         StringBuilder caption = new StringBuilder();
         int count = 0;
-        List<Map<String, String>> newMessages = userMessageService.trackNewMessagesForAdmin(chatId);
+        List<Map<String, String>> newMessages = userMessageService.trackNewMessagesForModerator(chatId);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
@@ -32,7 +32,7 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
             caption.setLength(0);
             Integer sum = Integer.parseInt(messages.get("sum"));
             Integer orderId = Integer.parseInt(messages.get("orderId"));
-            String sectionCallBackData = command.append(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_MESSAGES_COMMAND)
+            String sectionCallBackData = command.append(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND)
                     .append(orderId)
                     .toString();
             if (sum > 0) {
@@ -52,8 +52,8 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
         }
 
         InlineKeyboardButton goBackButton = new InlineKeyboardButton();
-        goBackButton.setText(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_NAME);
-        goBackButton.setCallbackData(Constants.KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_COMMAND);
+        goBackButton.setText(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_NAME);
+        goBackButton.setCallbackData(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND);
         rowList.add(new ArrayList<>(List.of(goBackButton)));
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;

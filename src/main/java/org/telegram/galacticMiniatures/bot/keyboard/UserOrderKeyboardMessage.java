@@ -28,7 +28,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
+public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final CacheService cacheService;

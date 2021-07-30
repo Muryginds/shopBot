@@ -21,19 +21,23 @@ public class UserChatActivityService {
         userChatActivityRepository.save(userChatActivity);
     }
 
-    public Optional<UserChatActivity> findByChatIdAndOrderId(Long chatId, Integer orderId) {
-        return userChatActivityRepository.findByUser_ChatIdAndOrder_Id(chatId.toString(), orderId);
+    public Optional<UserChatActivity> findByChatIdAndOrderId(String chatId, Integer orderId) {
+        return userChatActivityRepository.findByUser_ChatIdAndOrder_Id(chatId, orderId);
     }
 
     public void saveNewChatActivity(Long chatId, Integer orderId) {
         Optional<Order> orderOptional = orderService.findById(orderId);
         orderOptional.ifPresent(o -> {
             Optional<UserChatActivity> optionalUCA =
-                    findByChatIdAndOrderId(chatId, orderId);
+                    findByChatIdAndOrderId(chatId.toString(), orderId);
             UserChatActivity chatActivity = optionalUCA.orElse(
                     new UserChatActivity(userService.getUser(chatId), o, null, null));
             chatActivity.setLastActivity(LocalDateTime.now());
             save(chatActivity);
         });
+    }
+
+    public void saveAll(Iterable<UserChatActivity> iterable) {
+        userChatActivityRepository.saveAll(iterable);
     }
 }

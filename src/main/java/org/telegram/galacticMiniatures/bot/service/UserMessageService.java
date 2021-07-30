@@ -38,8 +38,8 @@ public class UserMessageService {
         return userMessageRepository.trackNewMessagesForUser(chatId.toString());
     }
 
-    public List<Map<String, String>> trackNewMessagesForAdmin(Long chatId) {
-        return userMessageRepository.trackNewMessagesForAdmin(chatId.toString());
+    public List<Map<String, String>> trackNewMessagesForModerator(Long chatId) {
+        return userMessageRepository.trackNewMessagesForModerator(chatId.toString());
     }
 
     public void announceNewOrder(Long chatId, Order order) {

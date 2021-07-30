@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users
     chat_id    varchar (20)     UNIQUE  NOT NULL,
     name       varchar (100)    NOT NULL,
     bot_state  varchar (50)     NOT NULL,
+    in_moderator  tinyint(1) NOT NULL,
     in_admin  tinyint(1) NOT NULL,
     PRIMARY KEY (id)
 );

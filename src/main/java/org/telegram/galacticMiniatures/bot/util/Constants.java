@@ -4,9 +4,6 @@ final public class Constants {
 
     private Constants() {}
 
-
-
-
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -15,39 +12,78 @@ final public class Constants {
     private static final String MINUS = "\u2796";
     private static final String PLUS = "\u2795";
     private static final String BACK = "\u2B05  Back";
+    private static final String ADD_MESSAGE = "Add message";
 
-    public static final String KEYBOARD_ADMIN_MESSAGES_OPERATED_CALLBACK = "AdminMessagesCallback";
-    public static final String KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_NAME = CLOSE;
-    public static final String KEYBOARD_ADMIN_MESSAGES_BUTTON_CLOSE_COMMAND = "AdminMessagesCallbackClose";
-    public static final String KEYBOARD_ADMIN_MESSAGES_BUTTON_MESSAGES_COMMAND = "AdminMessagesCallbackMessages";
+    public static final String KEYBOARD_STARTER_SHOP_COMMAND = "\uD83E\uDDD9  Магазин";
+    public static final String KEYBOARD_STARTER_INFORMATION_COMMAND = "\uD83D\uDCDC  Информация";
+    public static final String KEYBOARD_STARTER_ADDRESS_COMMAND = "\uD83C\uDFF0  Адрес";
+    public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
+    public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
+    public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
+    public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
+    public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
+    public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Сообщения пользователей";
+    public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Заказы пользователей";
+    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Центр сообщений";
+    public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
+    public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
+    public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";
 
     public static final String KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK = "UserChatMessageCallback";
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_COMMAND = "UserChatMessageCallbackClose";
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;
-    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND = "UserChatMessageCallbackAddMessage";
-    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND =
+            "UserChatMessageCallbackAddMessage";
+    public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_NAME = ADD_MESSAGE;
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_COMMAND = "UserChatMessageCallbackNext";
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_NAME = NEXT;
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserChatMessageCallbackPrevious";
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
 
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK = "AdminOrderMessageCallback";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND = "AdminOrderMessageCallbackClose";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND =
-            "AdminOrderMessageCallbackAddMessage";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_COMMAND = "AdminOrderMessageCallbackNext";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_NAME = NEXT;
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND =
-            "AdminOrderMessageCallbackPrevious";
-    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_USER_MESSAGES_OPERATED_CALLBACK = "UserMessagesCallback";
+    public static final String KEYBOARD_USER_MESSAGES_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_USER_MESSAGES_BUTTON_CLOSE_COMMAND = "UserMessagesCallbackClose";
+    public static final String KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND = "UserMessagesCallbackMessages";
+
+    public static final String KEYBOARD_MODERATOR_MESSAGES_OPERATED_CALLBACK = "ModeratorMessagesCallback";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND = "ModeratorMessagesCallbackClose";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND =
+            "ModeratorMessagesCallbackMessages";
+
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK =
+            "ModeratorMessageScrollerCallback";
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_CLOSE_COMMAND =
+            "ModeratorMessageScrollerCallbackClose";
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_ADD_MESSAGE_COMMAND =
+            "ModeratorMessageScrollerCallbackAddMessage";
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_ADD_MESSAGE_NAME = ADD_MESSAGE;
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_NEXT_COMMAND =
+            "ModeratorMessageScrollerCallbackNext";
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_COMMAND =
+            "ModeratorMessageScrollerCallbackPrevious";
+    public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_NAME = PREVIOUS;
+
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_OPERATED_CALLBACK = "UserMessageScrollerCallback";
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_PREVIOUS_COMMAND =
+            "UserMessageScrollerCallbackPrevious";
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_NEXT_COMMAND = "UserMessageScrollerCallbackNext";
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_ADD_MESSAGE_COMMAND =
+            "UserMessageScrollerCallbackAddMessage";
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_ADD_MESSAGE_NAME = ADD_MESSAGE;
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_CLOSE_COMMAND = "UserMessageScrollerCallbackClose";
+    public static final String KEYBOARD_USER_MESSAGE_SCROLLER_BUTTON_CLOSE_NAME = CLOSE;
 
     public static final String KEYBOARD_USER_ORDER_MESSAGE_OPERATED_CALLBACK = "UserOrderMessageCallback";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND = "UserOrderMessageCallbackClose";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;
-    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND = "UserOrderMessageCallbackAddMessage";
-    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND =
+            "UserOrderMessageCallbackAddMessage";
+    public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME = ADD_MESSAGE;
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_COMMAND = "UserOrderMessageCallbackNext";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_NEXT_NAME = NEXT;
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserOrderMessageCallbackPrevious";
@@ -82,7 +118,6 @@ final public class Constants {
     public static final String KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_NAME = BACK;
     public static final String KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY ="Order is empty. Deleting order";
 
-    public static final String KEYBOARD_ORDER_HEADER = "\uD83D\uDC34  Orders";
     public static final String KEYBOARD_ORDER_OPERATED_CALLBACK = "OrderCallback";
     public static final String KEYBOARD_ORDER_BUTTON_CLOSE_COMMAND = "OrderCallbackClose";
     public static final String KEYBOARD_ORDER_BUTTON_CLOSE_NAME = CLOSE;
@@ -98,20 +133,6 @@ final public class Constants {
     public static final String KEYBOARD_ORDER_BUTTON_TRACK_NAME = "Track";
     public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND = "OrderCallbackMessages";
     public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_NAME = "Messages";
-
-    public static final String KEYBOARD_STARTER_SHOP_COMMAND = "\uD83E\uDDD9  Магазин";
-    public static final String KEYBOARD_STARTER_INFORMATION_COMMAND = "\uD83D\uDCDC  Информация";
-    public static final String KEYBOARD_STARTER_ADDRESS_COMMAND = "\uD83C\uDFF0  Адрес";
-    public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
-    public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
-    public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
-    public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
-    public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
-    public static final String KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND = "Сообщения пользователей";
-    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Центр сообщений";
-    public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
-    public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
-    public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";
 
     public static final String KEYBOARD_ADDRESS_OPERATED_CALLBACK = "AddressCallback";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_NAME = "\u270F  Edit";

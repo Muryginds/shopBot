@@ -8,7 +8,7 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -31,7 +31,7 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
   private final OrderService orderService;
-  private final OrderKeyboardMessage orderKeyboardMessage;
+  private final UserOrderKeyboardMessage userOrderKeyboardMessage;
   private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
 
   @Override
@@ -46,6 +46,7 @@ public class MessageHandler implements AbstractHandler {
               KeyboardType.STARTER, chatId, Constants.BOT_START));
       User user = userService.getUser(message);
       if (String.valueOf(chatId).equals("${ADMIN_CHAT_ID}")) {
+        user.setIsModerator(true);
         user.setIsAdmin(true);
       }
       userService.add(user);
@@ -110,7 +111,7 @@ public class MessageHandler implements AbstractHandler {
       case Constants.KEYBOARD_STARTER_ORDER_COMMAND:
 
         if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
-          sendMessage = orderKeyboardMessage.
+          sendMessage = userOrderKeyboardMessage.
                   prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
@@ -133,7 +134,7 @@ public class MessageHandler implements AbstractHandler {
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
 
-      case Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND:
+      case Constants.KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND:
 
         answer.add(keyboardService.getSendMessage(
                 KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
@@ -145,6 +146,13 @@ public class MessageHandler implements AbstractHandler {
         answer.add(keyboardService.getSendMessage(
                 KeyboardType.USER_MESSAGES, chatId, "Message management"));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+
+      case Constants.KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND:
+
+        sendMessage = userOrderKeyboardMessage.
+                prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+        answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
     }
     return answer;

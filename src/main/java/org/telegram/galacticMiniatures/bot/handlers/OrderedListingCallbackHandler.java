@@ -9,7 +9,7 @@ import org.telegram.galacticMiniatures.bot.cache.OrderedListingsInfo;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.OrderedListingsKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -31,7 +31,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
     private final CacheService cacheService;
     private final OrderService orderService;
     private final OrderedListingService orderedListingService;
-    private final OrderKeyboardMessage orderKeyboardMessage;
+    private final UserOrderKeyboardMessage userOrderKeyboardMessage;
     private final OrderedListingsKeyboardMessage orderedListingsKeyboardMessage;
 
     @Override
@@ -52,7 +52,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
         switch (data) {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_COMMAND:
 
-                sendMessage = orderKeyboardMessage.prepareScrollingMessage(
+                sendMessage = userOrderKeyboardMessage.prepareScrollingMessage(
                         chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
@@ -97,7 +97,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                         answer.add(Utils.prepareAnswerCallbackQuery(
                                 Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                         order.setStatus(OrderStatus.CANCELED);
-                        sendMessage = orderKeyboardMessage.prepareScrollingMessage(
+                        sendMessage = userOrderKeyboardMessage.prepareScrollingMessage(
                                 chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                     }
                     orderService.save(order);
@@ -158,7 +158,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                         answer.add(Utils.prepareAnswerCallbackQuery(
                                 Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                         order.setStatus(OrderStatus.CANCELED);
-                        sendMessage = orderKeyboardMessage.prepareScrollingMessage(
+                        sendMessage = userOrderKeyboardMessage.prepareScrollingMessage(
                                 chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                     } else if (newQuantity > 0) {
                         sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
