@@ -8,7 +8,6 @@ import org.telegram.galacticMiniatures.bot.model.ListingWithTag;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface ListingWithTagRepository
     extends JpaRepository<ListingWithTag, ListingWithTag.Key> {
 

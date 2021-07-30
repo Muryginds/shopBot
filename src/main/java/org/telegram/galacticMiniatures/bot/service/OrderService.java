@@ -44,7 +44,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void createNewOrderWithListings(Long chatId) {
+    public Order createNewOrderWithListings(Long chatId) {
         User user = userService.findUser(chatId).orElse(new User(chatId.toString(), chatId.toString()));
         Order order = new Order(user,
                 OrderStatus.CREATED,
@@ -62,13 +62,14 @@ public class OrderService {
         }
         orderedListingService.saveAll(orderedListingsList);
         cartService.deleteAllByChatId(user);
+        return order;
     }
 
     public void delete(int orderId) {
         orderRepository.deleteById(orderId);
     }
 
-    public void save(Order order) {
-        orderRepository.save(order);
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 }

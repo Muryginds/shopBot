@@ -31,6 +31,11 @@ public class UserService {
                 .orElseGet(() -> add(new User(message)));
     }
 
+    public User getUser(Long chatId) {
+        return findUser(chatId)
+                .orElseGet(() -> add(new User(chatId.toString(), chatId.toString())));
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }

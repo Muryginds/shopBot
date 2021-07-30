@@ -25,5 +25,8 @@ public class UserChatActivity extends AbstractEntity {
     Order order;
 
     @Column(name = "last_activity")
-    LocalDateTime created = LocalDateTime.now();
+    LocalDateTime lastActivity = LocalDateTime.now();
+
+    @Column(name = "announced")
+    LocalDateTime announced;
 }

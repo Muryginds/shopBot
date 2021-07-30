@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface SectionRepository extends JpaRepository<Section, Integer> {
 
     Optional<Section> findByIdentifier(Integer id);
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE sections SET active = 0 WHERE updated - " +
             "(SELECT * FROM (SELECT MAX(updated) FROM sections) as upd) " +
             "< -?1", nativeQuery = true)

@@ -11,13 +11,13 @@ import org.springframework.data.domain.Sort;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserOrderMessageInfo {
+public class OrderMessageInfo {
     int pageSize = 15;
     Integer orderId = 0;
     Pageable messagePageable = PageRequest.of(
             0, pageSize, Sort.by("created").descending());
 
-    public UserOrderMessageInfo(Integer orderId) {
+    public OrderMessageInfo(Integer orderId) {
         this.orderId = orderId;
     }
 }

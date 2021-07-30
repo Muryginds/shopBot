@@ -12,7 +12,6 @@ import org.telegram.galacticMiniatures.bot.model.Listing;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface ListingRepository extends JpaRepository<Listing, Integer> {
 
     Optional<Listing> findByIdentifier(Integer id);
@@ -22,6 +21,7 @@ public interface ListingRepository extends JpaRepository<Listing, Integer> {
     Optional<Integer> countBySectionIdentifierAndActiveTrue(Integer sectionId);
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE listings SET active = 0 WHERE updated - " +
             "(SELECT * FROM (SELECT MAX(updated) FROM listings) as upd) " +
             "< -?1", nativeQuery = true)

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.UserChatMessageInfo;
+import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
+public class AdminOrderMessageKeyboardMessage implements AbstractKeyboardMessage, Scrollable {
 
     private final CacheService cacheService;
     private final UserMessageService userMessageService;
@@ -36,18 +36,22 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
                                                                     ScrollerType scrollerType,
                                                                     ScrollerObjectType scrollerObjectType) {
 
-        UserChatMessageInfo userChatMessageInfo =
-                cacheService.get(chatId).getUserChatMessageInfo();
-        Pageable messagePageable = userChatMessageInfo.getMessagePageable();
-        int totalElementOnPage = userChatMessageInfo.getPageSize();
+        OrderMessageInfo orderMessageInfo =
+                cacheService.get(chatId).getOrderMessageInfo();
+        Pageable messagePageable = orderMessageInfo.getMessagePageable();
+        int totalElementOnPage = orderMessageInfo.getPageSize();
 
         Sort optionSort = Sort.by("created").descending();
         if (scrollerObjectType == ScrollerObjectType.ITEM) {
             messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
         }
+        int orderId = orderMessageInfo.getOrderId();
+        if (orderId == 0) {
+            return Optional.empty();
+        }
 
         Page<UserMessage> messagePage =
-                userMessageService.getPageByChatId(chatId, messagePageable);
+                userMessageService.getPageByOrderId(orderId, messagePageable);
         List<UserMessage> userMessages = messagePage.getContent();
 
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -56,12 +60,12 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
         if (messagePage.getTotalElements() > totalElementOnPage) {
-            String listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK;
+            String listingPreviousCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
-                listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND;
+                listingPreviousCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
+                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
             long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
@@ -72,41 +76,43 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
                                     totalElements / totalElementOnPage + 1 :
                                     totalElements / totalElementOnPage)
                             .toString(),
-                    Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK));
+                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK));
 
-            String listingNextCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK;
+            String listingNextCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() + 1 < messagePage.getTotalPages()) {
-                listingNextCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_COMMAND;
+                listingNextCommand = Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_NAME, listingNextCommand));
+                    Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_NAME,
-                Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND));
+                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME,
+                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_NAME,
-                Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_CLOSE_COMMAND));
+                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        userChatMessageInfo.setMessagePageable(messagePageable);
-        cacheService.add(chatId, userChatMessageInfo);
+        orderMessageInfo.setMessagePageable(messagePageable);
+        cacheService.add(chatId, orderMessageInfo);
 
-        StringBuilder text = new StringBuilder("* Chat [")
-                .append(chatId)
+        StringBuilder text = new StringBuilder("* Order [")
+                .append(String.format("%05d" , orderId))
                 .append("]: *\n\n");
         for (UserMessage userMessage: userMessages) {
             String username;
-            if (userMessage.getUser().getChatId().equals(chatId.toString())) {
-                username = "*[You]*";
+            String userChatId = userMessage.getUser().getChatId();
+            if (userChatId.equals(chatId.toString())) {
+                username = "You";
             } else {
-                username = "*[Admin]*";
+                username = userChatId;
             }
-            text.append(username)
-                    .append(": ")
+            text.append("*[")
+                    .append(username)
+                    .append("]*: ")
                     .append(userMessage.getMessage())
                     .append("\n");
         }

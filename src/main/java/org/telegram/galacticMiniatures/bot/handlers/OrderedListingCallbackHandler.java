@@ -53,21 +53,21 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_COMMAND:
 
                 sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_NEXT_COMMAND:
 
                 sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_PREVIOUS_COMMAND:
 
                 sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
@@ -79,28 +79,36 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 orderedListingsPage =
                         orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
-                orderedListingService.delete(orderedListing);
-
-                answer.add(
-                        Utils.prepareAnswerCallbackQuery("Removed from order", true, callbackQuery));
-
                 order = orderedListing.getId().getOrder();
-                order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
-                orderedListingsPage =
-                        orderedListingService.findPageByOrderId(orderId, pageable);
-                if (orderedListingsPage.getTotalElements() > 0) {
+                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                    orderedListingService.delete(orderedListing);
 
-                    sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                    answer.add(
+                            Utils.prepareAnswerCallbackQuery("Removed from order", true, callbackQuery));
+
+                    order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
+                    orderedListingsPage =
+                            orderedListingService.findPageByOrderId(orderId, pageable);
+                    if (orderedListingsPage.getTotalElements() > 0) {
+
+                        sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                    } else {
+                        answer.add(Utils.prepareAnswerCallbackQuery(
+                                Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
+                        order.setStatus(OrderStatus.CANCELED);
+                        sendMessage = orderKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                    }
+                    orderService.save(order);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
-                    answer.add(Utils.prepareAnswerCallbackQuery(
-                            Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
-                    order.setStatus(OrderStatus.CANCELED);
-                    sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                    answer.add(Utils.prepareSendMessage(chatId, new StringBuilder()
+                            .append("Order is ")
+                            .append(order.getStatus())
+                            .append(" you can not modify it").toString()
+                    ));
                 }
-                orderService.save(order);
-                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_PLUS_COMMAND:
@@ -110,14 +118,22 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 pageable = orderedListingsInfo.getListingPageable();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
-                orderedListing.setQuantity(orderedListing.getQuantity() + 1);
-                orderedListingService.save(orderedListing);
                 order = orderedListing.getId().getOrder();
-                order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
-                orderService.save(order);
-                sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
-                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
+                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                    orderedListing.setQuantity(orderedListing.getQuantity() + 1);
+                    orderedListingService.save(orderedListing);
+                    order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
+                    orderService.save(order);
+                    sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
+                            chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
+                } else {
+                    answer.add(Utils.prepareSendMessage(chatId, new StringBuilder()
+                            .append("Order is ")
+                            .append(order.getStatus())
+                            .append(" you can not modify it").toString()
+                    ));
+                }
                 break;
 
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_COMMAND:
@@ -127,31 +143,39 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 orderId = orderedListingsInfo.getOrderId();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
-                int newQuantity = orderedListing.getQuantity() - 1;
-                if (newQuantity == 0) {
-                    orderedListingService.delete(orderedListing);
-                } else {
-                    orderedListing.setQuantity(newQuantity);
-                    orderedListingService.save(orderedListing);
-                }
                 order = orderedListing.getId().getOrder();
-                order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
+                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                    int newQuantity = orderedListing.getQuantity() - 1;
+                    if (newQuantity == 0) {
+                        orderedListingService.delete(orderedListing);
+                    } else {
+                        orderedListing.setQuantity(newQuantity);
+                        orderedListingService.save(orderedListing);
+                    }
+                    order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
 
-                if (orderedListingsPage.getTotalPages() - 1 == 0 && newQuantity == 0) {
-                    answer.add(Utils.prepareAnswerCallbackQuery(
-                            Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
-                    order.setStatus(OrderStatus.CANCELED);
-                    sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
-                } else if (newQuantity > 0) {
-                    sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
+                    if (orderedListingsPage.getTotalPages() - 1 == 0 && newQuantity == 0) {
+                        answer.add(Utils.prepareAnswerCallbackQuery(
+                                Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
+                        order.setStatus(OrderStatus.CANCELED);
+                        sendMessage = orderKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                    } else if (newQuantity > 0) {
+                        sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
+                    } else {
+                        sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                    }
+                    orderService.save(order);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
-                    sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                    answer.add(Utils.prepareSendMessage(chatId, new StringBuilder()
+                            .append("Order is ")
+                            .append(order.getStatus())
+                            .append(" you can not modify it").toString()
+                    ));
                 }
-                orderService.save(order);
-                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
         }
         return answer;

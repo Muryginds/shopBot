@@ -25,4 +25,8 @@ public class Country extends AbstractEntity {
 
     @Column(name = "code")
     Integer code;
+
+    public Country(Integer countryId) {
+        this.countryId = countryId;
+    }
 }

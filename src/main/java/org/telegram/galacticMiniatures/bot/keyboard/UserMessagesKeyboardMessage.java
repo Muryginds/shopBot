@@ -36,11 +36,10 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
                     .append(orderId)
                     .toString();
             if (sum > 0) {
-                caption.append("Order ")
-                        .append(String.format("%05d", orderId))
-                        .append(" (")
+                caption.append(String.format("%05d", orderId))
+                        .append(" [")
                         .append(sum)
-                        .append(")");
+                        .append("]");
             } else {
                 caption.append("Order ")
                         .append(String.format("%05d", orderId));

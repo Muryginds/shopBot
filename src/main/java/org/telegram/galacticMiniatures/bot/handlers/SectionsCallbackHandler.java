@@ -43,7 +43,7 @@ public class SectionsCallbackHandler implements AbstractHandler {
                 SearchInfo searchInfo = new SearchInfo(sectionId);
                 cacheService.add(chatId, searchInfo);
                 Optional<PartialBotApiMethod<?>> sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
             } else {
                 answer.add(Utils.prepareAnswerCallbackQuery(

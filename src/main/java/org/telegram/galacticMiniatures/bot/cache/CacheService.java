@@ -41,9 +41,9 @@ public class CacheService {
         cache.put(chatId, chatInfo);
     }
 
-    public void add(long chatId, UserOrderMessageInfo userOrderMessageInfo) {
+    public void add(long chatId, OrderMessageInfo orderMessageInfo) {
         ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
-        chatInfo.setUserOrderMessageInfo(userOrderMessageInfo);
+        chatInfo.setOrderMessageInfo(orderMessageInfo);
         cache.put(chatId, chatInfo);
     }
 

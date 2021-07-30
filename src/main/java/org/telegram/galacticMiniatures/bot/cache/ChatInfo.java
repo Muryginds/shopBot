@@ -2,7 +2,6 @@ package org.telegram.galacticMiniatures.bot.cache;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.telegram.galacticMiniatures.bot.enums.BotState;
 
 @Setter
 @Getter
@@ -16,5 +15,5 @@ public class ChatInfo {
     OrderInfo orderInfo = new OrderInfo();
     OrderedListingsInfo orderedListingsInfo = new OrderedListingsInfo();
     UserChatMessageInfo userChatMessageInfo = new UserChatMessageInfo();
-    UserOrderMessageInfo userOrderMessageInfo = new UserOrderMessageInfo();
+    OrderMessageInfo orderMessageInfo = new OrderMessageInfo();
 }

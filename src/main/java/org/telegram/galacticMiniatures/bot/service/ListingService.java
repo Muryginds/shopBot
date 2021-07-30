@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.ListingRepository;
@@ -21,6 +22,7 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
 
+    @Transactional
     public List<Listing> saveAllByParsedListingMap(Map<Section, List<ParsedListing>> listingsMap) {
         List<Listing> listings = new ArrayList<>();
         for (Map.Entry<Section, List<ParsedListing>> entry : listingsMap.entrySet()) {

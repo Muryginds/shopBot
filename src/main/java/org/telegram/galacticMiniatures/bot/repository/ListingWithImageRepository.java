@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface ListingWithImageRepository
     extends JpaRepository<ListingWithImage, Integer> {
 
@@ -25,6 +24,7 @@ public interface ListingWithImageRepository
     Page<ListingWithImage> findByListingAndActiveTrue(Listing listing, Pageable pageable);
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE listings_images SET active = 0 WHERE updated - " +
             "(SELECT * FROM (SELECT MAX(updated) FROM listings_images) as upd) " +
             "< -?1", nativeQuery = true)

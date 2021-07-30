@@ -8,14 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
-import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface ListingWithOptionRepository
     extends JpaRepository<ListingWithOption, Integer> {
 
@@ -27,6 +24,7 @@ public interface ListingWithOptionRepository
             String secondOptionName, String secondOptionValue);
 
     @Modifying
+    @Transactional
     @Query(value = "UPDATE listings_options SET active = 0 WHERE updated - " +
             "(SELECT * FROM (SELECT MAX(updated) FROM listings_options) as upd) " +
             "< -?1", nativeQuery = true)

@@ -32,6 +32,7 @@ public class CartCallbackHandler implements AbstractHandler {
     private final UserService userService;
     private final OrderService orderService;
     private final UserInfoService userInfoService;
+    private final UserMessageService userMessageService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -56,14 +57,14 @@ public class CartCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_CART_BUTTON_NEXT_COMMAND:
 
                 sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_CART_BUTTON_PREVIOUS_COMMAND:
 
                 sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
@@ -80,7 +81,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 if (pageCart.getTotalElements() > 0) {
                     sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
@@ -110,7 +111,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
                 cartService.save(listingCart);
                 sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
@@ -135,11 +136,11 @@ public class CartCallbackHandler implements AbstractHandler {
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 } else if (newQuantity > 0) {
                     sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.CURRENT, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
                     sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 }
                 break;
@@ -152,10 +153,11 @@ public class CartCallbackHandler implements AbstractHandler {
                 if (userInfo.isEmpty()) {
                     replyText = "Please fill in Address information before ordering";
                 } else if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
-                    orderService.createNewOrderWithListings(chatId);
+                    Order order = orderService.createNewOrderWithListings(chatId);
                     replyText = "Gratz! Order created. " +
                             "Please read information about shipping cost carefully";
                     answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
+                    userMessageService.announceNewOrder(chatId, order);
                 } else {
                     replyText = "Cart is empty, nothing to order";
                 }

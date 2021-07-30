@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithImageRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedImage;
@@ -20,6 +21,7 @@ public class ListingWithImageService {
 
     private final ListingWithImageRepository listingWithImageRepository;
 
+    @Transactional
     public void saveAllByParsedImageMap(Map<Listing, List<ParsedImage>> listingsMap) {
         List<ListingWithImage> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedImage>> entry : listingsMap.entrySet()) {

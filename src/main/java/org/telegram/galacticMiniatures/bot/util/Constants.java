@@ -31,6 +31,18 @@ final public class Constants {
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND = "UserChatMessageCallbackPrevious";
     public static final String KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
 
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_OPERATED_CALLBACK = "AdminOrderMessageCallback";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND = "AdminOrderMessageCallbackClose";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_COMMAND =
+            "AdminOrderMessageCallbackAddMessage";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_ADD_MESSAGE_NAME = "Add message";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_COMMAND = "AdminOrderMessageCallbackNext";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_COMMAND =
+            "AdminOrderMessageCallbackPrevious";
+    public static final String KEYBOARD_ADMIN_ORDER_MESSAGE_BUTTON_PREVIOUS_NAME = PREVIOUS;
+
     public static final String KEYBOARD_USER_ORDER_MESSAGE_OPERATED_CALLBACK = "UserOrderMessageCallback";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_COMMAND = "UserOrderMessageCallbackClose";
     public static final String KEYBOARD_USER_ORDER_MESSAGE_BUTTON_CLOSE_NAME = CLOSE;

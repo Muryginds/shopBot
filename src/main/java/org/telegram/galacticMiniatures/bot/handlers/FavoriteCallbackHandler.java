@@ -55,14 +55,14 @@ public class FavoriteCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_FAVORITE_BUTTON_NEXT_COMMAND:
 
                 sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_FAVORITE_BUTTON_PREVIOUS_COMMAND:
 
                 sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
@@ -109,7 +109,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
                     if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
                         sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
                         answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                     } else {
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));

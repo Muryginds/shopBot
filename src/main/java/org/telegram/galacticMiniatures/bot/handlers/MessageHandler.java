@@ -74,7 +74,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
           sendMessage = cartKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
@@ -92,7 +92,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
           sendMessage = favoriteKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
@@ -111,7 +111,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
           sendMessage = orderKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.LISTING);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_ORDERS_EMPTY));
@@ -122,7 +122,7 @@ public class MessageHandler implements AbstractHandler {
       case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
 
         sendMessage = userChatMessageKeyboardMessage
-                .prepareScrollingMessage(chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.LISTING);
+                .prepareScrollingMessage(chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
         answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
 

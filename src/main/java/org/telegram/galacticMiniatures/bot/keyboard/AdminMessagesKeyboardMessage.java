@@ -36,14 +36,12 @@ public class AdminMessagesKeyboardMessage implements AbstractKeyboardMessage {
                     .append(orderId)
                     .toString();
             if (sum > 0) {
-                caption.append("Order ")
-                        .append(String.format("%05d", orderId))
-                        .append(" (")
+                caption.append(String.format("%05d", orderId))
+                        .append(" [")
                         .append(sum)
-                        .append(")");
+                        .append("]");
             } else {
-                caption.append("Order ")
-                        .append(String.format("%05d", orderId));
+                caption.append(String.format("%05d", orderId));
             }
             keyboardButtonsRow.add(createInlineKeyboardButton(caption.toString(), sectionCallBackData));
             if (count % 2 == 1) {

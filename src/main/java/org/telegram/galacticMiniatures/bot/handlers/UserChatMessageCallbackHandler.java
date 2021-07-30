@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
@@ -51,7 +50,7 @@ public class UserChatMessageCallbackHandler implements AbstractHandler {
             }
 
             Optional<PartialBotApiMethod<?>> replyMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.LISTING);
+                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
             answer.addAll(handleOptionalAddMessage(replyMessage, message));
             user.setBotState(BotState.WORKING);
             userService.save(user);
@@ -76,14 +75,14 @@ public class UserChatMessageCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_NEXT_COMMAND:
 
                 sendMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND:
 
                 sendMessage = userChatMessageKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
@@ -93,8 +92,7 @@ public class UserChatMessageCallbackHandler implements AbstractHandler {
                 user.setBotState(BotState.ADDING_CHAT_MESSAGE);
                 userService.save(user);
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
-                answer.add(Utils.prepareAnswerCallbackQuery(
-                        Constants.QUERY_ADD_MESSAGE_WARNING,false, callbackQuery));
+                answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADD_MESSAGE_WARNING));
                 break;
         }
         return answer;

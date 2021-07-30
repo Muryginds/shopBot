@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.UserOrderMessageInfo;
+import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
@@ -36,16 +36,16 @@ public class UserOrderMessageKeyboardMessage implements AbstractKeyboardMessage,
                                                                     ScrollerType scrollerType,
                                                                     ScrollerObjectType scrollerObjectType) {
 
-        UserOrderMessageInfo userOrderMessageInfo =
-                cacheService.get(chatId).getUserOrderMessageInfo();
-        Pageable messagePageable = userOrderMessageInfo.getMessagePageable();
-        int totalElementOnPage = userOrderMessageInfo.getPageSize();
+        OrderMessageInfo orderMessageInfo =
+                cacheService.get(chatId).getOrderMessageInfo();
+        Pageable messagePageable = orderMessageInfo.getMessagePageable();
+        int totalElementOnPage = orderMessageInfo.getPageSize();
 
         Sort optionSort = Sort.by("created").descending();
-        if (scrollerObjectType == ScrollerObjectType.LISTING) {
+        if (scrollerObjectType == ScrollerObjectType.ITEM) {
             messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
         }
-        int orderId = userOrderMessageInfo.getOrderId();
+        int orderId = orderMessageInfo.getOrderId();
         if (orderId == 0) {
             return Optional.empty();
         }
@@ -96,8 +96,8 @@ public class UserOrderMessageKeyboardMessage implements AbstractKeyboardMessage,
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        userOrderMessageInfo.setMessagePageable(messagePageable);
-        cacheService.add(chatId, userOrderMessageInfo);
+        orderMessageInfo.setMessagePageable(messagePageable);
+        cacheService.add(chatId, orderMessageInfo);
 
         StringBuilder text = new StringBuilder("* Order [")
                 .append(String.format("%05d" , orderId))

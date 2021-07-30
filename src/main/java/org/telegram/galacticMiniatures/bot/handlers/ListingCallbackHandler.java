@@ -61,14 +61,14 @@ public class ListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_LISTING_BUTTON_NEXT_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.NEXT, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND:
 
                 sendPhoto = listingKeyboardMessage.prepareScrollingMessage(
-                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.LISTING);
+                        chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendPhoto, callbackQuery));
                 break;
 
