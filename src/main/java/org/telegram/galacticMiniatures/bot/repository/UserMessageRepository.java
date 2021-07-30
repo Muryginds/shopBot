@@ -38,8 +38,8 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
             "ORDER BY sum DESC, orderId DESC", nativeQuery = true)
     List<Map<String, String>> trackNewMessagesForAdmin(String chatId);
 
-    @Query(value = "SELECT vu.chat_id AS chatId, CAST(um.order_id AS CHAR) AS orderId, " +
-            "CAST(SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS CHAR) AS sum " +
+    @Query(value = "SELECT vu.chat_id AS chatId, um.order_id AS orderId, " +
+            "SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS sum " +
             "FROM user_messages um " +
             "LEFT JOIN (SELECT uca.order_id, uca.last_activity, u.chat_id FROM user_chat_activity uca " +
             "JOIN users u on uca.user_id = u.id WHERE uca.last_activity > COALESCE (uca.announced, '01-01-01')) vu " +

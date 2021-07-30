@@ -31,6 +31,15 @@ public final class Utils {
     return message;
   }
 
+  public static SendMessage prepareSendMessage(String chatId, String text) {
+    SendMessage message = new SendMessage();
+    message.enableMarkdown(true);
+    message.setChatId(chatId);
+    message.setText(text);
+
+    return message;
+  }
+
   public static DeleteMessage prepareDeleteMessage(Long chatId, Integer messageId) {
     DeleteMessage message = new DeleteMessage();
     message.setChatId(chatId.toString());
