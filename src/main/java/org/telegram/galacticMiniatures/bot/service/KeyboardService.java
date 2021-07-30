@@ -15,6 +15,9 @@ public class KeyboardService {
     private final StarterKeyboardMessage starterKeyboardMessage;
     private final AddressKeyboardMessage addressKeyboardMessage;
     private final DefaultKeyboardMessage defaultKeyboardMessage;
+    private final AdminPanelKeyboardMessage adminPanelKeyboardMessage;
+    private final UserMessagesKeyboardMessage userMessagesKeyboardMessage;
+    private final AdminMessagesKeyboardMessage adminMessagesKeyboardMessage;
 
     public SendMessage getSendMessage(KeyboardType keyboardType, long chatId, String text) {
         return getKeyboardMessage(keyboardType).prepareKeyboardMessage(chatId, text);
@@ -31,6 +34,15 @@ public class KeyboardService {
                 break;
             case ADDRESS:
                 result = addressKeyboardMessage;
+                break;
+            case ADMIN_PANEL:
+                result = adminPanelKeyboardMessage;
+                break;
+            case ADMIN_MESSAGES:
+                result = adminMessagesKeyboardMessage;
+                break;
+            case USER_MESSAGES:
+                result = userMessagesKeyboardMessage;
                 break;
             default:
                 result = defaultKeyboardMessage;

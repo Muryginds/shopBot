@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.Section;
@@ -45,17 +44,15 @@ public class ShopParserService {
     @Value("${schedule.entityExpirationTime}")
     private Integer expirationTime;
 
-    @Scheduled(fixedRateString = "${schedule.sectionParsePeriod}")
-    private void parseInfo() {
+    public void parseInfo() {
         parseSections();
         parseListings();
         parseListingImages();
         parseListingOptions();
-
-        // parseListingsWithTags();
         makeExpiredEntitiesNotActive();
 
-//        oneTimeCountyParser();
+        // parseListingsWithTags();
+        // oneTimeCountyParser();
     }
 
     private void oneTimeCountyParser() {

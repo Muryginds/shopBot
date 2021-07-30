@@ -9,13 +9,13 @@ import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.keyboard.OrderKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.*;
@@ -30,7 +30,9 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteService favoriteService;
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
+  private final OrderService orderService;
   private final OrderKeyboardMessage orderKeyboardMessage;
+  private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
 
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -42,7 +44,10 @@ public class MessageHandler implements AbstractHandler {
       answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
       answer.add(keyboardService.getSendMessage(
               KeyboardType.STARTER, chatId, Constants.BOT_START));
-      User user = userService.findUser(chatId).orElse(new User(message));
+      User user = userService.getUser(message);
+      if (String.valueOf(chatId).equals("${ADMIN_CHAT_ID}")) {
+        user.setIsAdmin(true);
+      }
       userService.add(user);
     } else {
       answer.addAll(handleStarterMenuReply(message));
@@ -56,6 +61,8 @@ public class MessageHandler implements AbstractHandler {
     List<PartialBotApiMethod<?>> answer = new ArrayList<>();
     Long chatId = message.getChatId();
     int messageId = message.getMessageId();
+    Optional<PartialBotApiMethod<?>> sendMessage;
+
     switch (text) {
       case Constants.KEYBOARD_STARTER_SHOP_COMMAND:
 
@@ -65,35 +72,35 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_CART_COMMAND:
 
-        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-        if (cartService.countSizeCartByChatId(chatId) > 0) {
-          Optional<PartialBotApiMethod<?>> sendPhoto = cartKeyboardMessage.prepareScrollingMessage(
-                  chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-          sendPhoto.ifPresent(answer::add);
+        if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
+          sendMessage = cartKeyboardMessage.
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+          answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
+          answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         }
         break;
 
-        case Constants.KEYBOARD_STARTER_INFORMATION_COMMAND:
+      case Constants.KEYBOARD_STARTER_INFORMATION_COMMAND:
 
         answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_ABOUT));
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
 
-        case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
+      case Constants.KEYBOARD_STARTER_FAVORITE_COMMAND:
 
-        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-        if (favoriteService.countSizeFavoriteByChatId(chatId) > 0) {
-          Optional<PartialBotApiMethod<?>> sendPhoto = favoriteKeyboardMessage.prepareScrollingMessage(
-                  chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-          sendPhoto.ifPresent(answer::add);
+        if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
+          sendMessage = favoriteKeyboardMessage.
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+          answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
-          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
+          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
+          answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         }
         break;
 
-        case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
+      case Constants.KEYBOARD_STARTER_ADDRESS_COMMAND:
 
         answer.add(keyboardService.getSendMessage(
                 KeyboardType.ADDRESS, chatId, Constants.BOT_ADDRESS_REQUEST));
@@ -102,14 +109,57 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_ORDER_COMMAND:
 
-        Optional<PartialBotApiMethod<?>> sendMessage = orderKeyboardMessage.prepareScrollingMessage(
-                chatId, ScrollerType.NEW, ScrollerObjectType.LISTING);
-        if (sendMessage.isPresent()) {
-          answer.add(sendMessage.get());
+        if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
+          sendMessage = orderKeyboardMessage.
+                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+          answer.addAll(handleOptionalMessage(sendMessage, message));
+        } else {
+          answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_ORDERS_EMPTY));
           answer.add(Utils.prepareDeleteMessage(chatId, messageId));
         }
+        break;
 
-        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+      case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
+
+        sendMessage = userChatMessageKeyboardMessage
+                .prepareScrollingMessage(chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+        answer.addAll(handleOptionalMessage(sendMessage, message));
+        break;
+
+      case Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.ADMIN_PANEL, chatId, "Admin panel"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+
+      case Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+
+      case Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND:
+
+        answer.add(keyboardService.getSendMessage(
+                KeyboardType.USER_MESSAGES, chatId, "Message management"));
+        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        break;
+    }
+    return answer;
+  }
+
+  public static List<PartialBotApiMethod<?>> handleOptionalMessage(Optional<PartialBotApiMethod<?>> sendMessage,
+                                                            Message message) {
+    List<PartialBotApiMethod<?>> answer = new ArrayList<>();
+    Long chatId = message.getChatId();
+    Integer messageId = message.getMessageId();
+    if (sendMessage.isPresent()) {
+      answer.add(sendMessage.get());
+      answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+    } else {
+      answer.add(Utils.prepareSendMessage(chatId, Constants.ERROR_RESTART_MENU));
     }
     return answer;
   }

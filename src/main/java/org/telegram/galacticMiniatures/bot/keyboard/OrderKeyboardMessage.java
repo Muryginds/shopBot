@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.OrderInfo;
+import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.model.Order;
@@ -41,7 +42,7 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
 
         OrderInfo orderInfo = cacheService.get(chatId).getOrderInfo();
         Pageable listingPageable;
-        if (scrollerType == ScrollerType.NEW) {
+        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
             Sort sort = Sort.by("created").descending();
             listingPageable = getPageableByScrollerType(orderInfo.getOrderPageable(), scrollerType, sort);
         } else {
@@ -63,6 +64,7 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow3 = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow4 = new ArrayList<>();
 
         if(orderPage.getTotalPages() > 1) {
 
@@ -88,14 +90,19 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
                     Constants.KEYBOARD_ORDER_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
-
-        keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_NAME,
-                Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND));
-        keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ORDER_BUTTON_EDIT_NAME,
-                Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND + order.getId()));
-        rowList.add(keyboardButtonsRow2);
+        if(order.getStatus().equals(OrderStatus.CREATED)) {
+            keyboardButtonsRow2.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_NAME,
+                    Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND + order.getId()));
+            keyboardButtonsRow2.add(createInlineKeyboardButton(
+                    Constants.KEYBOARD_ORDER_BUTTON_EDIT_NAME,
+                    Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND + order.getId()));
+            rowList.add(keyboardButtonsRow2);
+        }
+        keyboardButtonsRow4.add(createInlineKeyboardButton(
+                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_NAME,
+                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND + order.getId()));
+        rowList.add(keyboardButtonsRow4);
         keyboardButtonsRow3.add(createInlineKeyboardButton(
                 Constants.KEYBOARD_ORDER_BUTTON_TRACK_NAME,
                 Constants.KEYBOARD_ORDER_BUTTON_TRACK_COMMAND));
@@ -110,7 +117,7 @@ public class OrderKeyboardMessage implements AbstractKeyboardMessage, Scrollable
 
         String caption = new StringBuilder()
                 .append("*[Order №")
-                .append(order.getId())
+                .append(String.format("%05d" , order.getId()))
                 .append("]*\nSummary: *")
                 .append(order.getSummary())
                 .append("*\nCreated: *")

@@ -39,14 +39,18 @@ public class OrderService {
         return orderRepository.findAllByUser_ChatId(chatId, Sort.by("created").descending());
     }
 
+    public Optional<Integer> countSizeOrdersByChatId(Long chatId) {
+        return orderRepository.countByUser_ChatId(chatId.toString());
+    }
+
     @Transactional
-    public void createNewOrderWithListings(Long chatId) {
+    public Order createNewOrderWithListings(Long chatId) {
         User user = userService.findUser(chatId).orElse(new User(chatId.toString(), chatId.toString()));
         Order order = new Order(user,
                 OrderStatus.CREATED,
                 LocalDateTime.now(),
                 cartService.getCartSummaryByChatId(chatId).orElse(0));
-        orderRepository.save(order);
+        save(order);
         List<ListingCart> listingCartList = cartService.findAllByUser(user);
         List<OrderedListing> orderedListingsList = new ArrayList<>();
         for (ListingCart cartElement : listingCartList) {
@@ -58,5 +62,14 @@ public class OrderService {
         }
         orderedListingService.saveAll(orderedListingsList);
         cartService.deleteAllByChatId(user);
+        return order;
+    }
+
+    public void delete(int orderId) {
+        orderRepository.deleteById(orderId);
+    }
+
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 }

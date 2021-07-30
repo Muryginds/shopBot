@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithOptionRepository;
@@ -20,6 +21,7 @@ public class ListingWithOptionService {
 
     private final ListingWithOptionRepository listingWithOptionRepository;
 
+    @Transactional
     public void saveAllByParsedOptionMap(Map<Listing, List<ParsedOption>> listingsMap) {
         List<ListingWithOption> list = new ArrayList<>();
         for (Map.Entry<Listing, List<ParsedOption>> entry : listingsMap.entrySet()) {

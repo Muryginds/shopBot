@@ -2,6 +2,7 @@ package org.telegram.galacticMiniatures.bot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.CountryRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedCountry;
@@ -20,15 +21,17 @@ public class CountryService {
         return countryRepository.findByCountryId(id);
     }
 
+    @Transactional
     public void saveAllParsedCountries(List<ParsedCountry> list) {
         List<Country> countries = new ArrayList<>();
         for (ParsedCountry country : list) {
-            countries.add(new Country(country.getCountryId(),
-                                        country.getName(),
-                                        country.getRuName(),
-                                        country.getCode()));
+            Optional<Country> optionalCountry = countryRepository.findByCountryId(country.getCountryId());
+            Country modifiedCountry = optionalCountry.orElse(new Country(country.getCountryId()));
+            modifiedCountry.setCode(country.getCode());
+            modifiedCountry.setName(country.getName());
+            modifiedCountry.setRuName(country.getRuName());
+            countries.add(modifiedCountry);
         }
         countryRepository.saveAll(countries);
     }
-
 }

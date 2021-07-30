@@ -48,10 +48,10 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
 
         Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
-            case LISTING:
+            case ITEM:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
+                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);

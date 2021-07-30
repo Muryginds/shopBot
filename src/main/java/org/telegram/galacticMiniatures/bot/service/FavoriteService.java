@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.repository.ListingFavoriteRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class FavoriteService {
@@ -25,7 +27,7 @@ public class FavoriteService {
         return listingFavoriteRepository.findById_User_ChatId(chatId.toString(), pageable);
     }
 
-    public int countSizeFavoriteByChatId(Long chatId) {
+    public Optional<Integer> countSizeFavoriteByChatId(Long chatId) {
         return listingFavoriteRepository.countListingFavoriteById_User_ChatId(chatId.toString());
     }
 }

@@ -18,6 +18,10 @@ public class UserService {
         return userRepository.findByChatId(chatId.toString());
     }
 
+    public Optional<User> findUser(String chatId) {
+        return userRepository.findByChatId(chatId);
+    }
+
     public User add(User user) {
         return userRepository.save(user);
     }
@@ -25,6 +29,11 @@ public class UserService {
     public User getUser(Message message) {
         return findUser(message.getChatId())
                 .orElseGet(() -> add(new User(message)));
+    }
+
+    public User getUser(Long chatId) {
+        return findUser(chatId)
+                .orElseGet(() -> add(new User(chatId.toString(), chatId.toString())));
     }
 
     public void save(User user) {

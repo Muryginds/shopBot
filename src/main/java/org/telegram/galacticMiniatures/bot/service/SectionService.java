@@ -2,6 +2,7 @@ package org.telegram.galacticMiniatures.bot.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Section;
 import org.telegram.galacticMiniatures.bot.repository.SectionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedSection;
@@ -17,6 +18,7 @@ public class SectionService {
 
     private final SectionRepository sectionRepository;
 
+    @Transactional
     public List<Section> saveAllByParsedSectionCollection(Iterable<ParsedSection> collection) {
         List<Section> sections = new ArrayList<>();
         for (ParsedSection parsedSection : collection) {

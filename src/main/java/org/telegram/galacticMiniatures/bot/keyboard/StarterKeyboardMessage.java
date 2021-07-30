@@ -1,6 +1,9 @@
 package org.telegram.galacticMiniatures.bot.keyboard;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.galacticMiniatures.bot.model.User;
+import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -8,9 +11,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class StarterKeyboardMessage implements AbstractKeyboardMessage {
+
+  private final UserService userService;
 
   @Override
   public ReplyKeyboard formKeyboard(Long chatId) {
@@ -34,6 +41,26 @@ public class StarterKeyboardMessage implements AbstractKeyboardMessage {
     keyboardRow2.addAll(List.of(Constants.KEYBOARD_STARTER_INFORMATION_COMMAND,
             Constants.KEYBOARD_STARTER_FAVORITE_COMMAND));
     keyboard.add(keyboardRow2);
+
+//    KeyboardRow keyboardRow3 = new KeyboardRow();
+//    keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_MESSAGES_COMMAND));
+//    keyboard.add(keyboardRow3);
+
+    Optional<User> user = userService.findUser(chatId);
+    user.ifPresent(u -> {
+      if (user.get().getIsAdmin()) {
+        KeyboardRow keyboardRow3 = new KeyboardRow();
+        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_MESSAGES_COMMAND));
+        keyboard.add(keyboardRow3);
+        KeyboardRow keyboardRow4 = new KeyboardRow();
+        keyboardRow4.addAll(List.of(Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND));
+        keyboard.add(keyboardRow4);
+      } else {
+        KeyboardRow keyboardRow3 = new KeyboardRow();
+        keyboardRow3.addAll(List.of(Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND));
+        keyboard.add(keyboardRow3);
+      }
+    });
 
     keyboardMarkup.setKeyboard(keyboard);
 
