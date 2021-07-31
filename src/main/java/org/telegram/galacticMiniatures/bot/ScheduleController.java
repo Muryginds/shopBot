@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.model.UserChatActivity;
 import org.telegram.galacticMiniatures.bot.repository.response.AnnouncementsResponse;
 import org.telegram.galacticMiniatures.bot.service.OrderService;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class ScheduleController {
 
     private final ShopParserService shopParserService;
+    private final CacheService cacheService;
     private final UserService userService;
     private final OrderService orderService;
     private final UserMessageService userMessageService;
@@ -63,5 +65,13 @@ public class ScheduleController {
                 .peek(u -> u.setAnnounced(LocalDateTime.now()))
                 .collect(Collectors.toList());
         userChatActivityService.saveAll(announcements);
+    }
+
+    @Scheduled(fixedRateString = "${schedule.clearCache}")
+    private void clearCache() {
+
+        cacheService.getCache().entrySet().stream()
+                .filter(l -> l.getValue().getLastModified().plusHours(24).isBefore(LocalDateTime.now()))
+                .forEach(l -> cacheService.remove(l.getKey()));
     }
 }

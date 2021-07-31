@@ -3,6 +3,8 @@ package org.telegram.galacticMiniatures.bot.cache;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,4 +19,5 @@ public class ChatInfo {
     UserChatMessageInfo userChatMessageInfo = new UserChatMessageInfo();
     OrderMessageInfo orderMessageInfo = new OrderMessageInfo();
     MessagesInfo messagesInfo = new MessagesInfo();
+    LocalDateTime lastModified;
 }
