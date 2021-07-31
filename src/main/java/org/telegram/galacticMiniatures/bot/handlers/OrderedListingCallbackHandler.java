@@ -74,7 +74,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_COMMAND:
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderId = orderedListingsInfo.getOrderId();
                 orderedListingsPage =
                         orderedListingService.findPageByOrderId(orderId, pageable);
@@ -115,7 +115,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
                 orderId = orderedListingsInfo.getOrderId();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
@@ -139,7 +139,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_COMMAND:
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderId = orderedListingsInfo.getOrderId();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);

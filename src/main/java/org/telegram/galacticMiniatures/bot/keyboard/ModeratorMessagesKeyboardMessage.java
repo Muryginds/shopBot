@@ -1,6 +1,8 @@
 package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.repository.response.NewMessagesResponse;
 import org.telegram.galacticMiniatures.bot.service.UserMessageService;
@@ -23,7 +25,11 @@ public class ModeratorMessagesKeyboardMessage implements AbstractKeyboardMessage
         StringBuilder command = new StringBuilder();
         StringBuilder caption = new StringBuilder();
         int count = 0;
-        List<NewMessagesResponse> messagesResponses = userMessageService.trackNewMessagesForModerator(chatId);
+        Page<NewMessagesResponse> messagesPage = userMessageService.trackMessagesForModerator(chatId,
+                PageRequest.of(0,2));
+
+        List<NewMessagesResponse> messagesResponses = messagesPage.getContent();
+
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
@@ -44,7 +50,7 @@ public class ModeratorMessagesKeyboardMessage implements AbstractKeyboardMessage
                 caption.append(String.format("%05d", orderId));
             }
             keyboardButtonsRow.add(createInlineKeyboardButton(caption.toString(), sectionCallBackData));
-            if (++count % 2 == 1) {
+            if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
             } else if (count - 1 == messagesResponses.size()) {

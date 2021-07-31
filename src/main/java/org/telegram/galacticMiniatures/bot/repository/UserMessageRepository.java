@@ -18,7 +18,8 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
             String chatId, String targetChatId, Pageable pageable);
     Page<UserMessage> getPageByOrder_Id(Integer orderId, Pageable pageable);
 
-    @Query(value = "SELECT o.id AS orderId, CAST(COALESCE(SUM(um.created > uca.last_activity), 0) AS UNSIGNED) AS sum " +
+    @Query(value =
+            "SELECT o.id AS orderId, CAST(COALESCE(SUM(um.created > uca.last_activity), 0) AS UNSIGNED) AS sum " +
             "FROM orders o " +
             "JOIN users u ON o.user_id = u.id " +
             "LEFT JOIN user_chat_activity uca ON uca.order_id = o.id AND o.user_id = uca.user_id " +
@@ -26,10 +27,11 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
             "WHERE u.chat_id = ?1 " +
             "GROUP BY o.id " +
             "ORDER BY SUM DESC, o.id DESC", nativeQuery = true)
-    List<NewMessagesResponse> trackNewMessagesForUser(String chatId);
+    List<NewMessagesResponse> trackMessagesForUser(String chatId);
 
-    @Query(value = "SELECT um.order_id AS orderId, " +
-            "CAST(SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS UNSIGNED) as sum " +
+    @Query(value =
+            "SELECT um.order_id AS orderId, " +
+            "CAST(SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS UNSIGNED) AS sum " +
             "FROM user_messages um " +
             "LEFT JOIN (SELECT uca.order_id AS order_id, uca.last_activity AS last_activity " +
             "FROM user_chat_activity uca " +
@@ -37,18 +39,30 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
             "WHERE u.chat_id = ?1) vu ON vu.order_id = um.order_id " +
             "WHERE um.order_id IS NOT NULL " +
             "GROUP BY um.order_id " +
-            "ORDER BY sum DESC, um.order_id DESC", nativeQuery = true)
-    List<NewMessagesResponse> trackNewMessagesForModerator(String chatId);
-
-    @Query(value = "SELECT vu.chat_id AS chatId, um.order_id AS orderId, " +
-            "CAST(SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS UNSIGNED) AS sum " +
+            "ORDER BY sum DESC, um.order_id DESC",
+            countQuery =
+            "SELECT COUNT(*) FROM (SELECT um.order_id, " +
+            "SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) as sum " +
             "FROM user_messages um " +
-            "LEFT JOIN (SELECT uca.order_id, uca.last_activity, u.chat_id FROM user_chat_activity uca " +
-            "JOIN users u on uca.user_id = u.id WHERE uca.last_activity > COALESCE (uca.announced, '01-01-01')) vu " +
-            "ON vu.order_id = um.order_id " +
+            "LEFT JOIN (SELECT uca.order_id AS order_id, uca.last_activity AS last_activity " +
+            "FROM user_chat_activity uca " +
+            "JOIN users u on uca.user_id = u.id " +
+            "WHERE u.chat_id = ?1) vu ON vu.order_id = um.order_id " +
             "WHERE um.order_id IS NOT NULL " +
-            "GROUP BY um.order_id, vu.chat_id " +
+            "GROUP BY um.order_id) v",
+            nativeQuery = true)
+    Page<NewMessagesResponse> trackMessagesForModerator(String chatId, Pageable pageable);
+
+    @Query(value =
+            "SELECT u.chat_id AS chatId, um.order_id AS orderId, CAST(SUM(um.created > " +
+            "COALESCE(IF(COALESCE(uca.last_activity, '01-01-01') > COALESCE(uca.announced, '01-01-01'), " +
+            "uca.last_activity, uca.announced), '01-01-01')) AS UNSIGNED) AS sum " +
+            "FROM user_messages um " +
+            "LEFT JOIN user_chat_activity uca ON um.user_id = uca.user_id AND um.order_id = uca.order_id " +
+            "JOIN users u ON um.user_id = u.id " +
+            "WHERE um.order_id IS NOT NULL " +
+            "GROUP BY u.chat_id, um.order_id " +
             "HAVING sum > 0 " +
-            "ORDER BY vu.chat_id", nativeQuery = true)
+            "ORDER BY u.chat_id", nativeQuery = true)
     List<AnnouncementsResponse> getNewAnnouncements();
 }

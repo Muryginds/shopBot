@@ -103,7 +103,7 @@ public class ListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_FAVORITE_COMMAND:
 
                 searchInfo = cacheService.get(chatId).getSearchInfo();
-                pageable = searchInfo.getListingPageable();
+                pageable = searchInfo.getItemPageable();
                 listingPage =
                         listingService.findPageListingActiveBySectionIdentifier(searchInfo.getSectionId(), pageable);
                 try {
@@ -121,7 +121,7 @@ public class ListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_LISTING_BUTTON_ADD_TO_CART_COMMAND:
 
                 searchInfo = cacheService.get(chatId).getSearchInfo();
-                pageable = searchInfo.getListingPageable();
+                pageable = searchInfo.getItemPageable();
                 listingPage = listingService.findPageListingActiveBySectionIdentifier(
                                 searchInfo.getSectionId(), pageable);
                 try {

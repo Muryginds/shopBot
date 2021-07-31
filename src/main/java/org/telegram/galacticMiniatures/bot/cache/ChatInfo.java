@@ -16,4 +16,5 @@ public class ChatInfo {
     OrderedListingsInfo orderedListingsInfo = new OrderedListingsInfo();
     UserChatMessageInfo userChatMessageInfo = new UserChatMessageInfo();
     OrderMessageInfo orderMessageInfo = new OrderMessageInfo();
+    MessagesInfo messagesInfo = new MessagesInfo();
 }

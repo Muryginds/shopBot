@@ -42,7 +42,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                                                                     ScrollerObjectType scrollerObjectType) {
 
         SearchInfo searchInfo = cacheService.get(chatId).getSearchInfo();
-        Pageable listingPageable = searchInfo.getListingPageable();
+        Pageable listingPageable = searchInfo.getItemPageable();
         Pageable imagePageable = searchInfo.getImagePageable();
         Pageable optionPageable = searchInfo.getOptionPageable();
 
@@ -202,7 +202,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        searchInfo.setListingPageable(listingPageable);
+        searchInfo.setItemPageable(listingPageable);
         searchInfo.setImagePageable(imagePageable);
         searchInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, searchInfo);

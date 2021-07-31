@@ -13,5 +13,5 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderInfo {
-    Pageable orderPageable = PageRequest.of(0,1, Sort.by("created").descending());
+    Pageable itemPageable = PageRequest.of(0,1, Sort.by("created").descending());
 }

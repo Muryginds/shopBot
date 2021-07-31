@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor
 public class OrderedListingsInfo {
     Integer orderId;
-    Pageable listingPageable = PageRequest.of(0,1);
+    Pageable itemPageable = PageRequest.of(0,1);
 
     public OrderedListingsInfo(Integer orderId) {
         this.orderId = orderId;

@@ -38,7 +38,7 @@ public class UserMessageScrollerKeyboardMessage implements AbstractKeyboardMessa
 
         OrderMessageInfo orderMessageInfo =
                 cacheService.get(chatId).getOrderMessageInfo();
-        Pageable messagePageable = orderMessageInfo.getMessagePageable();
+        Pageable messagePageable = orderMessageInfo.getItemPageable();
         int totalElementOnPage = orderMessageInfo.getPageSize();
 
         Sort optionSort = Sort.by("created").descending();
@@ -96,7 +96,7 @@ public class UserMessageScrollerKeyboardMessage implements AbstractKeyboardMessa
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderMessageInfo.setMessagePageable(messagePageable);
+        orderMessageInfo.setItemPageable(messagePageable);
         cacheService.add(chatId, orderMessageInfo);
 
         StringBuilder text = new StringBuilder("* Order [")

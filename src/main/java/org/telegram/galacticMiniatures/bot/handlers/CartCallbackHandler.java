@@ -71,7 +71,7 @@ public class CartCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_CART_BUTTON_REMOVE_FROM_CART_COMMAND:
 
                 cartInfo = cacheService.get(chatId).getCartInfo();
-                pageable = cartInfo.getListingPageable();
+                pageable = cartInfo.getItemPageable();
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 cartService.delete(listingCart);
@@ -91,7 +91,7 @@ public class CartCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_CART_BUTTON_ADD_TO_FAVORITE_COMMAND:
 
                 cartInfo = cacheService.get(chatId).getCartInfo();
-                pageable = cartInfo.getListingPageable();
+                pageable = cartInfo.getItemPageable();
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 Listing listing = listingCart.getId().getListing();
@@ -105,7 +105,7 @@ public class CartCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_CART_BUTTON_ADD_PLUS_COMMAND:
 
                 cartInfo = cacheService.get(chatId).getCartInfo();
-                pageable = cartInfo.getListingPageable();
+                pageable = cartInfo.getItemPageable();
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 listingCart.setQuantity(listingCart.getQuantity() + 1);
@@ -118,7 +118,7 @@ public class CartCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_CART_BUTTON_ADD_MINUS_COMMAND:
 
                 cartInfo = cacheService.get(chatId).getCartInfo();
-                pageable = cartInfo.getListingPageable();
+                pageable = cartInfo.getItemPageable();
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 listingCart = pageCart.getContent().get(0);
                 int newQuantity = listingCart.getQuantity() - 1;

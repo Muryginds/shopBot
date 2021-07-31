@@ -13,6 +13,6 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor
 public class UserChatMessageInfo {
     int pageSize = 15;
-    Pageable messagePageable = PageRequest.of(
+    Pageable itemPageable = PageRequest.of(
             0,10, Sort.by("created").descending());
 }

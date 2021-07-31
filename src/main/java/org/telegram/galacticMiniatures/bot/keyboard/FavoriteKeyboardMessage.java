@@ -41,7 +41,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
                                                                     ScrollerObjectType scrollerObjectType) {
 
         FavoriteInfo favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-        Pageable listingPageable = favoriteInfo.getListingPageable();
+        Pageable listingPageable = favoriteInfo.getItemPageable();
         Pageable imagePageable = favoriteInfo.getImagePageable();
         Pageable optionPageable = favoriteInfo.getOptionPageable();
 
@@ -204,7 +204,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        favoriteInfo.setListingPageable(listingPageable);
+        favoriteInfo.setItemPageable(listingPageable);
         favoriteInfo.setImagePageable(imagePageable);
         favoriteInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, favoriteInfo);

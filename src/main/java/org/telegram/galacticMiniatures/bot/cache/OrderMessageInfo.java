@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 public class OrderMessageInfo {
     int pageSize = 15;
     Integer orderId = 0;
-    Pageable messagePageable = PageRequest.of(
+    Pageable itemPageable = PageRequest.of(
             0, pageSize, Sort.by("created").descending());
 
     public OrderMessageInfo(Integer orderId) {

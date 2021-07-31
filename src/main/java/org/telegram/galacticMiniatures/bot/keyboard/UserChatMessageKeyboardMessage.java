@@ -38,7 +38,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
 
         UserChatMessageInfo userChatMessageInfo =
                 cacheService.get(chatId).getUserChatMessageInfo();
-        Pageable messagePageable = userChatMessageInfo.getMessagePageable();
+        Pageable messagePageable = userChatMessageInfo.getItemPageable();
         int totalElementOnPage = userChatMessageInfo.getPageSize();
 
         Sort optionSort = Sort.by("created").descending();
@@ -92,7 +92,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        userChatMessageInfo.setMessagePageable(messagePageable);
+        userChatMessageInfo.setItemPageable(messagePageable);
         cacheService.add(chatId, userChatMessageInfo);
 
         StringBuilder text = new StringBuilder("* Chat [")

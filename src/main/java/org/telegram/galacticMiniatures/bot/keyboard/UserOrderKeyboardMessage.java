@@ -44,9 +44,9 @@ public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scroll
         Pageable listingPageable;
         if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
             Sort sort = Sort.by("created").descending();
-            listingPageable = getPageableByScrollerType(orderInfo.getOrderPageable(), scrollerType, sort);
+            listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType, sort);
         } else {
-            listingPageable = getPageableByScrollerType(orderInfo.getOrderPageable(), scrollerType);
+            listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType);
         }
 
         Page<Order> orderPage = orderService.findPageOrderByChatId(chatId, listingPageable);
@@ -112,7 +112,7 @@ public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scroll
         rowList.add(keyboardButtonsRow3);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderInfo.setOrderPageable(listingPageable);
+        orderInfo.setItemPageable(listingPageable);
         cacheService.add(chatId, orderInfo);
 
         String caption = new StringBuilder()

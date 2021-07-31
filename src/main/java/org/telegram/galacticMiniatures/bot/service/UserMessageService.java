@@ -34,12 +34,12 @@ public class UserMessageService {
         userMessageRepository.save(userMessage);
     }
 
-    public List<NewMessagesResponse> trackNewMessagesForUser(Long chatId) {
-        return userMessageRepository.trackNewMessagesForUser(chatId.toString());
+    public List<NewMessagesResponse> trackMessagesForUser(Long chatId) {
+        return userMessageRepository.trackMessagesForUser(chatId.toString());
     }
 
-    public List<NewMessagesResponse> trackNewMessagesForModerator(Long chatId) {
-        return userMessageRepository.trackNewMessagesForModerator(chatId.toString());
+    public Page<NewMessagesResponse> trackMessagesForModerator(Long chatId, Pageable pageable) {
+        return userMessageRepository.trackMessagesForModerator(chatId.toString(), pageable);
     }
 
     public void announceNewOrder(Long chatId, Order order) {

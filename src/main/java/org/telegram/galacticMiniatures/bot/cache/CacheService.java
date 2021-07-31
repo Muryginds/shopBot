@@ -53,6 +53,12 @@ public class CacheService {
         cache.put(chatId, chatInfo);
     }
 
+    public void add(long chatId, MessagesInfo messagesInfo) {
+        ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
+        chatInfo.setMessagesInfo(messagesInfo);
+        cache.put(chatId, chatInfo);
+    }
+
     public ChatInfo get(long chatId) {
         Optional<ChatInfo> optional = Optional.ofNullable(cache.get(chatId));
         return optional.orElse(new ChatInfo());

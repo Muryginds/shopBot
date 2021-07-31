@@ -44,9 +44,9 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
 
         if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
             Sort sort = Sort.by("id.listing").and(Sort.by("id.option"));
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getListingPageable(), scrollerType, sort);
+            listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType, sort);
         } else {
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getListingPageable(), scrollerType);
+            listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType);
         }
 
         Page<OrderedListing> listingPage =
@@ -128,7 +128,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderedListingsInfo.setListingPageable(listingPageable);
+        orderedListingsInfo.setItemPageable(listingPageable);
         cacheService.add(chatId, orderedListingsInfo);
 
         StringBuilder optionsText = new StringBuilder();

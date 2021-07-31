@@ -23,7 +23,7 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
         StringBuilder command = new StringBuilder();
         StringBuilder caption = new StringBuilder();
         int count = 0;
-        List<NewMessagesResponse> messagesResponses = userMessageService.trackNewMessagesForUser(chatId);
+        List<NewMessagesResponse> messagesResponses = userMessageService.trackMessagesForUser(chatId);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
