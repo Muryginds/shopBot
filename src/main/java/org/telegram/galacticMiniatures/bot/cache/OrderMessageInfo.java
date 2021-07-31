@@ -12,10 +12,9 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderMessageInfo {
-    int pageSize = 15;
     Integer orderId = 0;
     Pageable itemPageable = PageRequest.of(
-            0, pageSize, Sort.by("created").descending());
+            0, 15, Sort.by("created").descending());
 
     public OrderMessageInfo(Integer orderId) {
         this.orderId = orderId;

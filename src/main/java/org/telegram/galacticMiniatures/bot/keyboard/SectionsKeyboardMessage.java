@@ -33,7 +33,7 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
             if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
-            } else if (count - 1 == sections.size()) {
+            } else if (count == sections.size()) {
                 rowList.add(keyboardButtonsRow);
             }
         }

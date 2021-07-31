@@ -3,7 +3,6 @@ package org.telegram.galacticMiniatures.bot.util;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -18,8 +17,15 @@ public final class Utils {
   private Utils() {}
 
   public static String getUserName(User user) {
-    return (user.getUserName() != null) ? user.getUserName() :
-        String.format("%s %s", user.getLastName(), user.getFirstName());
+    StringBuilder sb = new StringBuilder();
+    if (user.getUserName() != null) {
+      return sb.append(user.getUserName()).toString();
+    }
+    if (user.getLastName() != null) {
+      sb.append(user.getLastName()).append(" ");
+    }
+    return sb.append(user.getFirstName()).toString();
+
   }
 
   public static SendMessage prepareSendMessage(Long chatId, String text) {

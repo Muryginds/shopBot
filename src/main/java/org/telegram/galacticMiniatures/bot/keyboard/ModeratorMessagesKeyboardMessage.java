@@ -66,7 +66,7 @@ public class ModeratorMessagesKeyboardMessage implements AbstractKeyboardMessage
             if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
-            } else if (count - 1 == messagesResponses.size()) {
+            } else if (count == messagesResponses.size()) {
                 rowList.add(keyboardButtonsRow);
             }
         }

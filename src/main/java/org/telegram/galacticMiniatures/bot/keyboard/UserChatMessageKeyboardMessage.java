@@ -39,7 +39,6 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         UserChatMessageInfo userChatMessageInfo =
                 cacheService.get(chatId).getUserChatMessageInfo();
         Pageable messagePageable = userChatMessageInfo.getItemPageable();
-        int totalElementOnPage = userChatMessageInfo.getPageSize();
 
         messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
 
@@ -52,7 +51,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
-        if (messagePage.getTotalElements() > totalElementOnPage) {
+        if (messagePage.getTotalElements() > messagePage.getNumberOfElements()) {
             String listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
                 listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND;
@@ -60,14 +59,11 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-            long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(messagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(totalElements % totalElementOnPage > 0 ?
-                                    totalElements / totalElementOnPage + 1 :
-                                    totalElements / totalElementOnPage)
+                            .append(messagePage.getTotalPages())
                             .toString(),
                     Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK));
 

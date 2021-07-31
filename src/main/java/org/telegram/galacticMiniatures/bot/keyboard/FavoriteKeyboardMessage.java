@@ -145,7 +145,6 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
             return Optional.empty();
         }
 
-
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
             keyboardButtonsRow3.add(createInlineKeyboardButton(

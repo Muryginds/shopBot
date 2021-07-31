@@ -39,7 +39,6 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
         OrderMessageInfo orderMessageInfo =
                 cacheService.get(chatId).getOrderMessageInfo();
         Pageable messagePageable = orderMessageInfo.getItemPageable();
-        int totalElementOnPage = orderMessageInfo.getPageSize();
 
         messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
 
@@ -57,7 +56,7 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
-        if (messagePage.getTotalElements() > totalElementOnPage) {
+        if (messagePage.getTotalElements() > messagePage.getNumberOfElements()) {
             String listingPreviousCommand = Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
                 listingPreviousCommand = Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_COMMAND;
@@ -65,14 +64,11 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-            long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(messagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(totalElements % totalElementOnPage > 0 ?
-                                    totalElements / totalElementOnPage + 1 :
-                                    totalElements / totalElementOnPage)
+                            .append(messagePage.getTotalPages())
                             .toString(),
                     Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK));
 
