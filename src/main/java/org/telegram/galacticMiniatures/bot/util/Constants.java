@@ -22,9 +22,9 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
     public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
     public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
-    public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Сообщения пользователей";
-    public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Заказы пользователей";
-    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Центр сообщений";
+    public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Центр сообщений";
+    public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Контроль заказов";
+    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Сообщения";
     public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
     public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
     public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";

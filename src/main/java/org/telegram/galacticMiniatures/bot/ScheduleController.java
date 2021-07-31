@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.UserChatActivity;
-import org.telegram.galacticMiniatures.bot.repository.AnnouncementsResponse;
+import org.telegram.galacticMiniatures.bot.repository.response.AnnouncementsResponse;
 import org.telegram.galacticMiniatures.bot.service.UserChatActivityService;
 import org.telegram.galacticMiniatures.bot.service.UserMessageService;
 import org.telegram.galacticMiniatures.bot.util.Utils;
@@ -38,7 +38,7 @@ public class ScheduleController {
         List<AnnouncementsResponse> responses = userMessageService.getNewAnnouncements();
         Map<String, Integer> summary = responses.stream()
                 .collect(Collectors.groupingBy(AnnouncementsResponse::getChatId,
-                        Collectors.summingInt(v -> Integer.parseInt(v.getSum()))));
+                        Collectors.summingInt(v -> v.getSum().intValue())));
         for (Map.Entry<String, Integer> entry : summary.entrySet()) {
             SendMessage sm = Utils.prepareSendMessage(entry.getKey(),
                     String.format("You received %d new message(s)", entry.getValue()));
