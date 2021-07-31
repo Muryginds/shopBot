@@ -65,7 +65,7 @@ public class UserMessageScrollerCallbackHandler implements AbstractHandler {
             }
 
             Optional<PartialBotApiMethod<?>> replyMessage = userMessageScrollerKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(handleOptionalAddMessage(replyMessage, message));
             user.setBotState(BotState.WORKING);
             userService.save(user);

@@ -36,6 +36,11 @@ public class UserService {
                 .orElseGet(() -> add(new User(chatId.toString(), chatId.toString())));
     }
 
+    public User getUser(String chatId) {
+        return findUser(chatId)
+                .orElseGet(() -> add(new User(chatId, chatId)));
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }

@@ -38,13 +38,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                                                                     ScrollerObjectType scrollerObjectType) {
 
         CartInfo cartInfo = cacheService.get(chatId).getCartInfo();
-        Pageable listingPageable;
-        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
-            Sort sort = Sort.by("id.listing").and(Sort.by("id.option"));
-            listingPageable = getPageableByScrollerType(cartInfo.getItemPageable(), scrollerType, sort);
-        } else {
-            listingPageable = getPageableByScrollerType(cartInfo.getItemPageable(), scrollerType);
-        }
+        Pageable listingPageable = getPageableByScrollerType(cartInfo.getItemPageable(), scrollerType);
 
         Page<ListingCart> listingPage = cartService.findPageCartByChatId(chatId, listingPageable);
 

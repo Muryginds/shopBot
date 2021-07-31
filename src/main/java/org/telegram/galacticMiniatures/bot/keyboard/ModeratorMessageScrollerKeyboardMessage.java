@@ -41,10 +41,8 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
         Pageable messagePageable = orderMessageInfo.getItemPageable();
         int totalElementOnPage = orderMessageInfo.getPageSize();
 
-        Sort optionSort = Sort.by("created").descending();
-        if (scrollerObjectType == ScrollerObjectType.ITEM) {
-            messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
-        }
+        messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
+
         int orderId = orderMessageInfo.getOrderId();
         if (orderId == 0) {
             return Optional.empty();

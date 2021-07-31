@@ -2,7 +2,6 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -14,7 +13,8 @@ import java.util.Optional;
 
 public interface Scrollable {
 
-    Optional<PartialBotApiMethod<?>> prepareScrollingMessage(Long chatId, ScrollerType scrollerType, ScrollerObjectType scrollerObjectType);
+    Optional<PartialBotApiMethod<?>> prepareScrollingMessage(Long chatId, ScrollerType scrollerType,
+                                                             ScrollerObjectType scrollerObjectType);
 
     default Pageable getPageableByScrollerType(Pageable pageable, ScrollerType scrollerType) {
         Pageable newPageable;
@@ -25,29 +25,8 @@ public interface Scrollable {
             case NEXT:
                 newPageable = pageable.next();
                 break;
-            case NEW_LISTING_SCROLLER:
-                newPageable = PageRequest.of(0,1);
-                break;
-            default:
-                newPageable = pageable;
-        }
-        return newPageable;
-    }
-
-    default Pageable getPageableByScrollerType(Pageable pageable, ScrollerType scrollerType, Sort sort) {
-        Pageable newPageable;
-        switch (scrollerType) {
-            case PREVIOUS:
-                newPageable = pageable.previousOrFirst();
-                break;
-            case NEXT:
-                newPageable = pageable.next();
-                break;
-            case NEW_LISTING_SCROLLER:
-                newPageable = PageRequest.of(0,1, sort);
-                break;
-            case NEW_MESSAGE_SCROLLER:
-                newPageable = PageRequest.of(0,15, sort);
+            case NEW:
+                newPageable = PageRequest.of(0,pageable.getPageSize(), pageable.getSort());
                 break;
             default:
                 newPageable = pageable;

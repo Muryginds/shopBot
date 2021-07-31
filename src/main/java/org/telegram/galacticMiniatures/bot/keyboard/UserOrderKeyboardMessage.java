@@ -41,13 +41,7 @@ public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scroll
                                                                     ScrollerObjectType scrollerObjectType) {
 
         OrderInfo orderInfo = cacheService.get(chatId).getOrderInfo();
-        Pageable listingPageable;
-        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
-            Sort sort = Sort.by("created").descending();
-            listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType, sort);
-        } else {
-            listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType);
-        }
+        Pageable listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType);
 
         Page<Order> orderPage = orderService.findPageOrderByChatId(chatId, listingPageable);
 

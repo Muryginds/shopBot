@@ -7,6 +7,7 @@ import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ModeratorMessageScrollerKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.ModeratorMessagesKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
@@ -24,6 +25,7 @@ public class ModeratorMessagesCallbackHandler implements AbstractHandler {
 
     private final CacheService cacheService;
     private final ModeratorMessageScrollerKeyboardMessage moderatorMessageScrollerKeyboardMessage;
+    private final ModeratorMessagesKeyboardMessage moderatorMessagesKeyboardMessage;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -41,14 +43,28 @@ public class ModeratorMessagesCallbackHandler implements AbstractHandler {
                     data.replace(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND, ""));
             cacheService.add(chatId, new OrderMessageInfo(orderId));
             sendMethod = moderatorMessageScrollerKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
         } else {
 
-                switch (data) {
-                    case Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND:
-                        answer.add(Utils.prepareDeleteMessage(chatId, messageId));
-                        break;
+            switch (data) {
+                case Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND:
+                    answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                    break;
+
+                case Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_NEXT_COMMAND:
+
+                    sendMethod = moderatorMessagesKeyboardMessage.prepareScrollingMessage(
+                            chatId, ScrollerType.NEXT, ScrollerObjectType.ITEM);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
+                    break;
+
+                case Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_PREVIOUS_COMMAND:
+
+                    sendMethod = moderatorMessagesKeyboardMessage.prepareScrollingMessage(
+                            chatId, ScrollerType.PREVIOUS, ScrollerObjectType.ITEM);
+                    answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
+                    break;
             }
         }
         return answer;

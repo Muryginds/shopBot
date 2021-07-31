@@ -81,7 +81,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 pageCart = cartService.findPageCartByChatId(chatId, pageable);
                 if (pageCart.getTotalElements() > 0) {
                     sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                            chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
                     answer.add(Utils.prepareDeleteMessage(chatId, messageId));
@@ -140,7 +140,7 @@ public class CartCallbackHandler implements AbstractHandler {
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 } else {
                     sendMessage = cartKeyboardMessage.prepareScrollingMessage(
-                            chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                            chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 }
                 break;
@@ -163,6 +163,7 @@ public class CartCallbackHandler implements AbstractHandler {
                 }
                 answer.add(Utils.prepareSendMessage(chatId, replyText));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                break;
         }
         return answer;
     }

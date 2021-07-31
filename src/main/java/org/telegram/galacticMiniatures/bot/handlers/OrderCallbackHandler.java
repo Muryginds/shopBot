@@ -55,7 +55,7 @@ public class OrderCallbackHandler implements AbstractHandler {
             orderedListingsInfo = new OrderedListingsInfo(orderId);
             cacheService.add(chatId, orderedListingsInfo);
             sendMethod = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
 
         }  else if (data.startsWith(Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND)) {
@@ -78,7 +78,7 @@ public class OrderCallbackHandler implements AbstractHandler {
                     data.replace(Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND, ""));
             cacheService.add(chatId, new OrderMessageInfo(orderId));
             sendMethod = userOrderMessageKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
         } else {
 

@@ -109,7 +109,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
                     if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
                         sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                         answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                     } else {
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));

@@ -31,7 +31,10 @@ public class UserChatActivityService {
             Optional<UserChatActivity> optionalUCA =
                     findByChatIdAndOrderId(chatId.toString(), orderId);
             UserChatActivity chatActivity = optionalUCA.orElse(
-                    new UserChatActivity(userService.getUser(chatId), o, null, null));
+                    new UserChatActivity(userService.getUser(chatId),
+                            o,
+                            null,
+                            LocalDateTime.of(2001, 1, 1, 0,0)));
             chatActivity.setLastActivity(LocalDateTime.now());
             save(chatActivity);
         });

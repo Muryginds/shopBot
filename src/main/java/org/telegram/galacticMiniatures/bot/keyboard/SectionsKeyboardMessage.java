@@ -30,7 +30,7 @@ public class SectionsKeyboardMessage implements AbstractKeyboardMessage {
             String sectionCallBackData = sb.append(Constants.KEYBOARD_SECTIONS_OPERATED_CALLBACK)
                     .append(section.getIdentifier()).toString();
             keyboardButtonsRow.add(createInlineKeyboardButton(section.getName(), sectionCallBackData));
-            if (++count % 2 == 1) {
+            if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
             } else if (count - 1 == sections.size()) {

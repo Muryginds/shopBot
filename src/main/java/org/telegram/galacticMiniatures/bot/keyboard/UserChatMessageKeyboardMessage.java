@@ -41,10 +41,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         Pageable messagePageable = userChatMessageInfo.getItemPageable();
         int totalElementOnPage = userChatMessageInfo.getPageSize();
 
-        Sort optionSort = Sort.by("created").descending();
-        if (scrollerObjectType == ScrollerObjectType.ITEM) {
-            messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
-        }
+        messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
 
         Page<UserMessage> messagePage =
                 userMessageService.getPageByChatId(chatId, messagePageable);

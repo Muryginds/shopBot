@@ -46,10 +46,17 @@ final public class Constants {
     public static final String KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND = "UserMessagesCallbackMessages";
 
     public static final String KEYBOARD_MODERATOR_MESSAGES_OPERATED_CALLBACK = "ModeratorMessagesCallback";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_HEADER = "Messages control panel";
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_NAME = CLOSE;
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND = "ModeratorMessagesCallbackClose";
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND =
             "ModeratorMessagesCallbackMessages";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_NEXT_COMMAND =
+            "ModeratorMessagesCallbackNext";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_PREVIOUS_COMMAND =
+            "ModeratorMessagesCallbackPrevious";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_PREVIOUS_NAME = PREVIOUS;
 
     public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK =
             "ModeratorMessageScrollerCallback";

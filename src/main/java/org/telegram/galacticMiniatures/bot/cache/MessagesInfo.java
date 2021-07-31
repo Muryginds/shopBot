@@ -12,6 +12,5 @@ import org.springframework.data.domain.Pageable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessagesInfo {
-    int pageSize = 20;
-    Pageable itemPageable = PageRequest.of(0,pageSize);
+    Pageable itemPageable = PageRequest.of(0, 5);
 }

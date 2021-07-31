@@ -40,14 +40,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
                                                                     ScrollerObjectType scrollerObjectType) {
 
         OrderedListingsInfo orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-        Pageable listingPageable;
-
-        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
-            Sort sort = Sort.by("id.listing").and(Sort.by("id.option"));
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType, sort);
-        } else {
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType);
-        }
+        Pageable listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType);
 
         Page<OrderedListing> listingPage =
                 orderedListingService.findPageByOrderId(orderedListingsInfo.getOrderId(), listingPageable);

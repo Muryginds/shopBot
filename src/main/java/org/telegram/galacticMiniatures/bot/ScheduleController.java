@@ -6,8 +6,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.UserChatActivity;
 import org.telegram.galacticMiniatures.bot.repository.response.AnnouncementsResponse;
+import org.telegram.galacticMiniatures.bot.service.OrderService;
 import org.telegram.galacticMiniatures.bot.service.UserChatActivityService;
 import org.telegram.galacticMiniatures.bot.service.UserMessageService;
+import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.galacticMiniatures.parser.ShopParserService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class ScheduleController {
 
     private final ShopParserService shopParserService;
+    private final UserService userService;
+    private final OrderService orderService;
     private final UserMessageService userMessageService;
     private final UserChatActivityService userChatActivityService;
     private final Bot bot;
@@ -50,7 +54,12 @@ public class ScheduleController {
         }
 
         List<UserChatActivity> announcements = responses.stream()
-                .flatMap(a -> userChatActivityService.findByChatIdAndOrderId(a.getChatId(), a.getOrderId()).stream())
+                .map(a -> userChatActivityService.findByChatIdAndOrderId(a.getChatId(), a.getOrderId())
+                        .orElse(new UserChatActivity(
+                                userService.getUser(a.getChatId()),
+                                orderService.findById(a.getOrderId()).orElseThrow(),
+                                LocalDateTime.of(2001, 1, 1, 0,0),
+                                null)))
                 .peek(u -> u.setAnnounced(LocalDateTime.now()))
                 .collect(Collectors.toList());
         userChatActivityService.saveAll(announcements);

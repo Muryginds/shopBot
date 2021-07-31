@@ -45,7 +45,7 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
                         .append(String.format("%05d", orderId));
             }
             keyboardButtonsRow.add(createInlineKeyboardButton(caption.toString(), sectionCallBackData));
-            if (++count % 2 == 1) {
+            if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
             } else if (count - 1 == messagesResponses.size()) {

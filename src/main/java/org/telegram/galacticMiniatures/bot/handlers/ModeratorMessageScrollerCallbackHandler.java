@@ -6,10 +6,10 @@ import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.ChatInfo;
 import org.telegram.galacticMiniatures.bot.cache.OrderMessageInfo;
 import org.telegram.galacticMiniatures.bot.enums.BotState;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ModeratorMessageScrollerKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.keyboard.ModeratorMessagesKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Order;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
@@ -31,7 +31,7 @@ public class ModeratorMessageScrollerCallbackHandler implements AbstractHandler 
 
     private final CacheService cacheService;
     private final ModeratorMessageScrollerKeyboardMessage moderatorMessageScrollerKeyboardMessage;
-    private final KeyboardService keyboardService;
+    private final ModeratorMessagesKeyboardMessage moderatorMessagesKeyboardMessage;
     private final UserMessageService userMessageService;
     private final UserService userService;
     private final OrderService orderService;
@@ -65,7 +65,7 @@ public class ModeratorMessageScrollerCallbackHandler implements AbstractHandler 
             }
 
             Optional<PartialBotApiMethod<?>> replyMessage = moderatorMessageScrollerKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(handleOptionalAddMessage(replyMessage, message));
             user.setBotState(BotState.WORKING);
             userService.save(user);
@@ -91,9 +91,9 @@ public class ModeratorMessageScrollerCallbackHandler implements AbstractHandler 
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
                 userChatActivityService.saveNewChatActivity(chatId, orderId);
-                answer.add(keyboardService.getSendMessage(
-                        KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
-                answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+                sendMessage = moderatorMessagesKeyboardMessage.prepareScrollingMessage(
+                        chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
+                answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                 break;
 
             case Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_NEXT_COMMAND:

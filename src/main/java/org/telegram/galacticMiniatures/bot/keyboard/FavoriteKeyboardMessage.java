@@ -45,12 +45,11 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         Pageable imagePageable = favoriteInfo.getImagePageable();
         Pageable optionPageable = favoriteInfo.getOptionPageable();
 
-        Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
             case ITEM:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
+                optionPageable = getPageableByScrollerType(optionPageable, ScrollerType.NEW);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);

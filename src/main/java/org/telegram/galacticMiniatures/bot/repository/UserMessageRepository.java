@@ -54,15 +54,23 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
     Page<NewMessagesResponse> trackMessagesForModerator(String chatId, Pageable pageable);
 
     @Query(value =
-            "SELECT u.chat_id AS chatId, um.order_id AS orderId, CAST(SUM(um.created > " +
-            "COALESCE(IF(COALESCE(uca.last_activity, '01-01-01') > COALESCE(uca.announced, '01-01-01'), " +
-            "uca.last_activity, uca.announced), '01-01-01')) AS UNSIGNED) AS sum " +
+            "SELECT v.chatId, v.orderId, CAST(SUM(v.calculated) AS UNSIGNED) AS sum FROM " +
+            "(SELECT u.chat_id AS chatId, um.order_id AS orderId, " +
+            "um.created > IF(uca.last_activity > " +
+            "uca.announced, uca.last_activity, uca.announced) AS calculated " +
             "FROM user_messages um " +
             "LEFT JOIN user_chat_activity uca ON um.user_id = uca.user_id AND um.order_id = uca.order_id " +
             "JOIN users u ON um.user_id = u.id " +
             "WHERE um.order_id IS NOT NULL " +
-            "GROUP BY u.chat_id, um.order_id " +
-            "HAVING sum > 0 " +
-            "ORDER BY u.chat_id", nativeQuery = true)
+            "UNION ALL " +
+            "SELECT u.chat_id, um.order_id, um.created > COALESCE (IF(COALESCE (uca.last_activity, '01-01-01') > " +
+            "COALESCE (uca.announced, '01-01-01'), uca.last_activity, uca.announced), '01-01-01') AS calculated " +
+            "FROM users u " +
+            "JOIN user_messages um ON um.user_id <> u.id " +
+            "LEFT JOIN user_chat_activity uca on u.id = uca.user_id AND um.order_id = uca.order_id " +
+            "WHERE u.is_moderator = true AND um.order_id IS NOT NULL) v " +
+            "GROUP BY v.chatId, v.orderId " +
+            "HAVING sum > 0",
+            nativeQuery = true)
     List<AnnouncementsResponse> getNewAnnouncements();
 }
