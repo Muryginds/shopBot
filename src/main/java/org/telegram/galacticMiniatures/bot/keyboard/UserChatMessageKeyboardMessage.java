@@ -38,13 +38,9 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
 
         UserChatMessageInfo userChatMessageInfo =
                 cacheService.get(chatId).getUserChatMessageInfo();
-        Pageable messagePageable = userChatMessageInfo.getMessagePageable();
-        int totalElementOnPage = userChatMessageInfo.getPageSize();
+        Pageable messagePageable = userChatMessageInfo.getItemPageable();
 
-        Sort optionSort = Sort.by("created").descending();
-        if (scrollerObjectType == ScrollerObjectType.ITEM) {
-            messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
-        }
+        messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
 
         Page<UserMessage> messagePage =
                 userMessageService.getPageByChatId(chatId, messagePageable);
@@ -55,7 +51,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
-        if (messagePage.getTotalElements() > totalElementOnPage) {
+        if (messagePage.getTotalElements() > messagePage.getNumberOfElements()) {
             String listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
                 listingPreviousCommand = Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_COMMAND;
@@ -63,14 +59,11 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_USER_CHAT_MESSAGE_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-            long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(messagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(totalElements % totalElementOnPage > 0 ?
-                                    totalElements / totalElementOnPage + 1 :
-                                    totalElements / totalElementOnPage)
+                            .append(messagePage.getTotalPages())
                             .toString(),
                     Constants.KEYBOARD_USER_CHAT_MESSAGE_OPERATED_CALLBACK));
 
@@ -92,7 +85,7 @@ public class UserChatMessageKeyboardMessage implements AbstractKeyboardMessage, 
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        userChatMessageInfo.setMessagePageable(messagePageable);
+        userChatMessageInfo.setItemPageable(messagePageable);
         cacheService.add(chatId, userChatMessageInfo);
 
         StringBuilder text = new StringBuilder("* Chat [")

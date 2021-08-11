@@ -42,9 +42,9 @@ public class Bot extends TelegramLongPollingBot {
     try {
       for (PartialBotApiMethod<?> botApiMethod : botApiMethodList) {
         if (botApiMethod instanceof SendPhoto) {
-          execute((SendPhoto) botApiMethod);
+          executeAsync((SendPhoto) botApiMethod);
         } else {
-          execute((BotApiMethod<?>) botApiMethod);
+          executeAsync((BotApiMethod<?>) botApiMethod);
         }
       }
     } catch (TelegramApiException e) {

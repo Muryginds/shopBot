@@ -74,13 +74,13 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_REMOVE_FROM_ORDER_COMMAND:
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderId = orderedListingsInfo.getOrderId();
                 orderedListingsPage =
                         orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     orderedListingService.delete(orderedListing);
 
                     answer.add(
@@ -92,13 +92,13 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                     if (orderedListingsPage.getTotalElements() > 0) {
 
                         sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     } else {
                         answer.add(Utils.prepareAnswerCallbackQuery(
                                 Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                         order.setStatus(OrderStatus.CANCELED);
                         sendMessage = userOrderKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     }
                     orderService.save(order);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
@@ -115,11 +115,11 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
                 orderId = orderedListingsInfo.getOrderId();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     orderedListing.setQuantity(orderedListing.getQuantity() + 1);
                     orderedListingService.save(orderedListing);
                     order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
@@ -139,12 +139,12 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_ORDEREDLISTING_BUTTON_ADD_MINUS_COMMAND:
 
                 orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-                pageable = orderedListingsInfo.getListingPageable();
+                pageable = orderedListingsInfo.getItemPageable();
                 orderId = orderedListingsInfo.getOrderId();
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     int newQuantity = orderedListing.getQuantity() - 1;
                     if (newQuantity == 0) {
                         orderedListingService.delete(orderedListing);
@@ -159,13 +159,13 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                                 Constants.KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY, true, callbackQuery));
                         order.setStatus(OrderStatus.CANCELED);
                         sendMessage = userOrderKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     } else if (newQuantity > 0) {
                         sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
                                 chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                     } else {
                         sendMessage = orderedListingsKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                     }
                     orderService.save(order);
                     answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));

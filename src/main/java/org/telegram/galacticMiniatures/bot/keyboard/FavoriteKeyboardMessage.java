@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.FavoriteInfo;
@@ -41,16 +40,15 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
                                                                     ScrollerObjectType scrollerObjectType) {
 
         FavoriteInfo favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-        Pageable listingPageable = favoriteInfo.getListingPageable();
+        Pageable listingPageable = favoriteInfo.getItemPageable();
         Pageable imagePageable = favoriteInfo.getImagePageable();
         Pageable optionPageable = favoriteInfo.getOptionPageable();
 
-        Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
             case ITEM:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
+                optionPageable = getPageableByScrollerType(optionPageable, ScrollerType.NEW);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
@@ -100,7 +98,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
-                            .append(listingPage.getTotalElements()).toString(),
+                            .append(listingPage.getTotalPages()).toString(),
                     Constants.KEYBOARD_FAVORITE_OPERATED_CALLBACK));
 
             String listingNextCommand = Constants.KEYBOARD_FAVORITE_OPERATED_CALLBACK;
@@ -145,7 +143,6 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
                     " not found. " + ex.getMessage());
             return Optional.empty();
         }
-
 
         StringBuilder optionsText = new StringBuilder();
         if (listingWithOptionPage.getTotalElements() > 1) {
@@ -204,7 +201,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        favoriteInfo.setListingPageable(listingPageable);
+        favoriteInfo.setItemPageable(listingPageable);
         favoriteInfo.setImagePageable(imagePageable);
         favoriteInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, favoriteInfo);

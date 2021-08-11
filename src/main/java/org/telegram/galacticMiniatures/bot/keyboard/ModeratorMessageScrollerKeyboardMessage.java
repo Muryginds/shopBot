@@ -38,13 +38,10 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
 
         OrderMessageInfo orderMessageInfo =
                 cacheService.get(chatId).getOrderMessageInfo();
-        Pageable messagePageable = orderMessageInfo.getMessagePageable();
-        int totalElementOnPage = orderMessageInfo.getPageSize();
+        Pageable messagePageable = orderMessageInfo.getItemPageable();
 
-        Sort optionSort = Sort.by("created").descending();
-        if (scrollerObjectType == ScrollerObjectType.ITEM) {
-            messagePageable = getPageableByScrollerType(messagePageable, scrollerType, optionSort);
-        }
+        messagePageable = getPageableByScrollerType(messagePageable, scrollerType);
+
         int orderId = orderMessageInfo.getOrderId();
         if (orderId == 0) {
             return Optional.empty();
@@ -59,7 +56,7 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
         List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
 
-        if (messagePage.getTotalElements() > totalElementOnPage) {
+        if (messagePage.getTotalElements() > messagePage.getNumberOfElements()) {
             String listingPreviousCommand = Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK;
             if (messagePage.getNumber() > 0) {
                 listingPreviousCommand = Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_COMMAND;
@@ -67,14 +64,11 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_BUTTON_PREVIOUS_NAME, listingPreviousCommand));
 
-            long totalElements = messagePage.getTotalElements();
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(messagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(totalElements % totalElementOnPage > 0 ?
-                                    totalElements / totalElementOnPage + 1 :
-                                    totalElements / totalElementOnPage)
+                            .append(messagePage.getTotalPages())
                             .toString(),
                     Constants.KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK));
 
@@ -96,7 +90,7 @@ public class ModeratorMessageScrollerKeyboardMessage implements AbstractKeyboard
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderMessageInfo.setMessagePageable(messagePageable);
+        orderMessageInfo.setItemPageable(messagePageable);
         cacheService.add(chatId, orderMessageInfo);
 
         StringBuilder text = new StringBuilder("* Order [")

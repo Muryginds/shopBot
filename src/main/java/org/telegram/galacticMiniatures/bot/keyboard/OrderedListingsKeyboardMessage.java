@@ -40,14 +40,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
                                                                     ScrollerObjectType scrollerObjectType) {
 
         OrderedListingsInfo orderedListingsInfo = cacheService.get(chatId).getOrderedListingsInfo();
-        Pageable listingPageable;
-
-        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
-            Sort sort = Sort.by("id.listing").and(Sort.by("id.option"));
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getListingPageable(), scrollerType, sort);
-        } else {
-            listingPageable = getPageableByScrollerType(orderedListingsInfo.getListingPageable(), scrollerType);
-        }
+        Pageable listingPageable = getPageableByScrollerType(orderedListingsInfo.getItemPageable(), scrollerType);
 
         Page<OrderedListing> listingPage =
                 orderedListingService.findPageByOrderId(orderedListingsInfo.getOrderId(), listingPageable);
@@ -85,7 +78,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
-                            .append(listingPage.getTotalElements()).toString(),
+                            .append(listingPage.getTotalPages()).toString(),
                     Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
 
             String listingNextCommand = Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK;
@@ -128,7 +121,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderedListingsInfo.setListingPageable(listingPageable);
+        orderedListingsInfo.setItemPageable(listingPageable);
         cacheService.add(chatId, orderedListingsInfo);
 
         StringBuilder optionsText = new StringBuilder();

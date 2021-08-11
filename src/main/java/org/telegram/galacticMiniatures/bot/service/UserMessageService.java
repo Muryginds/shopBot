@@ -6,13 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.model.Order;
 import org.telegram.galacticMiniatures.bot.model.UserMessage;
-import org.telegram.galacticMiniatures.bot.repository.AnnouncementsResponse;
+import org.telegram.galacticMiniatures.bot.repository.response.AnnouncementsResponse;
+import org.telegram.galacticMiniatures.bot.repository.response.NewMessagesResponse;
 import org.telegram.galacticMiniatures.bot.repository.UserMessageRepository;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -34,12 +34,12 @@ public class UserMessageService {
         userMessageRepository.save(userMessage);
     }
 
-    public List<Map<String, String>> trackNewMessagesForUser(Long chatId) {
-        return userMessageRepository.trackNewMessagesForUser(chatId.toString());
+    public List<NewMessagesResponse> trackMessagesForUser(Long chatId) {
+        return userMessageRepository.trackMessagesForUser(chatId.toString());
     }
 
-    public List<Map<String, String>> trackNewMessagesForModerator(Long chatId) {
-        return userMessageRepository.trackNewMessagesForModerator(chatId.toString());
+    public Page<NewMessagesResponse> trackMessagesForModerator(Long chatId, Pageable pageable) {
+        return userMessageRepository.trackMessagesForModerator(chatId.toString(), pageable);
     }
 
     public void announceNewOrder(Long chatId, Order order) {

@@ -2,14 +2,10 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.enums.BotState;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
-import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
-import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
-import org.telegram.galacticMiniatures.bot.keyboard.CartKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.FavoriteKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.UserOrderKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.UserChatMessageKeyboardMessage;
+import org.telegram.galacticMiniatures.bot.cache.CacheService;
+import org.telegram.galacticMiniatures.bot.cache.ModeratorOrderInfo;
+import org.telegram.galacticMiniatures.bot.enums.*;
+import org.telegram.galacticMiniatures.bot.keyboard.*;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
 import org.telegram.galacticMiniatures.bot.util.Constants;
@@ -30,9 +26,12 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteService favoriteService;
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
+  private final CacheService cacheService;
   private final OrderService orderService;
   private final UserOrderKeyboardMessage userOrderKeyboardMessage;
+  private final ModeratorOrdersKeyboardMessage moderatorOrdersKeyboardMessage;
   private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
+  private final ModeratorMessagesKeyboardMessage moderatorMessagesKeyboardMessage;
 
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -75,7 +74,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
           sendMessage = cartKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_CART_EMPTY));
@@ -93,7 +92,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
           sendMessage = favoriteKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_FAVORITES_EMPTY));
@@ -112,7 +111,7 @@ public class MessageHandler implements AbstractHandler {
 
         if (orderService.countSizeOrdersByChatId(chatId).orElse(0) > 0) {
           sendMessage = userOrderKeyboardMessage.
-                  prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                  prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
           answer.addAll(handleOptionalMessage(sendMessage, message));
         } else {
           answer.add(Utils.prepareSendMessage(chatId, Constants.KEYBOARD_STARTER_ORDERS_EMPTY));
@@ -123,7 +122,7 @@ public class MessageHandler implements AbstractHandler {
       case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
 
         sendMessage = userChatMessageKeyboardMessage
-                .prepareScrollingMessage(chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                .prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
         answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
 
@@ -136,9 +135,9 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND:
 
-        answer.add(keyboardService.getSendMessage(
-                KeyboardType.ADMIN_MESSAGES, chatId, "Message management"));
-        answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+        sendMessage = moderatorMessagesKeyboardMessage.prepareScrollingMessage(
+                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
+        answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
 
       case Constants.KEYBOARD_STARTER_USER_MESSAGES_COMMAND:
@@ -150,8 +149,9 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND:
 
-        sendMessage = userOrderKeyboardMessage.
-                prepareScrollingMessage(chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+        cacheService.add(chatId, new ModeratorOrderInfo());
+        sendMessage = moderatorOrdersKeyboardMessage.
+                prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
         answer.addAll(handleOptionalMessage(sendMessage, message));
         break;
     }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.CartInfo;
@@ -38,13 +37,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                                                                     ScrollerObjectType scrollerObjectType) {
 
         CartInfo cartInfo = cacheService.get(chatId).getCartInfo();
-        Pageable listingPageable;
-        if (scrollerType == ScrollerType.NEW_LISTING_SCROLLER) {
-            Sort sort = Sort.by("id.listing").and(Sort.by("id.option"));
-            listingPageable = getPageableByScrollerType(cartInfo.getListingPageable(), scrollerType, sort);
-        } else {
-            listingPageable = getPageableByScrollerType(cartInfo.getListingPageable(), scrollerType);
-        }
+        Pageable listingPageable = getPageableByScrollerType(cartInfo.getItemPageable(), scrollerType);
 
         Page<ListingCart> listingPage = cartService.findPageCartByChatId(chatId, listingPageable);
 
@@ -81,7 +74,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
-                            .append(listingPage.getTotalElements()).toString(),
+                            .append(listingPage.getTotalPages()).toString(),
                     Constants.KEYBOARD_CART_OPERATED_CALLBACK));
 
             String listingNextCommand = Constants.KEYBOARD_CART_OPERATED_CALLBACK;
@@ -130,7 +123,7 @@ public class CartKeyboardMessage implements AbstractKeyboardMessage, Scrollable 
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        cartInfo.setListingPageable(listingPageable);
+        cartInfo.setItemPageable(listingPageable);
         cacheService.add(chatId, cartInfo);
 
         StringBuilder optionsText = new StringBuilder();

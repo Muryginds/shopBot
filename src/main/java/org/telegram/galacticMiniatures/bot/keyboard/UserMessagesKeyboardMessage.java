@@ -2,6 +2,7 @@ package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.galacticMiniatures.bot.repository.response.NewMessagesResponse;
 import org.telegram.galacticMiniatures.bot.service.UserMessageService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -9,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -23,15 +23,15 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
         StringBuilder command = new StringBuilder();
         StringBuilder caption = new StringBuilder();
         int count = 0;
-        List<Map<String, String>> newMessages = userMessageService.trackNewMessagesForUser(chatId);
+        List<NewMessagesResponse> messagesResponses = userMessageService.trackMessagesForUser(chatId);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
-        for (Map<String, String> messages : newMessages) {
+        for (NewMessagesResponse message : messagesResponses) {
             command.setLength(0);
             caption.setLength(0);
-            Integer sum = Integer.parseInt(messages.get("sum"));
-            Integer orderId = Integer.parseInt(messages.get("orderId"));
+            Integer sum = message.getSum().intValue();
+            Integer orderId = message.getOrderId();
             String sectionCallBackData = command.append(Constants.KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND)
                     .append(orderId)
                     .toString();
@@ -41,15 +41,15 @@ public class UserMessagesKeyboardMessage implements AbstractKeyboardMessage {
                         .append(sum)
                         .append("]");
             } else {
-                caption.append("Order ")
-                        .append(String.format("%05d", orderId));
+                caption.append(String.format("%05d", orderId));
             }
             keyboardButtonsRow.add(createInlineKeyboardButton(caption.toString(), sectionCallBackData));
-            if (count % 2 == 1) {
+            if (count++ % 2 == 1) {
                 rowList.add(keyboardButtonsRow);
                 keyboardButtonsRow = new ArrayList<>();
+            } else if (count == messagesResponses.size()) {
+                rowList.add(keyboardButtonsRow);
             }
-            count++;
         }
 
         InlineKeyboardButton goBackButton = new InlineKeyboardButton();

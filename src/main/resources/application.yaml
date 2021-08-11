@@ -5,6 +5,7 @@ etsy:
   shopId: ${ETSY_SHOP_ID}
   apiKey: ${ETSY_API_KEY}
 schedule:
+  clearCache: PT2H
   parsePeriod: PT6H
   announcementPeriod: PT1M
   entityExpirationTime: 20000

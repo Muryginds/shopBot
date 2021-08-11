@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor
 public class SearchInfo {
     Integer sectionId;
-    Pageable listingPageable = PageRequest.of(0,1);
+    Pageable itemPageable = PageRequest.of(0,1);
     Pageable imagePageable = PageRequest.of(0,1);
     Pageable optionPageable = PageRequest.of(0, 1, Sort.by("price").and(Sort.by("firstOptionValue")));
 

@@ -1,9 +1,10 @@
 package org.telegram.galacticMiniatures.bot.enums;
 
 public enum OrderStatus {
-    CREATED,
+    NEW,
     CONFIRMED,
     PAID,
-    COMPLETED,
+    PRINTING,
+    SHIPPED,
     CANCELED
 }

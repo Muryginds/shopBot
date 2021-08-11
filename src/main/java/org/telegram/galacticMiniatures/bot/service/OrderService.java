@@ -3,7 +3,6 @@ package org.telegram.galacticMiniatures.bot.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.model.ListingCart;
@@ -31,12 +30,12 @@ public class OrderService {
         return orderRepository.findByUser_ChatId(chatId.toString(), pageable);
     }
 
-    public Optional<Order> findById(Integer id) {
-        return orderRepository.findById(id);
+    public Page<Order> findPageOrderByStatus(List<OrderStatus> statusList, Pageable pageable) {
+        return orderRepository.findByStatusIn(statusList, pageable);
     }
 
-    public List<Order> findAllByChatId(String chatId){
-        return orderRepository.findAllByUser_ChatId(chatId, Sort.by("created").descending());
+    public Optional<Order> findById(Integer id) {
+        return orderRepository.findById(id);
     }
 
     public Optional<Integer> countSizeOrdersByChatId(Long chatId) {
@@ -47,7 +46,7 @@ public class OrderService {
     public Order createNewOrderWithListings(Long chatId) {
         User user = userService.findUser(chatId).orElse(new User(chatId.toString(), chatId.toString()));
         Order order = new Order(user,
-                OrderStatus.CREATED,
+                OrderStatus.NEW,
                 LocalDateTime.now(),
                 cartService.getCartSummaryByChatId(chatId).orElse(0));
         save(order);

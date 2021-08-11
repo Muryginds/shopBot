@@ -97,7 +97,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_FAVORITE_BUTTON_REMOVE_FROM_FAVORITE_COMMAND:
 
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable();
+                pageable = favoriteInfo.getItemPageable();
                 pageFavorite = favoriteService.findPageFavoriteByChatId(chatId, pageable);
 
                 try {
@@ -109,7 +109,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
 
                     if (favoriteService.countSizeFavoriteByChatId(chatId).orElse(0) > 0) {
                         sendMessage = favoriteKeyboardMessage.prepareScrollingMessage(
-                                chatId, ScrollerType.NEW_LISTING_SCROLLER, ScrollerObjectType.ITEM);
+                                chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
                         answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
                     } else {
                         answer.add(Utils.prepareDeleteMessage(chatId, messageId));
@@ -124,7 +124,7 @@ public class FavoriteCallbackHandler implements AbstractHandler {
             case Constants.KEYBOARD_FAVORITE_BUTTON_ADD_TO_CART_COMMAND:
 
                 favoriteInfo = cacheService.get(chatId).getFavoriteInfo();
-                pageable = favoriteInfo.getListingPageable();
+                pageable = favoriteInfo.getItemPageable();
                 pageFavorite = favoriteService.findPageFavoriteByChatId(chatId, pageable);
                 try {
                     listingFavorite = pageFavorite.getContent().get(0);

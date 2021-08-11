@@ -38,10 +38,10 @@ public class UserMessagesCallbackHandler implements AbstractHandler {
 
         if (data.startsWith(Constants.KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND)) {
             orderId = Integer.parseInt(
-                    data.replace(Constants.KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND, ""));
+                    data.replace(Constants.KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND, ""));
             cacheService.add(chatId, new OrderMessageInfo(orderId));
             sendMethod = userMessageScrollerKeyboardMessage.prepareScrollingMessage(
-                    chatId, ScrollerType.NEW_MESSAGE_SCROLLER, ScrollerObjectType.ITEM);
+                    chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
             answer.addAll(Utils.handleOptionalSendMessage(sendMethod, callbackQuery));
         } else {
 

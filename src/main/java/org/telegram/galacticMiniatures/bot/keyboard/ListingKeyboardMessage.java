@@ -42,16 +42,15 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                                                                     ScrollerObjectType scrollerObjectType) {
 
         SearchInfo searchInfo = cacheService.get(chatId).getSearchInfo();
-        Pageable listingPageable = searchInfo.getListingPageable();
+        Pageable listingPageable = searchInfo.getItemPageable();
         Pageable imagePageable = searchInfo.getImagePageable();
         Pageable optionPageable = searchInfo.getOptionPageable();
 
-        Sort optionSort = Sort.by("price").and(Sort.by("firstOptionValue"));
         switch (scrollerObjectType) {
             case ITEM:
                 listingPageable = getPageableByScrollerType(listingPageable, scrollerType);
-                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER);
-                optionPageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW_LISTING_SCROLLER, optionSort);
+                imagePageable = getPageableByScrollerType(imagePageable, ScrollerType.NEW);
+                optionPageable = getPageableByScrollerType(optionPageable, ScrollerType.NEW);
                 break;
             case IMAGE:
                 imagePageable = getPageableByScrollerType(imagePageable, scrollerType);
@@ -124,7 +123,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                     new StringBuilder()
                             .append(imagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(imagePage.getTotalElements()).toString(),
+                            .append(imagePage.getTotalPages()).toString(),
                     Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
             String photoNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {
@@ -202,7 +201,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
         rowList.add(keyboardButtonsRow2);
         keyboardMarkup.setKeyboard(rowList);
 
-        searchInfo.setListingPageable(listingPageable);
+        searchInfo.setItemPageable(listingPageable);
         searchInfo.setImagePageable(imagePageable);
         searchInfo.setOptionPageable(optionPageable);
         cacheService.add(chatId, searchInfo);

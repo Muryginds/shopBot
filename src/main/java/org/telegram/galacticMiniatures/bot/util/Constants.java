@@ -4,6 +4,7 @@ final public class Constants {
 
     private Constants() {}
 
+
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -22,9 +23,9 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
     public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
     public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
-    public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Сообщения пользователей";
-    public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Заказы пользователей";
-    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Центр сообщений";
+    public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Центр сообщений";
+    public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Контроль заказов";
+    public static final String KEYBOARD_STARTER_USER_MESSAGES_COMMAND = "Сообщения";
     public static final String KEYBOARD_STARTER_FAVORITES_EMPTY = "Список пуст";
     public static final String KEYBOARD_STARTER_CART_EMPTY = "Корзина пуста";
     public static final String KEYBOARD_STARTER_ORDERS_EMPTY = "Список заказов пуст";
@@ -46,10 +47,17 @@ final public class Constants {
     public static final String KEYBOARD_USER_MESSAGES_BUTTON_MESSAGES_COMMAND = "UserMessagesCallbackMessages";
 
     public static final String KEYBOARD_MODERATOR_MESSAGES_OPERATED_CALLBACK = "ModeratorMessagesCallback";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_HEADER = "Messages control panel";
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_NAME = CLOSE;
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_CLOSE_COMMAND = "ModeratorMessagesCallbackClose";
     public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_MESSAGES_COMMAND =
             "ModeratorMessagesCallbackMessages";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_NEXT_COMMAND =
+            "ModeratorMessagesCallbackNext";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_PREVIOUS_COMMAND =
+            "ModeratorMessagesCallbackPrevious";
+    public static final String KEYBOARD_MODERATOR_MESSAGES_BUTTON_PREVIOUS_NAME = PREVIOUS;
 
     public static final String KEYBOARD_MODERATOR_MESSAGE_SCROLLER_OPERATED_CALLBACK =
             "ModeratorMessageScrollerCallback";
@@ -118,21 +126,46 @@ final public class Constants {
     public static final String KEYBOARD_ORDEREDLISTING_BUTTON_GO_BACK_NAME = BACK;
     public static final String KEYBOARD_ORDEREDLISTING_MESSAGE_ORDER_IS_EMPTY ="Order is empty. Deleting order";
 
-    public static final String KEYBOARD_ORDER_OPERATED_CALLBACK = "OrderCallback";
-    public static final String KEYBOARD_ORDER_BUTTON_CLOSE_COMMAND = "OrderCallbackClose";
-    public static final String KEYBOARD_ORDER_BUTTON_CLOSE_NAME = CLOSE;
-    public static final String KEYBOARD_ORDER_BUTTON_NEXT_COMMAND = "OrderCallbackNext";
-    public static final String KEYBOARD_ORDER_BUTTON_NEXT_NAME = NEXT;
-    public static final String KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND = "OrderCallbackPrevious";
-    public static final String KEYBOARD_ORDER_BUTTON_PREVIOUS_NAME = PREVIOUS;
-    public static final String KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND = "OrderCallbackCancelOrder";
-    public static final String KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_NAME = "Cancel";
-    public static final String KEYBOARD_ORDER_BUTTON_EDIT_COMMAND = "OrderCallbackEditOrder";
-    public static final String KEYBOARD_ORDER_BUTTON_EDIT_NAME = "Edit";
-    public static final String KEYBOARD_ORDER_BUTTON_TRACK_COMMAND = "OrderCallbackTrack";
-    public static final String KEYBOARD_ORDER_BUTTON_TRACK_NAME = "Track";
-    public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND = "OrderCallbackMessages";
-    public static final String KEYBOARD_ORDER_BUTTON_MESSAGES_NAME = "Messages";
+    public static final String KEYBOARD_USER_ORDER_OPERATED_CALLBACK = "UserOrderCallback";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_CLOSE_COMMAND = "UserOrderCallbackClose";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_USER_ORDER_BUTTON_NEXT_COMMAND = "UserOrderCallbackNext";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_USER_ORDER_BUTTON_PREVIOUS_COMMAND = "UserOrderCallbackPrevious";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_USER_ORDER_BUTTON_CANCEL_ORDER_COMMAND = "UserOrderCallbackCancelOrder";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_CANCEL_ORDER_NAME = "Cancel";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_EDIT_COMMAND = "UserOrderCallbackEditOrder";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_EDIT_NAME = "Edit";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_TRACK_COMMAND = "UserOrderCallbackTrack";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_TRACK_NAME = "Track";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_MESSAGES_COMMAND = "UserOrderCallbackMessages";
+    public static final String KEYBOARD_USER_ORDER_BUTTON_MESSAGES_NAME = "Messages";
+
+    public static final String KEYBOARD_MODERATOR_ORDER_OPERATED_CALLBACK = "ModeratorOrderCallback";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CLOSE_COMMAND = "ModeratorOrderCallbackClose";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CLOSE_NAME = CLOSE;
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_NEXT_COMMAND = "ModeratorOrderCallbackNext";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_NEXT_NAME = NEXT;
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PREVIOUS_COMMAND = "ModeratorOrderCallbackPrevious";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PREVIOUS_NAME = PREVIOUS;
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_NEW_COMMAND = "ModeratorOrderCallbackNew";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_NEW_NAME = "New";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CONFIRMED_COMMAND = "ModeratorOrderCallbackConfirmed";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CONFIRMED_NAME = "Confirmed";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PAID_COMMAND = "ModeratorOrderCallbackPaid";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PAID_NAME = "Paid";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PRINTING_COMMAND = "ModeratorOrderCallbackPrinting";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_PRINTING_NAME = "Printing";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CANCELED_COMMAND = "ModeratorOrderCallbackCanceled";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_CANCELED_NAME = "Canceled";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_ORDERS_COMMAND = "ModeratorOrderCallbackOrders";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_ALL_STATUSES_COMMAND =
+            "ModeratorOrderCallbackAllStatuses";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_ALL_STATUSES_NAME = "All";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_SHIPPED_COMMAND = "ModeratorOrderCallbackShipped";
+    public static final String KEYBOARD_MODERATOR_ORDER_BUTTON_SHIPPED_NAME = "Shipped";
+
 
     public static final String KEYBOARD_ADDRESS_OPERATED_CALLBACK = "AddressCallback";
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_NAME = "\u270F  Edit";
@@ -182,7 +215,7 @@ final public class Constants {
     public static final String KEYBOARD_FAVORITE_BUTTON_PHOTO_PREVIOUS_NAME = PREVIOUS;
     public static final String KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_COMMAND = "FavoriteCallbackNextPhoto";
     public static final String KEYBOARD_FAVORITE_BUTTON_PHOTO_NEXT_NAME = NEXT;
-    public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_COMMAND = "ListingCallbackPreviousOption";
+    public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_COMMAND = "FavoriteCallbackPreviousOption";
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_PREVIOUS_NAME = PREVIOUS;
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_COMMAND = "FavoriteCallbackNextOption";
     public static final String KEYBOARD_FAVORITE_BUTTON_OPTION_NEXT_NAME = NEXT;
