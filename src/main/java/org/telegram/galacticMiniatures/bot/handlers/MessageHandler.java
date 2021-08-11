@@ -2,10 +2,9 @@ package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.galacticMiniatures.bot.enums.BotState;
-import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
-import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
-import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
+import org.telegram.galacticMiniatures.bot.cache.CacheService;
+import org.telegram.galacticMiniatures.bot.cache.ModeratorOrderInfo;
+import org.telegram.galacticMiniatures.bot.enums.*;
 import org.telegram.galacticMiniatures.bot.keyboard.*;
 import org.telegram.galacticMiniatures.bot.model.User;
 import org.telegram.galacticMiniatures.bot.service.*;
@@ -27,8 +26,10 @@ public class MessageHandler implements AbstractHandler {
   private final FavoriteService favoriteService;
   private final FavoriteKeyboardMessage favoriteKeyboardMessage;
   private final UserService userService;
+  private final CacheService cacheService;
   private final OrderService orderService;
   private final UserOrderKeyboardMessage userOrderKeyboardMessage;
+  private final ModeratorOrdersKeyboardMessage moderatorOrdersKeyboardMessage;
   private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
   private final ModeratorMessagesKeyboardMessage moderatorMessagesKeyboardMessage;
 
@@ -148,7 +149,8 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND:
 
-        sendMessage = userOrderKeyboardMessage.
+        cacheService.add(chatId, new ModeratorOrderInfo());
+        sendMessage = moderatorOrdersKeyboardMessage.
                 prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
         answer.addAll(handleOptionalMessage(sendMessage, message));
         break;

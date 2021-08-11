@@ -80,7 +80,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                         orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     orderedListingService.delete(orderedListing);
 
                     answer.add(
@@ -119,7 +119,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     orderedListing.setQuantity(orderedListing.getQuantity() + 1);
                     orderedListingService.save(orderedListing);
                     order.setSummary(orderedListingService.getOrderSummary(orderId).orElse(0));
@@ -144,7 +144,7 @@ public class OrderedListingCallbackHandler implements AbstractHandler {
                 orderedListingsPage = orderedListingService.findPageByOrderId(orderId, pageable);
                 orderedListing = orderedListingsPage.getContent().get(0);
                 order = orderedListing.getId().getOrder();
-                if (order.getStatus().equals(OrderStatus.CREATED)) {
+                if (order.getStatus().equals(OrderStatus.NEW)) {
                     int newQuantity = orderedListing.getQuantity() - 1;
                     if (newQuantity == 0) {
                         orderedListingService.delete(orderedListing);

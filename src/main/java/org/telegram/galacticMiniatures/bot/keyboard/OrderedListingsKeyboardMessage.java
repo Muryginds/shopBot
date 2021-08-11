@@ -78,7 +78,7 @@ public class OrderedListingsKeyboardMessage implements AbstractKeyboardMessage, 
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
-                            .append(listingPage.getTotalElements()).toString(),
+                            .append(listingPage.getTotalPages()).toString(),
                     Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK));
 
             String listingNextCommand = Constants.KEYBOARD_ORDEREDLISTING_OPERATED_CALLBACK;

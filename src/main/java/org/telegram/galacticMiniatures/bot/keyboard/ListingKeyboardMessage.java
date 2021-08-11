@@ -123,7 +123,7 @@ public class ListingKeyboardMessage implements AbstractKeyboardMessage, Scrollab
                     new StringBuilder()
                             .append(imagePage.getNumber() + 1)
                             .append(" / ")
-                            .append(imagePage.getTotalElements()).toString(),
+                            .append(imagePage.getTotalPages()).toString(),
                     Constants.KEYBOARD_LISTING_BUTTON_PHOTO_MIDDLE_COMMAND));
             String photoNextCommand = Constants.KEYBOARD_LISTING_OPERATED_CALLBACK;
             if (imagePage.getNumber() + 1 < imagePage.getTotalPages()) {

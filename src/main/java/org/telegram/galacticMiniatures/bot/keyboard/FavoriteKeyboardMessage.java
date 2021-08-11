@@ -98,7 +98,7 @@ public class FavoriteKeyboardMessage implements AbstractKeyboardMessage, Scrolla
                     new StringBuilder()
                             .append(listingPage.getNumber() + 1)
                             .append(" / ")
-                            .append(listingPage.getTotalElements()).toString(),
+                            .append(listingPage.getTotalPages()).toString(),
                     Constants.KEYBOARD_FAVORITE_OPERATED_CALLBACK));
 
             String listingNextCommand = Constants.KEYBOARD_FAVORITE_OPERATED_CALLBACK;

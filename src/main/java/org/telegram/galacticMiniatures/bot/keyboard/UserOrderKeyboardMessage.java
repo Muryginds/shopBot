@@ -4,10 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
-import org.telegram.galacticMiniatures.bot.cache.OrderInfo;
+import org.telegram.galacticMiniatures.bot.cache.UserOrderInfo;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
@@ -40,8 +39,8 @@ public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scroll
                                                                     ScrollerType scrollerType,
                                                                     ScrollerObjectType scrollerObjectType) {
 
-        OrderInfo orderInfo = cacheService.get(chatId).getOrderInfo();
-        Pageable listingPageable = getPageableByScrollerType(orderInfo.getItemPageable(), scrollerType);
+        UserOrderInfo userOrderInfo = cacheService.get(chatId).getUserOrderInfo();
+        Pageable listingPageable = getPageableByScrollerType(userOrderInfo.getItemPageable(), scrollerType);
 
         Page<Order> orderPage = orderService.findPageOrderByChatId(chatId, listingPageable);
 
@@ -62,52 +61,52 @@ public class UserOrderKeyboardMessage implements AbstractKeyboardMessage, Scroll
 
         if(orderPage.getTotalPages() > 1) {
 
-            String orderPreviousCommand = Constants.KEYBOARD_ORDER_OPERATED_CALLBACK;
+            String orderPreviousCommand = Constants.KEYBOARD_USER_ORDER_OPERATED_CALLBACK;
             if (orderPage.getNumber() > 0) {
-                orderPreviousCommand = Constants.KEYBOARD_ORDER_BUTTON_PREVIOUS_COMMAND;
+                orderPreviousCommand = Constants.KEYBOARD_USER_ORDER_BUTTON_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ORDER_BUTTON_PREVIOUS_NAME, orderPreviousCommand));
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_PREVIOUS_NAME, orderPreviousCommand));
 
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(orderPage.getNumber() + 1)
                             .append(" / ")
                             .append(orderPage.getTotalElements()).toString(),
-                    Constants.KEYBOARD_ORDER_OPERATED_CALLBACK));
+                    Constants.KEYBOARD_USER_ORDER_OPERATED_CALLBACK));
 
-            String listingNextCommand = Constants.KEYBOARD_ORDER_OPERATED_CALLBACK;
+            String listingNextCommand = Constants.KEYBOARD_USER_ORDER_OPERATED_CALLBACK;
             if (orderPage.getNumber() + 1 < orderPage.getTotalPages()) {
-                listingNextCommand = Constants.KEYBOARD_ORDER_BUTTON_NEXT_COMMAND;
+                listingNextCommand = Constants.KEYBOARD_USER_ORDER_BUTTON_NEXT_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ORDER_BUTTON_NEXT_NAME, listingNextCommand));
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
-        if(order.getStatus().equals(OrderStatus.CREATED)) {
+        if(order.getStatus().equals(OrderStatus.NEW)) {
             keyboardButtonsRow2.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_NAME,
-                    Constants.KEYBOARD_ORDER_BUTTON_CANCEL_ORDER_COMMAND + order.getId()));
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_CANCEL_ORDER_NAME,
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_CANCEL_ORDER_COMMAND + order.getId()));
             keyboardButtonsRow2.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_ORDER_BUTTON_EDIT_NAME,
-                    Constants.KEYBOARD_ORDER_BUTTON_EDIT_COMMAND + order.getId()));
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_EDIT_NAME,
+                    Constants.KEYBOARD_USER_ORDER_BUTTON_EDIT_COMMAND + order.getId()));
             rowList.add(keyboardButtonsRow2);
         }
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_NAME,
-                Constants.KEYBOARD_ORDER_BUTTON_MESSAGES_COMMAND + order.getId()));
+                Constants.KEYBOARD_USER_ORDER_BUTTON_MESSAGES_NAME,
+                Constants.KEYBOARD_USER_ORDER_BUTTON_MESSAGES_COMMAND + order.getId()));
         rowList.add(keyboardButtonsRow4);
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ORDER_BUTTON_TRACK_NAME,
-                Constants.KEYBOARD_ORDER_BUTTON_TRACK_COMMAND));
+                Constants.KEYBOARD_USER_ORDER_BUTTON_TRACK_NAME,
+                Constants.KEYBOARD_USER_ORDER_BUTTON_TRACK_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_ORDER_BUTTON_CLOSE_NAME,
-                Constants.KEYBOARD_ORDER_BUTTON_CLOSE_COMMAND));
+                Constants.KEYBOARD_USER_ORDER_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_USER_ORDER_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow3);
         keyboardMarkup.setKeyboard(rowList);
 
-        orderInfo.setItemPageable(listingPageable);
-        cacheService.add(chatId, orderInfo);
+        userOrderInfo.setItemPageable(listingPageable);
+        cacheService.add(chatId, userOrderInfo);
 
         String caption = new StringBuilder()
                 .append("*[Order №")

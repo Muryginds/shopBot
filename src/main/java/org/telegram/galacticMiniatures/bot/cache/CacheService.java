@@ -36,9 +36,15 @@ public class CacheService {
         putNewData(chatId, chatInfo);
     }
 
-    public void add(long chatId, OrderInfo orderInfo) {
+    public void add(long chatId, UserOrderInfo userOrderInfo) {
         ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
-        chatInfo.setOrderInfo(orderInfo);
+        chatInfo.setUserOrderInfo(userOrderInfo);
+        putNewData(chatId, chatInfo);
+    }
+
+    public void add(long chatId, ModeratorOrderInfo moderatorOrderInfo) {
+        ChatInfo chatInfo = cache.getOrDefault(chatId, new ChatInfo());
+        chatInfo.setModeratorOrderInfo(moderatorOrderInfo);
         putNewData(chatId, chatInfo);
     }
 
