@@ -49,7 +49,7 @@ public class ModeratorOrdersKeyboardMessage implements AbstractKeyboardMessage, 
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         for (Order order : orders) {
             sb.setLength(0);
-            String sectionCallBackData = sb.append(Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_ORDERS_COMMAND)
+            String sectionCallBackData = sb.append(Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_ORDERS_COMMAND)
                     .append(order.getId()).toString();
             String buttonName;
             if (statusList.size() > 1) {
@@ -73,56 +73,56 @@ public class ModeratorOrdersKeyboardMessage implements AbstractKeyboardMessage, 
 
         if(orderPage.getTotalPages() > 1) {
 
-            String orderPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDER_OPERATED_CALLBACK;
+            String orderPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDERS_OPERATED_CALLBACK;
             if (orderPage.getNumber() > 0) {
-                orderPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PREVIOUS_COMMAND;
+                orderPreviousCommand = Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PREVIOUS_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PREVIOUS_NAME, orderPreviousCommand));
+                    Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PREVIOUS_NAME, orderPreviousCommand));
 
             keyboardButtonsRow1.add(createInlineKeyboardButton(
                     new StringBuilder()
                             .append(orderPage.getNumber() + 1)
                             .append(" / ")
                             .append(orderPage.getTotalPages()).toString(),
-                    Constants.KEYBOARD_MODERATOR_ORDER_OPERATED_CALLBACK));
+                    Constants.KEYBOARD_MODERATOR_ORDERS_OPERATED_CALLBACK));
 
-            String listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDER_OPERATED_CALLBACK;
+            String listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDERS_OPERATED_CALLBACK;
             if (orderPage.getNumber() + 1 < orderPage.getTotalPages()) {
-                listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_NEXT_COMMAND;
+                listingNextCommand = Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_NEXT_COMMAND;
             }
             keyboardButtonsRow1.add(createInlineKeyboardButton(
-                    Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_NEXT_NAME, listingNextCommand));
+                    Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_NEXT_NAME, listingNextCommand));
             rowList.add(keyboardButtonsRow1);
         }
 
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_ALL_STATUSES_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_ALL_STATUSES_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_ALL_STATUSES_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_ALL_STATUSES_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_NEW_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_NEW_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_NEW_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_NEW_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CONFIRMED_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CONFIRMED_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CONFIRMED_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CONFIRMED_COMMAND));
         keyboardButtonsRow2.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PAID_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PAID_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PAID_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PAID_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PRINTING_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_PRINTING_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PRINTING_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_PRINTING_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_SHIPPED_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_SHIPPED_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_SHIPPED_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_SHIPPED_COMMAND));
         keyboardButtonsRow3.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CANCELED_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CANCELED_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CANCELED_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CANCELED_COMMAND));
         rowList.add(keyboardButtonsRow2);
         rowList.add(keyboardButtonsRow3);
 
         keyboardButtonsRow4.add(createInlineKeyboardButton(
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CLOSE_NAME,
-                Constants.KEYBOARD_MODERATOR_ORDER_BUTTON_CLOSE_COMMAND));
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CLOSE_NAME,
+                Constants.KEYBOARD_MODERATOR_ORDERS_BUTTON_CLOSE_COMMAND));
         rowList.add(keyboardButtonsRow4);
 
         keyboardMarkup.setKeyboard(rowList);
