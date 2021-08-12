@@ -21,6 +21,3 @@ spring:
       ddl-auto: none
 server:
   port: ${PORT:8080}
-java:
-  runtime:
-    version: 11
