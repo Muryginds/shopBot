@@ -1,0 +1,1 @@
+web: java -jar target/GalacticMiniaturesBot-1.0.jar

@@ -5,5 +5,6 @@ public enum KeyboardType {
     STARTER,
     ADDRESS,
     ADMIN_PANEL,
-    USER_MESSAGES
+    USER_MESSAGES,
+    MODERATOR_ORDER_STATUS_CHANGE
 }
