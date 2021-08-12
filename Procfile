@@ -1,1 +1,1 @@
-web: java -jar target/GalacticMiniaturesBot-1.0.jar
+web: java $JAVA_OPTS -jar -Dserver.port=$PORT target/GalacticMiniaturesBot-1.0.jar

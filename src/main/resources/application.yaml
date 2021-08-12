@@ -20,7 +20,4 @@ spring:
     hibernate:
       ddl-auto: none
 server:
-  port: ${PORT:8080}
-java:
-  runtime:
-    version: 11
+  port: ${PORT:33500}

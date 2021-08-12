@@ -55,7 +55,7 @@ public class ShopParserService {
         // oneTimeCountyParser();
     }
 
-    private void oneTimeCountyParser() {
+    public void oneTimeCountyParser() {
         ObjectMapper mapper = new ObjectMapper();
         List<ParsedCountry> resultList = null;
         File file = Paths.get(FILE_COUNTRIES).toFile();
@@ -74,7 +74,7 @@ public class ShopParserService {
         log.info("Task: Country parser finished");
     }
 
-    private void parseSections() {
+    public void parseSections() {
         ObjectMapper mapper = new ObjectMapper();
         List<ParsedSection> resultList = null;
         StringBuilder sb = new StringBuilder(SITE_URL);
@@ -92,13 +92,14 @@ public class ShopParserService {
 
         if (resultList != null) {
             sectionList = sectionService.saveAllByParsedSectionCollection(resultList);
+            sectionService.modifyExpiredEntities(expirationTime);
             log.info("Scheduled task: SECTIONS saved to DB");
         }
 
         log.info("Scheduled task: SECTIONS parser finished");
     }
 
-    private void parseListings() {
+    public void parseListings() {
         ObjectMapper mapper = new ObjectMapper();
         //Set<String> tags = new HashSet<>();
         Map<Section, List<ParsedListing>> listings = new HashMap<>();
@@ -139,6 +140,7 @@ public class ShopParserService {
 
         if (listings.size() > 0) {
             listingList = listingService.saveAllByParsedListingMap(listings);
+            listingService.modifyExpiredEntities(expirationTime);
             log.info("Scheduled task: LISTINGS saved to DB");
 //            tagService.saveAll(tags);
 //            log.info("Scheduled task: TAGS saved to DB");
@@ -157,7 +159,7 @@ public class ShopParserService {
 //        log.info("Scheduled task: LISTINGS WITH TAGS parser finished");
 //    }
 
-    private void parseListingImages() {
+    public void parseListingImages() {
         ObjectMapper mapper = new ObjectMapper();
         Map<Listing, List<ParsedImage>> images = new HashMap<>();
         try {
@@ -184,12 +186,13 @@ public class ShopParserService {
 
         if (images.size() > 0) {
             listingWithImageService.saveAllByParsedImageMap(images);
+            listingWithImageService.modifyExpiredEntities(expirationTime);
             log.info("Scheduled task: LISTING IMAGES saved to DB");
         }
 
         log.info("Scheduled task: LISTING IMAGES parser finished");
     }
-    private void parseListingOptions() {
+    public void parseListingOptions() {
         ObjectMapper mapper = new ObjectMapper();
         Map<Listing, List<ParsedOption>> options = new HashMap<>();
         try {
@@ -207,7 +210,6 @@ public class ShopParserService {
                 results = mapper.readValue(url, ParsedOptionsResult.class);
                 resultList = results.getResults().values().stream()
                         .flatMap(Collection::stream)
-                        //.filter(l -> l.getParsedOptionValues().size() > 0)
                         .collect(Collectors.toList());
                 if (resultList.size() > 0) {
                     options.put(listing, resultList);
@@ -219,6 +221,7 @@ public class ShopParserService {
 
         if (options.size() > 0) {
             listingWithOptionService.saveAllByParsedOptionMap(options);
+            listingWithOptionService.modifyExpiredEntities(expirationTime);
             log.info("Scheduled task: LISTING OPTIONS saved to DB");
         }
 

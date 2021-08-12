@@ -2,6 +2,8 @@ package org.telegram.galacticMiniatures.bot;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableAsync
 public class ScheduleController {
 
     private final ShopParserService shopParserService;
@@ -35,12 +38,24 @@ public class ScheduleController {
     private final Bot bot;
 
     @Scheduled(fixedRateString = "${schedule.parsePeriod}")
-    private void parseInfo() {
-        //shopParserService.parseInfo();
+    public void parseSectionsAndListings() {
+        shopParserService.parseSections();
+        shopParserService.parseListings();
     }
 
+    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT1H")
+    public void parseImages() {
+        shopParserService.parseListingImages();
+    }
+
+    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT1H")
+    public void parseOptions() {
+        shopParserService.parseListingOptions();
+    }
+
+    @Async
     @Scheduled(fixedRateString = "${schedule.announcementPeriod}")
-    private void announceNewMessages() {
+    public void announceNewMessages() {
         List<AnnouncementsResponse> responses = userMessageService.getNewAnnouncements();
         Map<String, Integer> summary = responses.stream()
                 .collect(Collectors.groupingBy(AnnouncementsResponse::getChatId,
@@ -67,8 +82,9 @@ public class ScheduleController {
         userChatActivityService.saveAll(announcements);
     }
 
+    @Async
     @Scheduled(fixedRateString = "${schedule.clearCache}")
-    private void clearCache() {
+    public void clearCache() {
 
         cacheService.getCache().entrySet().stream()
                 .filter(l -> l.getValue().getLastModified().plusHours(24).isBefore(LocalDateTime.now()))
