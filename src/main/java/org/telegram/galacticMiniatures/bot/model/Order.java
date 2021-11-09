@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.telegram.galacticMiniatures.bot.enums.OrderStatus;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -28,4 +29,8 @@ public class Order extends AbstractEntity {
 
     @Column(name = "summary")
     Integer summary;
+
+    @Column(name = "track_number")
+    @Nullable
+    String trackNumber;
 }

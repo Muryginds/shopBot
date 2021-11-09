@@ -14,12 +14,11 @@ import java.util.List;
 @Repository
 public interface UserMessageRepository extends JpaRepository<UserMessage, Integer> {
 
-    Page<UserMessage> getPageByUser_ChatIdAndOrderIsNullOrTargetUser_ChatIdAndOrderIsNull(
-            String chatId, String targetChatId, Pageable pageable);
+    Page<UserMessage> getPageByUser_ChatIdAndOrderIsNull(String chatId, Pageable pageable);
     Page<UserMessage> getPageByOrder_Id(Integer orderId, Pageable pageable);
 
     @Query(value =
-            "SELECT o.id AS orderId, CAST(COALESCE(SUM(um.created > uca.last_activity), 0) AS UNSIGNED) AS sum " +
+            "SELECT o.id AS orderId, SUM(CASE WHEN um.created > uca.last_activity THEN 1 ELSE 0 END) AS sum " +
             "FROM orders o " +
             "JOIN users u ON o.user_id = u.id " +
             "LEFT JOIN user_chat_activity uca ON uca.order_id = o.id AND o.user_id = uca.user_id " +
@@ -31,7 +30,7 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
 
     @Query(value =
             "SELECT um.order_id AS orderId, " +
-            "CAST(SUM(um.created > COALESCE (vu.last_activity, '01-01-01')) AS UNSIGNED) AS sum " +
+            "SUM(CASE WHEN um.created > COALESCE (vu.last_activity, '01-01-01') THEN 1 ELSE 0 END) AS sum " +
             "FROM user_messages um " +
             "LEFT JOIN (SELECT uca.order_id AS order_id, uca.last_activity AS last_activity " +
             "FROM user_chat_activity uca " +
@@ -54,23 +53,23 @@ public interface UserMessageRepository extends JpaRepository<UserMessage, Intege
     Page<NewMessagesResponse> trackMessagesForModerator(String chatId, Pageable pageable);
 
     @Query(value =
-            "SELECT v.chatId, v.orderId, CAST(SUM(v.calculated) AS UNSIGNED) AS sum FROM " +
+            "SELECT v.chatId, v.orderId, SUM(case when v.calculated then 1 else 0 end) AS sum FROM " +
             "(SELECT u.chat_id AS chatId, um.order_id AS orderId, " +
-            "um.created > IF(uca.last_activity > " +
-            "uca.announced, uca.last_activity, uca.announced) AS calculated " +
+            "um.created > CASE WHEN uca.last_activity > " +
+            "uca.announced THEN uca.last_activity ELSE uca.announced END AS calculated " +
             "FROM user_messages um " +
             "LEFT JOIN user_chat_activity uca ON um.user_id = uca.user_id AND um.order_id = uca.order_id " +
             "JOIN users u ON um.user_id = u.id " +
             "WHERE um.order_id IS NOT NULL " +
             "UNION ALL " +
-            "SELECT u.chat_id, um.order_id, um.created > COALESCE (IF(COALESCE (uca.last_activity, '01-01-01') > " +
-            "COALESCE (uca.announced, '01-01-01'), uca.last_activity, uca.announced), '01-01-01') AS calculated " +
-            "FROM users u " +
+            "SELECT u.chat_id, um.order_id, um.created > COALESCE (CASE WHEN " +
+            "COALESCE (uca.last_activity, '01-01-01') > COALESCE (uca.announced, '01-01-01') THEN " +
+            "uca.last_activity ELSE uca.announced END, '01-01-01') AS calculated FROM users u " +
             "JOIN user_messages um ON um.user_id <> u.id " +
             "LEFT JOIN user_chat_activity uca on u.id = uca.user_id AND um.order_id = uca.order_id " +
             "WHERE u.is_moderator = true AND um.order_id IS NOT NULL) v " +
             "GROUP BY v.chatId, v.orderId " +
-            "HAVING sum > 0",
+            "HAVING SUM(case when v.calculated then 1 else 0 end) > 0",
             nativeQuery = true)
     List<AnnouncementsResponse> getNewAnnouncements();
 }

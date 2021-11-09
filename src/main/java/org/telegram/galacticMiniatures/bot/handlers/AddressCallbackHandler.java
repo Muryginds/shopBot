@@ -60,8 +60,6 @@ public class AddressCallbackHandler implements AbstractHandler {
 
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 userInfo.ifPresent(u -> {u.setFullName(text);
-                    Optional<Country> optional = countryService.findByCountryId(181);
-                    optional.ifPresent(u::setCountry);
                     userInfoService.save(u);});
                 user.setBotState(BotState.FILLING_TOWN);
                 userService.save(user);
@@ -114,6 +112,8 @@ public class AddressCallbackHandler implements AbstractHandler {
                 user.setBotState(BotState.FILLING_FULL_NAME);
                 userService.save(user);
                 UserInfo userInfo = userInfoService.findByUser(user).orElse(new UserInfo(user));
+                Optional<Country> optional = countryService.findByCountryId(181);
+                optional.ifPresent(userInfo::setCountry);
                 userInfoService.save(userInfo);
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADDRESS_QUESTION_1));

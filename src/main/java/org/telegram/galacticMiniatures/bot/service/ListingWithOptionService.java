@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
+import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithOptionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedOption;
@@ -23,8 +24,23 @@ public class ListingWithOptionService {
 
     @Transactional
     public void saveAllByParsedOptionMap(Map<Listing, List<ParsedOption>> listingsMap) {
-        List<ListingWithOption> list = new ArrayList<>();
+        List<ListingWithOption> updatedList = new ArrayList<>();
+        Map<String, List<ListingWithOption>> current = findByIdentifiers(listingsMap.keySet()).stream()
+                .collect(Collectors.groupingBy(l -> l.getListing().getSkuNumber()));
         for (Map.Entry<Listing, List<ParsedOption>> entry : listingsMap.entrySet()) {
+            Listing listing = entry.getKey();
+            String skuNumber = listing.getSkuNumber();
+            Map<String, ListingWithOption> map = new HashMap<>();
+            if (current.containsKey(skuNumber)) {
+                map = current.get(skuNumber).stream()
+                        .collect(Collectors.toMap(k ->
+                                new StringBuilder()
+                                        .append(k.getFirstOptionName())
+                                        .append(k.getFirstOptionValue())
+                                        .append(k.getSecondOptionName())
+                                        .append(k.getSecondOptionValue())
+                                        .toString(), l -> l));
+            }
             for (ParsedOption parsedOption : entry.getValue()) {
 
                 Map<String, String> options = parsedOption.getParsedOptionValues().stream()
@@ -59,27 +75,28 @@ public class ListingWithOptionService {
                     secondOptionValue = second.getValue();
                 }
 
-                Optional<ListingWithOption> listingWithOption =
-                        findByListingAndParsedOption(entry.getKey(),
-                                firstOptionName, firstOptionValue, secondOptionName, secondOptionValue);
-                ListingWithOption modifiedListingWithOption =
-                        listingWithOption.orElse(new ListingWithOption(entry.getKey(),
+                String key = new StringBuilder()
+                        .append(firstOptionName)
+                        .append(firstOptionValue)
+                        .append(secondOptionName)
+                        .append(secondOptionValue)
+                        .toString();
+
+                ListingWithOption listingWithOption = map.getOrDefault(key,
+                        new ListingWithOption(null, listing,
                                 firstOptionName, firstOptionValue, secondOptionName, secondOptionValue,
-                                price, null, null));
-                modifiedListingWithOption.setUpdated(LocalDateTime.now());
-                modifiedListingWithOption.setActive(true);
-                list.add(modifiedListingWithOption);
+                                 null, null, null));
+                listingWithOption.setPrice(price);
+                listingWithOption.setUpdated(LocalDateTime.now());
+                listingWithOption.setActive(true);
+                updatedList.add(listingWithOption);
             }
         }
-        listingWithOptionRepository.saveAll(list);
+        listingWithOptionRepository.saveAll(updatedList);
     }
 
-    public Optional<ListingWithOption> findByListingAndParsedOption(
-            Listing listing, String firstOptionName, String firstOptionValue,
-            String secondOptionName, String secondOptionValue) {
-        return listingWithOptionRepository.
-                findByListingAndFirstOptionNameAndFirstOptionValueAndSecondOptionNameAndSecondOptionValue(
-                        listing, firstOptionName, firstOptionValue, secondOptionName, secondOptionValue);
+    public List<ListingWithOption> findByIdentifiers(Iterable<Listing> listings) {
+        return listingWithOptionRepository.findAllByListingIn(listings);
     }
 
     public Page<ListingWithOption> findPageOptionByListing(Listing listing, Pageable pageable) {
@@ -88,6 +105,5 @@ public class ListingWithOptionService {
 
     public void modifyExpiredEntities(Integer expirationTime) {
         listingWithOptionRepository.modifyExpiredEntities(expirationTime);
-
     }
 }

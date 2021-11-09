@@ -12,7 +12,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Country extends AbstractEntity {
+public class Country {
+
+    @Id
+    @SequenceGenerator(name = "country_seq", sequenceName = "countries_id_seq", allocationSize = 3)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "country_seq")
+    Long id;
 
     @Column(name = "country_id")
     Integer countryId;

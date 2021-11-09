@@ -41,17 +41,19 @@ public class ScheduleController {
     public void parseSectionsAndListings() {
         shopParserService.parseSections();
         shopParserService.parseListings();
-    }
-
-    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT1H")
-    public void parseImages() {
         shopParserService.parseListingImages();
-    }
-
-    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT1H")
-    public void parseOptions() {
         shopParserService.parseListingOptions();
     }
+
+//    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT10M")
+//    public void parseImages() {
+//        shopParserService.parseListingImages();
+//    }
+//
+//    @Scheduled(fixedRateString = "${schedule.parsePeriod}", initialDelayString = "PT10M")
+//    public void parseOptions() {
+//        shopParserService.parseListingOptions();
+//    }
 
     @Async
     @Scheduled(fixedRateString = "${schedule.announcementPeriod}")

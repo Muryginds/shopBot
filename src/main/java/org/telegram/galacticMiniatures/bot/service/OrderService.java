@@ -48,7 +48,7 @@ public class OrderService {
         Order order = new Order(user,
                 OrderStatus.NEW,
                 LocalDateTime.now(),
-                cartService.getCartSummaryByChatId(chatId).orElse(0));
+                cartService.getCartSummaryByChatId(chatId).orElse(0), null);
         save(order);
         List<ListingCart> listingCartList = cartService.findAllByUser(user);
         List<OrderedListing> orderedListingsList = new ArrayList<>();

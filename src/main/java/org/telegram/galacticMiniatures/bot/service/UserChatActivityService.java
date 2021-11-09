@@ -25,19 +25,33 @@ public class UserChatActivityService {
         return userChatActivityRepository.findByUser_ChatIdAndOrder_Id(chatId, orderId);
     }
 
-    public void saveNewChatActivity(Long chatId, Integer orderId) {
+    public void saveChatActivity(Long chatId, Integer orderId) {
         Optional<Order> orderOptional = orderService.findById(orderId);
         orderOptional.ifPresent(o -> {
-            Optional<UserChatActivity> optionalUCA =
-                    findByChatIdAndOrderId(chatId.toString(), orderId);
-            UserChatActivity chatActivity = optionalUCA.orElse(
-                    new UserChatActivity(userService.getUser(chatId),
-                            o,
-                            null,
-                            LocalDateTime.of(2001, 1, 1, 0,0)));
-            chatActivity.setLastActivity(LocalDateTime.now());
-            save(chatActivity);
+            saveChatActivity(chatId, o);
         });
+    }
+
+    public void saveChatActivity(Long chatId, Order order) {
+        Optional<UserChatActivity> optionalUCA =
+                findByChatIdAndOrderId(chatId.toString(), order.getId());
+        UserChatActivity chatActivity = optionalUCA.orElse(
+                new UserChatActivity(userService.getUser(chatId),
+                        order,
+                        LocalDateTime.of(2001, 1, 1, 0,0),
+                        LocalDateTime.of(2001, 1, 1, 0,0)));
+        chatActivity.setLastActivity(LocalDateTime.now());
+        save(chatActivity);
+    }
+
+    public void createNewChatActivity(Long chatId, Order order) {
+
+        UserChatActivity chatActivity =
+                new UserChatActivity(userService.getUser(chatId),
+                        order,
+                        LocalDateTime.of(2001, 1, 1, 0,0),
+                        LocalDateTime.of(2001, 1, 1, 0,0));
+        save(chatActivity);
     }
 
     public void saveAll(Iterable<UserChatActivity> iterable) {
