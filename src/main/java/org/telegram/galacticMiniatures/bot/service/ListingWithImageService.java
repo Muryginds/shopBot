@@ -10,10 +10,8 @@ import org.telegram.galacticMiniatures.bot.repository.ListingWithImageRepository
 import org.telegram.galacticMiniatures.parser.entity.ParsedImage;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,30 +21,37 @@ public class ListingWithImageService {
 
     @Transactional
     public void saveAllByParsedImageMap(Map<Listing, List<ParsedImage>> listingsMap) {
-        List<ListingWithImage> list = new ArrayList<>();
+        List<ListingWithImage> updatedList = new ArrayList<>();
+        Map<String, List<ListingWithImage>> current = findByIdentifiers(listingsMap.keySet()).stream()
+                .collect(Collectors.groupingBy(l -> l.getListing().getSkuNumber()));
         for (Map.Entry<Listing, List<ParsedImage>> entry : listingsMap.entrySet()) {
+            Listing listing = entry.getKey();
+            String skuNumber = listing.getSkuNumber();
+            Map<String, ListingWithImage> map = new HashMap<>();
+            if (current.containsKey(skuNumber)) {
+                map = current.get(skuNumber).stream()
+                        .collect(Collectors.toMap(ListingWithImage::getImageUrl, l -> l));
+            }
             for (ParsedImage parsedImage : entry.getValue()) {
-                Optional<ListingWithImage> listingWithImage =
-                        findByListingAndImageUrl(entry.getKey(), parsedImage.getImageUrl());
-                ListingWithImage modifiedListingWithImage =
-                        listingWithImage.orElse(new ListingWithImage(entry.getKey(),
-                                parsedImage.getImageUrl(), null, null));
-                modifiedListingWithImage.setUpdated(LocalDateTime.now());
-                modifiedListingWithImage.setActive(true);
-                list.add(modifiedListingWithImage);
+                String image = parsedImage.getImageUrl();
+                ListingWithImage listingWithImage = map.getOrDefault(image,
+                        new ListingWithImage(null, listing, image, null, null));
+                listingWithImage.setUpdated(LocalDateTime.now());
+                listingWithImage.setActive(true);
+                updatedList.add(listingWithImage);
             }
         }
-        listingWithImageRepository.saveAll(list);
-    }
-
-    public Optional<ListingWithImage> findByListingAndImageUrl(Listing listing, String url) {
-        return listingWithImageRepository.findByListingAndImageUrl(listing, url);
+        listingWithImageRepository.saveAll(updatedList);
     }
 
     public Optional<String> findAnyImageByListingIdentifier(Integer listingId) {
         return listingWithImageRepository.findAllByListing_IdentifierAndActiveTrue(listingId).stream()
                 .map(ListingWithImage::getImageUrl)
                 .findAny();
+    }
+
+    private List<ListingWithImage> findByIdentifiers(Iterable<Listing> listings) {
+        return listingWithImageRepository.findAllByListingInAndActiveTrue(listings);
     }
 
     public Page<ListingWithImage> findPageImagesActiveByListing(Listing listing, Pageable pageable) {

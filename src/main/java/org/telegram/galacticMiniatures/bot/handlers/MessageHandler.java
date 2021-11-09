@@ -1,6 +1,7 @@
 package org.telegram.galacticMiniatures.bot.handlers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.galacticMiniatures.bot.cache.CacheService;
 import org.telegram.galacticMiniatures.bot.cache.ModeratorOrderInfo;
@@ -33,6 +34,9 @@ public class MessageHandler implements AbstractHandler {
   private final UserChatMessageKeyboardMessage userChatMessageKeyboardMessage;
   private final ModeratorMessagesKeyboardMessage moderatorMessagesKeyboardMessage;
 
+  @Value("${ADMIN_CHAT_ID}")
+  private String adminChatId;
+
   @Override
   public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
     List<PartialBotApiMethod<?>> answer = new ArrayList<>();
@@ -40,15 +44,15 @@ public class MessageHandler implements AbstractHandler {
     long chatId = message.getChatId();
 
     if (Constants.BOT_START_COMMAND.equals(message.getText())) {
-      answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
-      answer.add(keyboardService.getSendMessage(
-              KeyboardType.STARTER, chatId, Constants.BOT_START));
       User user = userService.getUser(message);
-      if (String.valueOf(chatId).equals("${ADMIN_CHAT_ID}")) {
+      if (String.valueOf(chatId).equals(adminChatId)) {
         user.setIsModerator(true);
         user.setIsAdmin(true);
       }
       userService.add(user);
+      answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
+      answer.add(keyboardService.getSendMessage(
+              KeyboardType.STARTER, chatId, Constants.BOT_START));
     } else {
       answer.addAll(handleStarterMenuReply(message));
     }
@@ -119,12 +123,12 @@ public class MessageHandler implements AbstractHandler {
         }
         break;
 
-      case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
-
-        sendMessage = userChatMessageKeyboardMessage
-                .prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
-        answer.addAll(handleOptionalMessage(sendMessage, message));
-        break;
+//      case Constants.KEYBOARD_STARTER_MESSAGES_COMMAND:
+//
+//        sendMessage = userChatMessageKeyboardMessage
+//                .prepareScrollingMessage(chatId, ScrollerType.NEW, ScrollerObjectType.ITEM);
+//        answer.addAll(handleOptionalMessage(sendMessage, message));
+//        break;
 
       case Constants.KEYBOARD_STARTER_ADMIN_PANEL_COMMAND:
 

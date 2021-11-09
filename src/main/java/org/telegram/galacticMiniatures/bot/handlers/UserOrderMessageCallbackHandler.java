@@ -93,7 +93,7 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
                 chatInfo = cacheService.get(chatId);
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
-                userChatActivityService.saveNewChatActivity(chatId, orderId);
+                userChatActivityService.saveChatActivity(chatId, orderId);
                 sendMessage = userOrderKeyboardMessage.
                         prepareScrollingMessage(chatId, ScrollerType.CURRENT, ScrollerObjectType.ITEM);
                 answer.addAll(Utils.handleOptionalSendMessage(sendMessage, callbackQuery));
@@ -121,7 +121,7 @@ public class UserOrderMessageCallbackHandler implements AbstractHandler {
                 chatInfo = cacheService.get(chatId);
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
-                userChatActivityService.saveNewChatActivity(chatId, orderId);
+                userChatActivityService.saveChatActivity(chatId, orderId);
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADD_MESSAGE_WARNING));
                 break;

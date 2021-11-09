@@ -4,6 +4,8 @@ final public class Constants {
 
     private Constants() {}
 
+
+
     private static final String CLOSE = "\u2716  Close";
     private static final String ADD_CART = "\uD83D\uDCB0  Add";
     private static final String ADD_FAVORITE = "\u2B50  Add";
@@ -20,7 +22,7 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
     public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
-    public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
+    //public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
     public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
     public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Центр сообщений";
     public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Контроль заказов";
@@ -99,12 +101,16 @@ final public class Constants {
     public static final String QUERY_ADD_MESSAGE_CANCEL = "NO";
 
     public static final String KEYBOARD_ADMIN_OPERATED_CALLBACK = "AdminPanelCallback";
-    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_COMMAND = "AdminPanelCallbackPromote";
-    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_USER_NAME = "Promote user to admin";
-    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_USER_COMMAND = "AdminPanelCallbackDemote";
-    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_USER_NAME = "Demote admin to user";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_ADMIN_COMMAND = "AdminPanelCallbackPromoteAdmin";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_ADMIN_NAME = "Promote user to admin";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_ADMIN_COMMAND = "AdminPanelCallbackDemoteAdmin";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_ADMIN_NAME = "Demote admin to user";
     public static final String KEYBOARD_ADMIN_ERROR_NO_RIGHTS = "You have no rights to do that";
     public static final String KEYBOARD_ADMIN_ERROR_USER_NOT_FOUND = "User not found";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_MODERATOR_NAME = "Promote user to moderator";
+    public static final String KEYBOARD_ADMIN_BUTTON_PROMOTE_MODERATOR_COMMAND = "AdminPanelCallbackPromoteModerator";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_MODERATOR_NAME = "Demote moderator to user";
+    public static final String KEYBOARD_ADMIN_BUTTON_DEMOTE_MODERATOR_COMMAND = "AdminPanelCallbackDemoteModerator";
     public static final String KEYBOARD_ADMIN_BUTTON_CLOSE_MENU_COMMAND = "AdminPanelCallbackCloseMenu";
     public static final String KEYBOARD_ADMIN_BUTTON_CLOSE_MENU_NAME = CLOSE;
     public static final String QUERY_ADMIN_QUESTION_ENTER_CHAT_ID = "Enter user Chat ID";
@@ -147,6 +153,9 @@ final public class Constants {
     public static final String KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_STATUS_COMMAND =
             "ModeratorOrderEditCallbackChangeStatus";
     public static final String KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_STATUS_NAME = "Edit status";
+    public static final String KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_TRACK_NUMBER_COMMAND =
+            "ModeratorOrderEditCallbackChangeTrack";
+    public static final String KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_TRACK_NUMBER_NAME = "Edit track number";
 
     public static final String KEYBOARD_MODERATOR_ORDER_STATUS_EDIT_OPERATED_CALLBACK =
             "ModeratorOrderStatusEditCallback";

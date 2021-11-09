@@ -6,8 +6,8 @@ import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
 import org.telegram.galacticMiniatures.bot.keyboard.ModeratorOrdersKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.keyboard.ModeratorEditOrderStatusKeyboardMessage;
-import org.telegram.galacticMiniatures.bot.service.KeyboardService;
+import org.telegram.galacticMiniatures.bot.keyboard.KeyboardService;
+import org.telegram.galacticMiniatures.bot.service.UserService;
 import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
@@ -26,6 +26,7 @@ public class ModeratorEditOrderCallbackHandler implements AbstractHandler {
 
     private final ModeratorOrdersKeyboardMessage moderatorOrdersKeyboardMessage;
     private final KeyboardService keyboardService;
+    private final UserService userService;
 
     @Override
     public List<PartialBotApiMethod<?>> getAnswerList(BotApiObject botApiObject) {
@@ -47,10 +48,15 @@ public class ModeratorEditOrderCallbackHandler implements AbstractHandler {
 
             case Constants.KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_STATUS_COMMAND:
 
-                SendMessage sm = keyboardService.getSendMessage(
-                                KeyboardType.MODERATOR_ORDER_STATUS_CHANGE, chatId, "Edit order");
-                answer.add(sm);
+                answer.add(keyboardService.getSendMessage(
+                        KeyboardType.MODERATOR_ORDER_STATUS_CHANGE, chatId, "Edit order"));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                break;
+
+            case Constants.KEYBOARD_MODERATOR_ORDER_EDIT_BUTTON_CHANGE_TRACK_NUMBER_COMMAND:
+
+                answer.add(Utils.prepareDeleteMessage(chatId, messageId));
+                answer.add(keyboardService.getSendMessage(KeyboardType.TRACK_NUMBER, chatId, "Track number"));
                 break;
         }
         return answer;

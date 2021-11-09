@@ -13,7 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ListingWithOption extends AbstractEntity {
+public class ListingWithOption {
+
+  @Id
+  @SequenceGenerator(name = "option_seq", sequenceName = "options_id_seq", allocationSize = 3)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "option_seq")
+  Long id;
 
   @ManyToOne(cascade = CascadeType.MERGE)
   Listing listing;

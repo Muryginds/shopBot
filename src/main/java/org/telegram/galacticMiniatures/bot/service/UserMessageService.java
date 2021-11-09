@@ -19,11 +19,11 @@ import java.util.List;
 public class UserMessageService {
 
     private final UserMessageRepository userMessageRepository;
+    private final UserChatActivityService userChatActivityService;
     private final UserService userService;
 
     public Page<UserMessage> getPageByChatId(Long chatId, Pageable pageable) {
-        return userMessageRepository.getPageByUser_ChatIdAndOrderIsNullOrTargetUser_ChatIdAndOrderIsNull(
-                chatId.toString(), chatId.toString(), pageable);
+        return userMessageRepository.getPageByUser_ChatIdAndOrderIsNull(chatId.toString(), pageable);
     }
 
     public Page<UserMessage> getPageByOrderId(Integer orderId, Pageable pageable) {
@@ -53,6 +53,8 @@ public class UserMessageService {
                 .toString());
         userMessage.setCreated(LocalDateTime.now());
         save(userMessage);
+
+        userChatActivityService.createNewChatActivity(chatId, order);
     }
 
     public void announceOrderStatusChanged(Long chatId, Order order) {
@@ -68,9 +70,11 @@ public class UserMessageService {
                 .toString());
         userMessage.setCreated(LocalDateTime.now());
         save(userMessage);
+
+        userChatActivityService.saveChatActivity(chatId, order);
     }
 
-    public List<AnnouncementsResponse> getNewAnnouncements (){
+    public List<AnnouncementsResponse> getNewAnnouncements(){
         return userMessageRepository.getNewAnnouncements();
     }
 }

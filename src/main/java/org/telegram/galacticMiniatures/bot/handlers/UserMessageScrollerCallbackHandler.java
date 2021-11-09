@@ -9,6 +9,7 @@ import org.telegram.galacticMiniatures.bot.enums.BotState;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
+import org.telegram.galacticMiniatures.bot.keyboard.KeyboardService;
 import org.telegram.galacticMiniatures.bot.keyboard.UserMessageScrollerKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.Order;
 import org.telegram.galacticMiniatures.bot.model.User;
@@ -90,7 +91,7 @@ public class UserMessageScrollerCallbackHandler implements AbstractHandler {
                 chatInfo = cacheService.get(chatId);
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
-                userChatActivityService.saveNewChatActivity(chatId, orderId);
+                userChatActivityService.saveChatActivity(chatId, orderId);
                 answer.add(keyboardService.getSendMessage(
                         KeyboardType.USER_MESSAGES, chatId, "Message management"));
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
@@ -118,7 +119,7 @@ public class UserMessageScrollerCallbackHandler implements AbstractHandler {
                 chatInfo = cacheService.get(chatId);
                 orderMessageInfo = chatInfo.getOrderMessageInfo();
                 orderId = orderMessageInfo.getOrderId();
-                userChatActivityService.saveNewChatActivity(chatId, orderId);
+                userChatActivityService.saveChatActivity(chatId, orderId);
                 answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
                 answer.add(Utils.prepareSendMessage(chatId, Constants.QUERY_ADD_MESSAGE_WARNING));
                 break;

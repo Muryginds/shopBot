@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface ListingWithOptionRepository
@@ -18,15 +18,12 @@ public interface ListingWithOptionRepository
 
     Page<ListingWithOption> findByListingAndActiveTrue(Listing listing, Pageable pageable);
 
-    Optional<ListingWithOption>
-    findByListingAndFirstOptionNameAndFirstOptionValueAndSecondOptionNameAndSecondOptionValue(
-            Listing listing, String firstOptionName, String firstOptionValue,
-            String secondOptionName, String secondOptionValue);
-
     @Modifying
     @Transactional
-    @Query(value = "UPDATE listings_options SET active = 0 WHERE updated - " +
-            "(SELECT * FROM (SELECT MAX(updated) FROM listings_options) as upd) " +
+    @Query(value = "UPDATE listings_options SET active = false WHERE EXTRACT(EPOCH FROM updated - " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM listings_options) as upd)) " +
             "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
+
+    List<ListingWithOption> findAllByListingIn(Iterable<Listing> listings);
 }

@@ -11,7 +11,6 @@ import org.telegram.galacticMiniatures.bot.model.Listing;
 import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ListingWithImageRepository
@@ -19,14 +18,14 @@ public interface ListingWithImageRepository
 
     List<ListingWithImage> findAllByListing_IdentifierAndActiveTrue(Integer listingId);
 
-    Optional<ListingWithImage> findByListingAndImageUrl(Listing listing, String url);
+    List<ListingWithImage> findAllByListingInAndActiveTrue(Iterable<Listing> list);
 
     Page<ListingWithImage> findByListingAndActiveTrue(Listing listing, Pageable pageable);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE listings_images SET active = 0 WHERE updated - " +
-            "(SELECT * FROM (SELECT MAX(updated) FROM listings_images) as upd) " +
+    @Query(value = "UPDATE listings_images SET active = false WHERE EXTRACT(EPOCH FROM updated - " +
+            "(SELECT * FROM (SELECT MAX(updated) FROM listings_images) as upd)) " +
             "< -?1", nativeQuery = true)
     void modifyExpiredEntities(Integer expirationTime);
 }

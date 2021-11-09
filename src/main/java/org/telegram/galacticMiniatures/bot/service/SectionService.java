@@ -10,7 +10,8 @@ import org.telegram.galacticMiniatures.parser.entity.ParsedSection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,23 +20,26 @@ public class SectionService {
     private final SectionRepository sectionRepository;
 
     @Transactional
-    public List<Section> saveAllByParsedSectionCollection(Iterable<ParsedSection> collection) {
-        List<Section> sections = new ArrayList<>();
-        for (ParsedSection parsedSection : collection) {
-            Optional<Section> section = findByIdentifier(parsedSection.getSectionId());
-            Section modifiedSection = section.
-                    orElse(new Section());
-            modifiedSection.setName(parsedSection.getTitle());
-            modifiedSection.setIdentifier(parsedSection.getSectionId());
-            modifiedSection.setUpdated(LocalDateTime.now());
-            modifiedSection.setActive(true);
-            sections.add(modifiedSection);
+    public List<Section> saveAllByParsedSectionCollection(List<ParsedSection> list) {
+        List<Section> updatedSectionsList = new ArrayList<>();
+        List<Integer> identifiers = list.stream()
+                .map(ParsedSection::getSectionId)
+                .collect(Collectors.toList());
+        Map<Integer, Section> map = findByIdentifierList(identifiers).stream()
+                .collect(Collectors.toMap(Section::getIdentifier, s -> s));
+        for (ParsedSection parsedSection : list) {
+            Section updatedSection = map.getOrDefault(parsedSection.getSectionId(), new Section());
+            updatedSection.setName(parsedSection.getTitle());
+            updatedSection.setIdentifier(parsedSection.getSectionId());
+            updatedSection.setUpdated(LocalDateTime.now());
+            updatedSection.setActive(true);
+            updatedSectionsList.add(updatedSection);
         }
-       return sectionRepository.saveAll(sections);
+       return sectionRepository.saveAll(updatedSectionsList);
     }
 
-    public Optional<Section> findByIdentifier(Integer id) {
-        return sectionRepository.findByIdentifier(id);
+    public List<Section> findByIdentifierList(List<Integer> identifiers) {
+        return sectionRepository.findByIdentifierIn(identifiers);
     }
 
     public List<Section> findActiveSections() {

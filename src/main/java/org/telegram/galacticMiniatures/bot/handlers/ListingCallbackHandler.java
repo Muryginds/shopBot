@@ -9,6 +9,7 @@ import org.telegram.galacticMiniatures.bot.cache.SearchInfo;
 import org.telegram.galacticMiniatures.bot.enums.KeyboardType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerObjectType;
 import org.telegram.galacticMiniatures.bot.enums.ScrollerType;
+import org.telegram.galacticMiniatures.bot.keyboard.KeyboardService;
 import org.telegram.galacticMiniatures.bot.keyboard.ListingKeyboardMessage;
 import org.telegram.galacticMiniatures.bot.model.*;
 import org.telegram.galacticMiniatures.bot.service.*;

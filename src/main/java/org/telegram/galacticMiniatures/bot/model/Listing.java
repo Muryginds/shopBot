@@ -13,7 +13,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Listing extends AbstractEntity {
+public class Listing {
+
+    @Id
+    @SequenceGenerator(name = "listing_seq", sequenceName = "listings_id_seq", allocationSize = 3)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "listing_seq")
+    Long id;
 
     @Column(name = "title")
     String title;

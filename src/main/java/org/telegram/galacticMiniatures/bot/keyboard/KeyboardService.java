@@ -1,4 +1,4 @@
-package org.telegram.galacticMiniatures.bot.service;
+package org.telegram.galacticMiniatures.bot.keyboard;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ public class KeyboardService {
     private final AdminPanelKeyboardMessage adminPanelKeyboardMessage;
     private final UserMessagesKeyboardMessage userMessagesKeyboardMessage;
     private final ModeratorEditOrderStatusKeyboardMessage moderatorEditOrderStatusKeyboardMessage;
+    private final TrackNumberKeyboardMessage trackNumberKeyboardMessage;
 
     public SendMessage getSendMessage(KeyboardType keyboardType, long chatId, String text) {
         return getKeyboardMessage(keyboardType).prepareKeyboardMessage(chatId, text);
@@ -43,6 +44,9 @@ public class KeyboardService {
                 break;
             case MODERATOR_ORDER_STATUS_CHANGE:
                 result = moderatorEditOrderStatusKeyboardMessage;
+                break;
+            case TRACK_NUMBER:
+                result = trackNumberKeyboardMessage;
                 break;
             default:
                 result = defaultKeyboardMessage;

@@ -21,9 +21,6 @@ public class UserMessage extends AbstractEntity {
     @ManyToOne
     Order order;
 
-    @ManyToOne
-    User targetUser;
-
     @Column (name = "message")
     String message;
 
