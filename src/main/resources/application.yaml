@@ -11,7 +11,7 @@ schedule:
   entityExpirationTime: 20000
 spring:
   datasource:
-    url: jdbc:${JAWSDB_URL:postgresql://localhost:5432/mybot_db?rewriteBatchedStatements=true}
+    url: jdbc:${DATABASE_URL:postgresql://localhost:5432/mybot_db?rewriteBatchedStatements=true}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
