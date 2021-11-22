@@ -22,7 +22,6 @@ final public class Constants {
     public static final String KEYBOARD_STARTER_CART_COMMAND = "\uD83D\uDCB0  Корзина";
     public static final String KEYBOARD_STARTER_FAVORITE_COMMAND = "\u2B50  Избранное";
     public static final String KEYBOARD_STARTER_ORDER_COMMAND = "\uD83D\uDC34  Заказы";
-    //public static final String KEYBOARD_STARTER_MESSAGES_COMMAND = "Отправить сообщение";
     public static final String KEYBOARD_STARTER_ADMIN_PANEL_COMMAND = "Панель администратора";
     public static final String KEYBOARD_STARTER_MODERATOR_MESSAGES_COMMAND = "Центр сообщений";
     public static final String KEYBOARD_STARTER_MODERATOR_ORDERS_COMMAND = "Контроль заказов";
@@ -194,10 +193,10 @@ final public class Constants {
     public static final String KEYBOARD_ADDRESS_BUTTON_EDIT_COMMAND = "AddressCallbackEdit";
     public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_NAME = CLOSE;
     public static final String KEYBOARD_ADDRESS_BUTTON_CLOSE_COMMAND = "AddressCallbackClose";
-    public static final String QUERY_ADDRESS_QUESTION_1 = "\uD83E\uDDD9  Enter your full name";
-    public static final String QUERY_ADDRESS_QUESTION_2 = "\uD83E\uDDD9  Enter your town";
-    public static final String QUERY_ADDRESS_QUESTION_3 = "\uD83E\uDDD9  Enter your address";
-    public static final String QUERY_ADDRESS_QUESTION_4 = "\uD83E\uDDD9  Enter your post index";
+    public static final String QUERY_ADDRESS_QUESTION_1 = "\uD83E\uDDD9  Напишите ваше ФИО";
+    public static final String QUERY_ADDRESS_QUESTION_2 = "\uD83E\uDDD9  Из какого вы города?";
+    public static final String QUERY_ADDRESS_QUESTION_3 = "\uD83E\uDDD9  Напишите улицу и номер дома";
+    public static final String QUERY_ADDRESS_QUESTION_4 = "\uD83E\uDDD9  Напишите ваш индекс";
 
     public static final String KEYBOARD_LISTING_OPERATED_CALLBACK = "ListingCallback";
     public static final String KEYBOARD_LISTING_BUTTON_PREVIOUS_COMMAND = "ListingCallbackPrevious";
@@ -261,15 +260,22 @@ final public class Constants {
     public static final String KEYBOARD_CART_BUTTON_ORDER_COMMAND = "CartCallbackOrder";
     public static final String KEYBOARD_CART_BUTTON_ORDER_NAME = "Make Order";
 
-    public static final String KEYBOARD_SECTIONS_HEADER = "\uD83E\uDDD9 Добро пожаловать в магазин!";
+    public static final String KEYBOARD_SECTIONS_HEADER = "\uD83E\uDDD9 Добро пожаловать в наш магазин!";
     public static final String KEYBOARD_SECTIONS_OPERATED_CALLBACK = "SectionsCallback";
     public static final String KEYBOARD_SECTIONS_BUTTON_CLOSE_COMMAND = "SectionsCallbackGoBack";
     public static final String KEYBOARD_SECTIONS_BUTTON_CLOSE_NAME = CLOSE;
 
-    public static final String BOT_START = "Добро пожаловать! Этот бот магазина 3Д моделек";
+    public static final String BOT_START = "Добро пожаловать в наш магазин! " +
+            "Здесь вы найдете множество миниатюр для ваших настольных, ролевых игр и варгеймов. " +
+            "Если у вас есть вопросы, вы всегда можете задать их в нашем сообществе в " +
+            "ВК https://vk.com/goodstuffyouknow";
     public static final String BOT_START_COMMAND = "/start";
-    public static final String BOT_ABOUT = "This bot represents GalacticMiniatures store";
-    public static final String BOT_ADDRESS_REQUEST = "Вы не заполнили адрес доставки. Пожалуйста сделайте это";
-
+    public static final String BOT_ABOUT = "Официальный магазин нашей группы в ВК: " +
+            "https://vk.com/goodstuffyouknow. Если вы хотите сообщить о баге или у вас есть предложение " +
+            "по улучшению, пожалуйста напишите в этой теме: https://bit.ly/3DRZQlS";
+    public static final String BOT_ADDRESS_REQUEST = "Пожалуйста заполните адрес доставки";
+    public static final String BOT_ORDER_SUCCESSFUL = "Заказ создан! После того, как заказ будет подтвержден, " +
+            "оплатите 100% от его стоимости + 300р за отправку почтой. " +
+            "\nНомер карты для перевода (Тинькофф): 5536 9139 3047 6144";
     public static final String ERROR_RESTART_MENU = "Unexpected error, please restart menu";
 }

@@ -90,7 +90,7 @@ public class AddressCallbackHandler implements AbstractHandler {
                 userInfo.ifPresent(u -> {u.setPostIndex(text); userInfoService.save(u);});
                 user.setBotState(BotState.WORKING);
                 userService.save(user);
-                answer.add(Utils.prepareSendMessage(chatId, "Address is set!"));
+                answer.add(Utils.prepareSendMessage(chatId, "Адрес установлен!"));
                 break;
         }
 

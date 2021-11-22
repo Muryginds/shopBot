@@ -13,6 +13,7 @@ import org.telegram.galacticMiniatures.bot.util.Constants;
 import org.telegram.galacticMiniatures.bot.util.Utils;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.*;
@@ -51,8 +52,10 @@ public class MessageHandler implements AbstractHandler {
       }
       userService.add(user);
       answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
-      answer.add(keyboardService.getSendMessage(
-              KeyboardType.STARTER, chatId, Constants.BOT_START));
+      SendMessage sm = keyboardService.getSendMessage(
+              KeyboardType.STARTER, chatId, Constants.BOT_START);
+      sm.setDisableWebPagePreview(true);
+      answer.add(sm);
     } else {
       answer.addAll(handleStarterMenuReply(message));
     }
@@ -88,7 +91,9 @@ public class MessageHandler implements AbstractHandler {
 
       case Constants.KEYBOARD_STARTER_INFORMATION_COMMAND:
 
-        answer.add(Utils.prepareSendMessage(chatId, Constants.BOT_ABOUT));
+        SendMessage sm = Utils.prepareSendMessage(chatId, Constants.BOT_ABOUT);
+        sm.setDisableWebPagePreview(true);
+        answer.add(sm);
         answer.add(Utils.prepareDeleteMessage(chatId, message.getMessageId()));
         break;
 

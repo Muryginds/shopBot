@@ -151,15 +151,14 @@ public class CartCallbackHandler implements AbstractHandler {
                         userService.getUser(message));
                 String replyText;
                 if (userInfo.isEmpty()) {
-                    replyText = "Please fill in Address information before ordering";
+                    replyText = Constants.BOT_ADDRESS_REQUEST;
                 } else if (cartService.countSizeCartByChatId(chatId).orElse(0) > 0) {
                     Order order = orderService.createNewOrderWithListings(chatId);
-                    replyText = "Gratz! Order created. " +
-                            "Please read information about shipping cost carefully";
+                    replyText = Constants.BOT_ORDER_SUCCESSFUL;
                     answer.add(Utils.prepareAnswerCallbackQuery("Order created", true, callbackQuery));
                     userMessageService.announceNewOrder(chatId, order);
                 } else {
-                    replyText = "Cart is empty, nothing to order";
+                    replyText = Constants.KEYBOARD_STARTER_CART_EMPTY;
                 }
                 answer.add(Utils.prepareSendMessage(chatId, replyText));
                 answer.add(Utils.prepareDeleteMessage(chatId, messageId));

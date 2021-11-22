@@ -31,13 +31,13 @@ public class AddressKeyboardMessage implements AbstractKeyboardMessage {
         if (userInfoOptional.isPresent()) {
             UserInfo userInfo = userInfoOptional.get();
             text = new StringBuilder()
-                    .append("Full name: ")
+                    .append("ФИО: ")
                     .append(userInfo.getFullName())
-                    .append("\nTown: ")
+                    .append("\nГород: ")
                     .append(userInfo.getTown())
-                    .append("\nAddress: ")
+                    .append("\nАдрес: ")
                     .append(userInfo.getAddress())
-                    .append("\nPost index: ")
+                    .append("\nИндекс: ")
                     .append(userInfo.getPostIndex())
                     .toString();
         }
