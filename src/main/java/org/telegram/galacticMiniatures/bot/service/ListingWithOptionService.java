@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.galacticMiniatures.bot.model.Listing;
-import org.telegram.galacticMiniatures.bot.model.ListingWithImage;
 import org.telegram.galacticMiniatures.bot.model.ListingWithOption;
 import org.telegram.galacticMiniatures.bot.repository.ListingWithOptionRepository;
 import org.telegram.galacticMiniatures.parser.entity.ParsedOption;
@@ -54,13 +53,13 @@ public class ListingWithOptionService {
                                 .get("currency_formatted_raw").replace(",", "")))
                         .findFirst().orElse(0D);
 
-                int price = (int) Math.round(rawPrice * 7) * 10;
+                int price = (int) Math.round(rawPrice * 7 * 0.8d * 0.85d) * 10;
 
                 Iterator<Map.Entry<String, String>> iterator = options.entrySet().iterator();
 
                 String firstOptionName = "";
                 String firstOptionValue = "";
-                String secondOptionName = "" ;
+                String secondOptionName = "";
                 String secondOptionValue = "";
 
                 if (iterator.hasNext()) {
